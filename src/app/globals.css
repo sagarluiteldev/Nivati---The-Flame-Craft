@@ -1,26 +1,41 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-olive: var(--theme-olive, #3b4132);
+  --color-creme: var(--theme-creme, #f9f7f2);
+  --color-sage: #a2ad9c;
+  --color-terracotta: #d3a795;
+
+  --font-serif:
+    var(--font-playfair), ui-serif, Georgia, Cambria, "Times New Roman", Times,
+    serif;
+  --font-sans:
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --theme-olive: #3b4132;
+  --theme-creme: #f9f7f2;
 }
 
+.dark {
+  --theme-olive: #f9f7f2;
+  --theme-creme: #121212;
+}
+
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-creme text-olive antialiased font-sans;
+  scroll-behavior: smooth;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-serif;
 }
