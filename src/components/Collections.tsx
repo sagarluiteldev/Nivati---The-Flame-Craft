@@ -22,37 +22,37 @@ export default function Collections() {
     {
       title: "Signature Jars",
       description: "Best-selling scented candles for your sanctuary.",
-      image: "/images/IMG_4142.jpg",
+      image: "/images/IMG_4084.jpg",
       span: "md:col-span-2 lg:col-span-2 row-span-2",
     },
     {
       title: "Shaped Candles",
       description: "Handcrafted roses, cakes & geometric art pieces.",
-      image: "/images/IMG_4091.jpg",
+      image: "/images/IMG_4099.jpg",
       span: "md:col-span-1 lg:col-span-1",
     },
     {
       title: "Mini Candles",
       description: "Pocket-sized luxury for travel & gifting.",
-      image: "/images/IMG_3248.JPG",
+      image: "/images/IMG_4101.JPG",
       span: "md:col-span-1 lg:col-span-1",
     },
     {
       title: "Large Candles",
       description: "Statement pillars that fill entire rooms.",
-      image: "/images/IMG_4139.jpg",
+      image: "/images/IMG_4067.jpg",
       span: "md:col-span-1 lg:col-span-1",
     },
     {
       title: "Raw Materials",
       description: "Premium wax, wicks, and oils for makers.",
-      image: "/images/IMG_1476 2.jpg",
+      image: "/images/IMG_4187.png",
       span: "md:col-span-1 lg:col-span-1",
     },
     {
       title: "The Beginner's Kit",
       description: "All-in-one box to start your candle journey.",
-      image: "/images/IMG_4138.jpg",
+      image: "/images/IMG_4201.jpg",
       span: "md:col-span-2 lg:col-span-2 row-span-2",
     },
   ];

@@ -15,7 +15,7 @@ export default function ShopPage() {
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
-  const categories = ["All", "Signature Candles", "Concrete Jar Candles", "Basic Jar Candles", "Mould Candles", "Premium Jar Candles", "Gel&Soy Jar", "Mini Jar", "Concrete Pots", "Candle Making Kit", "Candle Making"];
+  const categories = ["All", "Signature Candles", "Concrete Jar Candles", "Basic Jar Candles", "Mould Candles", "Premium Jar Candles", "Gel&Soy Jar", "Mini Jar", "Concrete Pots & More", "Candle Making Kit", "Candle Making"];
 
   const filteredProducts = activeCategory === "All" 
     ? products 
