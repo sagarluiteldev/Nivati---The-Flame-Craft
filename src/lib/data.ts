@@ -12,7 +12,6 @@ export interface Product {
     mid: string;
     base: string;
   };
-  burnTime: string;
   category: string;
 }
 
@@ -26,14 +25,13 @@ export const products: Product[] = [
     img: "/images/IMG_3917.JPG",
     gallery: ["/images/IMG_3917.JPG"],
     tag: "",
-    category: "Signature Candles",
+    category: "Mould Candles",
     description: "An adorable large teddy bear candle, ideal for children's rooms or as a charming gift. Crafted with care and scented with warm vanilla.",
     scentNotes: {
       top: "Vanilla",
       mid: "Honey, Cream",
       base: "Tonka Bean, Musk"
     },
-    burnTime: "25-30 hours"
   },
   {
     id: "rose-bloom-signature",
@@ -43,14 +41,13 @@ export const products: Product[] = [
     img: "/images/IMG_4315.jpg",
     gallery: ["/images/IMG_4315.jpg"],
     tag: "",
-    category: "Signature Candles",
+    category: "Mould Candles",
     description: "A stunning hand-sculpted rose candle with layered petals. Perfect as a gift or decorative centerpiece with real rose essence fragrance.",
     scentNotes: {
       top: "Rose Petals, Lavender",
       mid: "Peony, Pink Peppercorn",
       base: "Soft Musk, Tonka"
     },
-    burnTime: "18-22 hours"
   },
   {
     id: "cake-signature",
@@ -60,14 +57,13 @@ export const products: Product[] = [
     img: "/images/Generated Image November 07, 2025 - 4.jpg",
     gallery: ["/images/Generated Image November 07, 2025 - 4.jpg"],
     tag: "",
-    category: "Signature Candles",
+    category: "Mould Candles",
     description: "A beautifully detailed cake candle with frosting swirls and decorative elements. Too pretty to light, but scented with sweet vanilla cake fragrance.",
     scentNotes: {
       top: "Vanilla, Sugar",
       mid: "Buttercream, Caramel",
       base: "Tonka Bean, Musk"
     },
-    burnTime: "30-35 hours"
   },
   {
     id: "fairy-house-signature",
@@ -77,14 +73,13 @@ export const products: Product[] = [
     img: "/images/IMG_1078.jpg",
     gallery: ["/images/IMG_1078.jpg"],
     tag: "",
-    category: "Signature Candles",
+    category: "Mould Candles",
     description: "A magical fairy house candle with intricate architectural details. Perfect for creating an enchanted atmosphere in any room.",
     scentNotes: {
       top: "Floral, Bergamot",
       mid: "Rose, Lily, Honeysuckle",
       base: "Musk, Cedarwood"
     },
-    burnTime: "28-32 hours"
   },
   {
     id: "strawberry-jar-signature",
@@ -94,14 +89,13 @@ export const products: Product[] = [
     img: "images/IMG_4202.jpg",
     gallery: ["images/IMG_4202.jpg"],
     tag: "",
-    category: "Signature Candles",
+    category: "Premium Jar Candles",
     description: "A delightfully fruity strawberry candle in premium jar format. Sweet and indulgent fragrance that fills your space.",
     scentNotes: {
       top: "Fresh Strawberry",
       mid: "Berry, Cream",
       base: "Vanilla, Musk"
     },
-    burnTime: "60-70 hours"
   },
   {
     id: "rainbow-jar-signature",
@@ -111,14 +105,13 @@ export const products: Product[] = [
     img: "/images/IMG_4077.jpg",
     gallery: ["/images/IMG_4077.jpg"],
     tag: "",
-    category: "Signature Candles",
+    category: "Premium Jar Candles",
     description: "A vibrant multi-colored rainbow candle with layered fragrances. Visually stunning and aromatic creation.",
     scentNotes: {
       top: "Citrus, Berry, Florals",
       mid: "Mixed Fruit Notes",
       base: "Musk, Cedarwood"
     },
-    burnTime: "65-75 hours"
   },
 
   // ── Concrete Jar Candles ───────────────────────────────────────
@@ -130,14 +123,13 @@ export const products: Product[] = [
     img: "/images/IMG_4071.jpg",
     gallery: ["/images/IMG_4071.jpg"],
     tag: "",
-    category: "Concrete Jar Candles",
+    category: "Signature Candles",
     description: "A stunning moon-shaped concrete jar candle. Perfect for celestial lovers and modern minimalist spaces. Hand-poured with premium soy wax.",
     scentNotes: {
       top: "Moonflower, Bergamot",
       mid: "Night-blooming Jasmine",
       base: "Vanilla, Musk"
     },
-    burnTime: "50-60 hours"
   },
   {
     id: "concrete-starfish",
@@ -154,7 +146,6 @@ export const products: Product[] = [
       mid: "Ocean Mist, Driftwood",
       base: "Cedarwood, Amber"
     },
-    burnTime: "40-50 hours"
   },
   {
     id: "concrete-bowl",
@@ -171,7 +162,6 @@ export const products: Product[] = [
       mid: "Sage, Mint",
       base: "Cedarwood, Vetiver"
     },
-    burnTime: "45-55 hours"
   },
   {
     id: "bowl-candle",
@@ -188,7 +178,6 @@ export const products: Product[] = [
       mid: "Sweet Floral, Rose",
       base: "Musk, Tonka"
     },
-    burnTime: "40-50 hours"
   },
   {
     id: "rose-bowl-candle",
@@ -198,14 +187,13 @@ export const products: Product[] = [
     img: "/images/IMG_4086.jpg",
     gallery: ["/images/IMG_4086.jpg"],
     tag: "",
-    category: "Concrete Jar Candles",
+    category: "Signature Candles",
     description: "A romantic rose-infused bowl candle in concrete finish. Perfect for creating an intimate and elegant atmosphere in any room.",
     scentNotes: {
       top: "Fresh Rose, Pink Peppercorn",
       mid: "Peony, Floral Blend",
       base: "Sandalwood, Musk"
     },
-    burnTime: "45-55 hours"
   },
   {
     id: "sea-theme-bowl-candle",
@@ -222,7 +210,6 @@ export const products: Product[] = [
       mid: "Ocean Mist, Driftwood",
       base: "Cedarwood, Amber"
     },
-    burnTime: "45-55 hours"
   },
   {
     id: "concrete-three-layers",
@@ -239,7 +226,6 @@ export const products: Product[] = [
       mid: "Floral Blend, Rose",
       base: "Sandalwood, Patchouli"
     },
-    burnTime: "50-60 hours"
   },
   {
     id: "concrete-grid-jar",
@@ -256,7 +242,6 @@ export const products: Product[] = [
       mid: "White Tea, Green Apple",
       base: "Clean Linen, Musk"
     },
-    burnTime: "40-50 hours"
   },
   {
     id: "big-bowl-nest-candle",
@@ -273,7 +258,6 @@ export const products: Product[] = [
       mid: "Sage, Floral",
       base: "Amber, Musk"
     },
-    burnTime: "55-65 hours"
   },
   {
     id: "large-bowl-candle",
@@ -290,7 +274,38 @@ export const products: Product[] = [
       mid: "White Florals, Tea",
       base: "Cedarwood, Sandalwood"
     },
-    burnTime: "60-70 hours"
+  },
+  {
+    id: "strawberry-bowl-candle",
+    title: "Strawberry Bowl Candle",
+    price: 1149,
+    sizeTag: "col-span-1 row-span-1",
+    img: "/images/IMG_4204.jpg",
+    gallery: ["/images/IMG_4204.jpg"],
+    tag: "",
+    category: "Concrete Jar Candles",
+    description: "A delightful strawberry-inspired bowl candle with fruity fragrance. Perfect for adding a pop of color and scent to your space.",
+    scentNotes: {
+      top: "Fresh Strawberry",
+      mid: "Ripe Berry, Cream",
+      base: "Vanilla, Musk"
+    },
+  },
+  {
+    id: "tulip-bowl-candle",
+    title: "Tulip Bowl Candle",
+    price: 1299,
+    sizeTag: "col-span-1 row-span-1",
+    img: "/images/IMG_4089.jpg",
+    gallery: ["/images/IMG_4089.jpg"],
+    tag: "",
+    category: "Concrete Jar Candles",
+    description: "A botanical tulip-inspired bowl candle with elegant floral notes. Perfect for spring and celebrating nature's beauty.",
+    scentNotes: {
+      top: "Fresh Tulip, Bergamot",
+      mid: "Floral Blend, Rose",
+      base: "Cedarwood, Musk"
+    },
   },
 
   // ── Basic Jar Candles ───────────────────────────────────────────
@@ -309,7 +324,6 @@ export const products: Product[] = [
       mid: "Floral, Rose",
       base: "Musk, Woods"
     },
-    burnTime: "15-20 hours"
   },
   {
     id: "basic-medium-160ml",
@@ -326,7 +340,6 @@ export const products: Product[] = [
       mid: "Chamomile, Herb",
       base: "Cedarwood, Vetiver"
     },
-    burnTime: "25-30 hours"
   },
   {
     id: "basic-large-200ml",
@@ -343,7 +356,6 @@ export const products: Product[] = [
       mid: "Cinnamon, Spice",
       base: "Sandalwood, Amber"
     },
-    burnTime: "35-45 hours"
   },
 
   // ── Mould Candles ──────────────────────────────────────────────
@@ -355,14 +367,13 @@ export const products: Product[] = [
     img: "/images/IMG_3918.JPG",
     gallery: ["/images/IMG_3918.JPG"],
     tag: "",
-    category: "Mould Candles",
+    category: "Signature Candles",
     description: "A whimsical astronaut-shaped candle perfect for space enthusiasts. Hand-poured with premium soy wax, this decorative piece doubles as a functional candle.",
     scentNotes: {
       top: "Citrus, Bergamot",
       mid: "Lavender, Sage",
       base: "Sandalwood, Musk"
     },
-    burnTime: "20-25 hours"
   },
   {
     id: "teddy-bear-large",
@@ -379,7 +390,6 @@ export const products: Product[] = [
       mid: "Honey, Cream",
       base: "Tonka Bean, Musk"
     },
-    burnTime: "25-30 hours"
   },
   {
     id: "rose-peony-small",
@@ -396,7 +406,6 @@ export const products: Product[] = [
       mid: "Lily, Geranium",
       base: "Musk, Soft Woods"
     },
-    burnTime: "12-15 hours"
   },
   {
     id: "rose-peony-large",
@@ -413,7 +422,6 @@ export const products: Product[] = [
       mid: "Lily, Geranium",
       base: "Musk, Soft Woods"
     },
-    burnTime: "20-25 hours"
   },
   {
     id: "rose-bloom-mould",
@@ -430,7 +438,6 @@ export const products: Product[] = [
       mid: "Peony, Pink Peppercorn",
       base: "Soft Musk, Tonka"
     },
-    burnTime: "18-22 hours"
   },
   {
     id: "rose-bloom-ii",
@@ -447,7 +454,6 @@ export const products: Product[] = [
       mid: "Damask Rose, Iris",
       base: "Sandalwood, Amber"
     },
-    burnTime: "18-22 hours"
   },
   {
     id: "tulip-with-stem",
@@ -464,15 +470,14 @@ export const products: Product[] = [
       mid: "Tulip, Green Stems",
       base: "Cedarwood, Vetiver"
     },
-    burnTime: "20-25 hours"
   },
   {
     id: "tulip-flower",
     title: "Tulip Flower",
     price: 249,
     sizeTag: "col-span-1 row-span-1",
-    img: "/images/IMG_3246.jpg",
-    gallery: ["/images/IMG_3246.jpg"],
+    img: "/images/IMG_3246.JPG",
+    gallery: ["/images/IMG_3246.JPG"],
     tag: "",
     category: "Mould Candles",
     description: "A compact tulip-shaped candle perfect for small spaces. Minimal yet elegant, capturing the simple beauty of spring flowers.",
@@ -481,7 +486,6 @@ export const products: Product[] = [
       mid: "Tulip Petals",
       base: "Green Moss, Cedarwood"
     },
-    burnTime: "14-18 hours"
   },
   {
     id: "bubbles",
@@ -498,24 +502,22 @@ export const products: Product[] = [
       mid: "White Tea, Mint",
       base: "Linen, Musk"
     },
-    burnTime: "20-25 hours"
   },
   {
     id: "bubble-pillar",
     title: "Bubble Pillar",
     price: 349,
     sizeTag: "col-span-1 row-span-1",
-    img: "/images/IMG_4100.JPG",
-    gallery: ["/images/IMG_4100.JPG"],
+    img: "/images/IMG_4100.jpg",
+    gallery: ["/images/IMG_4100.jpg"],
     tag: "",
-    category: "Mould Candles",
+    category: "Signature Candles",
     description: "A vertical arrangement of bubble-textured candle for a contemporary look. Ideal for creating sculptural interest on shelves or tables.",
     scentNotes: {
       top: "Grapefruit, Lemon",
       mid: "White Pepper, Cardamom",
       base: "Driftwood, Ambroxan"
     },
-    burnTime: "22-28 hours"
   },
   {
     id: "spiral",
@@ -532,7 +534,6 @@ export const products: Product[] = [
       mid: "Bamboo, Aloe",
       base: "Cedar, Clean Linen"
     },
-    burnTime: "15-20 hours"
   },
   {
     id: "christmas-tree",
@@ -549,15 +550,14 @@ export const products: Product[] = [
       mid: "Cinnamon, Clove",
       base: "Cedarwood, Amber"
     },
-    burnTime: "25-30 hours"
   },
   {
     id: "mini-flower",
     title: "Mini Flower",
     price: 149,
     sizeTag: "col-span-1 row-span-1",
-    img: "/images/IMG_3248.jpg",
-    gallery: ["/images/IMG_3248.jpg"],
+    img: "/images/IMG_3248.JPG",
+    gallery: ["/images/IMG_3248.JPG"],
     tag: "",
     category: "Mould Candles",
     description: "Tiny flower-shaped candle perfect for decorative arrangements or small gifts. Sweet and charming with delicate floral scent.",
@@ -566,7 +566,6 @@ export const products: Product[] = [
       mid: "Rose, Lily",
       base: "Soft Musk"
     },
-    burnTime: "8-10 hours"
   },
   {
     id: "sunflower",
@@ -583,15 +582,14 @@ export const products: Product[] = [
       mid: "Sunflower, Heliotrope",
       base: "Vanilla, Honey"
     },
-    burnTime: "10-12 hours"
   },
   {
     id: "daisy",
     title: "Daisy Flower",
     price: 149,
     sizeTag: "col-span-1 row-span-1",
-    img: "/images/IMG_4092.jpg",
-    gallery: ["/images/IMG_4092.jpg"],
+    img: "/images/IMG_4092.JPG",
+    gallery: ["/images/IMG_4092.JPG"],
     tag: "",
     category: "Mould Candles",
     description: "A simple yet elegant daisy candle with clean lines. Perfect for minimalist decor and scented with fresh, herbaceous notes.",
@@ -600,7 +598,6 @@ export const products: Product[] = [
       mid: "Daisy, Chamomile",
       base: "Green Moss, Musk"
     },
-    burnTime: "10-12 hours"
   },
   {
     id: "cactus-1",
@@ -617,7 +614,6 @@ export const products: Product[] = [
       mid: "Arid Spices",
       base: "Sandalwood, Patchouli"
     },
-    burnTime: "22-26 hours"
   },
   {
     id: "cactus-2",
@@ -634,7 +630,6 @@ export const products: Product[] = [
       mid: "Green Pepper, Aloe",
       base: "Cedarwood, Vetiver"
     },
-    burnTime: "12-15 hours"
   },
   {
     id: "cactus-3",
@@ -651,7 +646,6 @@ export const products: Product[] = [
       mid: "Eucalyptus, Sage",
       base: "Dry Woods"
     },
-    burnTime: "10-12 hours"
   },
   {
     id: "cactus-4",
@@ -668,7 +662,6 @@ export const products: Product[] = [
       mid: "Herbal Notes",
       base: "Soft Woods"
     },
-    burnTime: "8-10 hours"
   },
   {
     id: "couple",
@@ -685,7 +678,6 @@ export const products: Product[] = [
       mid: "Gardenia, Patchouli",
       base: "Sandalwood, Amber"
     },
-    burnTime: "20-25 hours"
   },
   {
     id: "strawberry",
@@ -702,7 +694,6 @@ export const products: Product[] = [
       mid: "Ripe Berry, Cream",
       base: "Vanilla, Musk"
     },
-    burnTime: "10-12 hours"
   },
   {
     id: "cake",
@@ -719,7 +710,6 @@ export const products: Product[] = [
       mid: "Buttercream, Caramel",
       base: "Tonka Bean, Musk"
     },
-    burnTime: "30-35 hours"
   },
   {
     id: "fairy-house",
@@ -736,7 +726,6 @@ export const products: Product[] = [
       mid: "Rose, Lily, Honeysuckle",
       base: "Musk, Cedarwood"
     },
-    burnTime: "28-32 hours"
   },
   {
     id: "acanthus-pillar-candle",
@@ -753,7 +742,6 @@ export const products: Product[] = [
       mid: "Rose, Floral Blend",
       base: "Cedarwood, Musk"
     },
-    burnTime: "35-40 hours"
   },
   {
     id: "empire-pillar-candle",
@@ -770,7 +758,6 @@ export const products: Product[] = [
       mid: "White Florals, Tea",
       base: "Sandalwood, Amber"
     },
-    burnTime: "38-42 hours"
   },
 
   // ── Premium Jar Candles ────────────────────────────────────────
@@ -789,7 +776,6 @@ export const products: Product[] = [
       mid: "Dry Herbs, Aloe",
       base: "Sandalwood, Patchouli"
     },
-    burnTime: "55-65 hours"
   },
   {
     id: "daisy-jar",
@@ -799,14 +785,13 @@ export const products: Product[] = [
     img: "/images/IMG_4089.jpg",
     gallery: ["/images/IMG_4089.jpg"],
     tag: "",
-    category: "Premium Jar Candles",
+    category: "Signature Candles",
     description: "A beautiful daisy-themed premium jar candle with fresh floral notes. Perfect for spring and summer.",
     scentNotes: {
       top: "Fresh Florals, Bergamot",
       mid: "Daisy, Chamomile",
       base: "Green Moss, Musk"
     },
-    burnTime: "55-65 hours"
   },
   {
     id: "berry-wine",
@@ -823,7 +808,6 @@ export const products: Product[] = [
       mid: "Red Wine, Berry",
       base: "Cedarwood, Amber"
     },
-    burnTime: "55-65 hours"
   },
   {
     id: "daisy-wine",
@@ -840,7 +824,6 @@ export const products: Product[] = [
       mid: "Wine, Berry Notes",
       base: "Sandalwood, Musk"
     },
-    burnTime: "60-70 hours"
   },
   {
     id: "sunflower-jar",
@@ -857,7 +840,6 @@ export const products: Product[] = [
       mid: "Golden Florals",
       base: "Vanilla, Cedarwood"
     },
-    burnTime: "55-70 hours"
   },
   {
     id: "mini-flower-jar",
@@ -874,7 +856,6 @@ export const products: Product[] = [
       mid: "Lily, Rose, Peony",
       base: "Soft Musk, Tonka"
     },
-    burnTime: "55-65 hours"
   },
   {
     id: "tulip-jar",
@@ -891,7 +872,6 @@ export const products: Product[] = [
       mid: "Spring Florals",
       base: "Cedarwood, Vetiver"
     },
-    burnTime: "65-75 hours"
   },
   {
     id: "tulip-stem-jar",
@@ -908,7 +888,6 @@ export const products: Product[] = [
       mid: "Green Stem, Herb",
       base: "Moss, Cedarwood"
     },
-    burnTime: "55-65 hours"
   },
   {
     id: "coffee-jar",
@@ -925,7 +904,6 @@ export const products: Product[] = [
       mid: "Roasted Notes, Caramel",
       base: "Vanilla, Cedarwood"
     },
-    burnTime: "50-60 hours"
   },
   {
     id: "strawberry-jar",
@@ -942,7 +920,6 @@ export const products: Product[] = [
       mid: "Berry, Cream",
       base: "Vanilla, Musk"
     },
-    burnTime: "60-70 hours"
   },
   {
     id: "rainbow-jar",
@@ -959,7 +936,6 @@ export const products: Product[] = [
       mid: "Mixed Fruit Notes",
       base: "Musk, Cedarwood"
     },
-    burnTime: "65-75 hours"
   },
   {
     id: "dried-flower-jar",
@@ -976,7 +952,6 @@ export const products: Product[] = [
       mid: "Rose, Chamomile",
       base: "Tonka, Musk"
     },
-    burnTime: "60-70 hours"
   },
 
   // ── Gel & Soy Jar ──────────────────────────────────────────────
@@ -995,7 +970,6 @@ export const products: Product[] = [
       mid: "Cream, Vanilla",
       base: "Caramel, Musk"
     },
-    burnTime: "50-60 hours"
   },
   {
     id: "iced-strawberry",
@@ -1012,7 +986,6 @@ export const products: Product[] = [
       mid: "Berry Juice, Cream",
       base: "Vanilla, Sugar"
     },
-    burnTime: "50-60 hours"
   },
   {
     id: "iced-blueberry",
@@ -1029,7 +1002,6 @@ export const products: Product[] = [
       mid: "Berry, Cream",
       base: "Vanilla, Musk"
     },
-    burnTime: "50-60 hours"
   },
   {
     id: "iced-matcha",
@@ -1039,14 +1011,13 @@ export const products: Product[] = [
     img: "/images/IMG_4144.jpg",
     gallery: ["/images/IMG_4144.jpg"],
     tag: "",
-    category: "Gel&Soy Jar",
+    category: "Signature Candles",
     description: "A trendy iced matcha gel and soy candle. Cool green tea fragrance with creamy notes.",
     scentNotes: {
       top: "Matcha, Green Tea",
       mid: "Cream, Vanilla",
       base: "Soft Musk"
     },
-    burnTime: "50-60 hours"
   },
   {
     id: "heart-patches",
@@ -1063,7 +1034,6 @@ export const products: Product[] = [
       mid: "Floral Blend",
       base: "Musk, Vanilla"
     },
-    burnTime: "50-60 hours"
   },
   {
     id: "heart-burst",
@@ -1080,7 +1050,6 @@ export const products: Product[] = [
       mid: "Gardenia, Peony",
       base: "Sandalwood, Musk"
     },
-    burnTime: "50-60 hours"
   },
   {
     id: "jack-daniels",
@@ -1097,7 +1066,6 @@ export const products: Product[] = [
       mid: "Vanilla, Spice",
       base: "Cedarwood, Tobacco"
     },
-    burnTime: "50-60 hours"
   },
 
   // ── Mini Jar ───────────────────────────────────────────────────
@@ -1116,7 +1084,6 @@ export const products: Product[] = [
       mid: "Floral, Peony",
       base: "Musk, Tonka"
     },
-    burnTime: "20-25 hours"
   },
   {
     id: "mini-heart-burst",
@@ -1133,7 +1100,6 @@ export const products: Product[] = [
       mid: "Jasmine, Floral",
       base: "Sandalwood, Musk"
     },
-    burnTime: "20-25 hours"
   },
 
   // ── Concrete Pots ─────────────────────────────────────────────
@@ -1152,7 +1118,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "concrete-pot-starfish",
@@ -1169,7 +1134,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "concrete-pot-bowl",
@@ -1186,7 +1150,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "concrete-pot-three-layers",
@@ -1203,7 +1166,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "concrete-pot-grid-jar",
@@ -1220,7 +1182,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "concrete-pot-big-bowl-nest",
@@ -1237,7 +1198,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "concrete-pot-large-bowl",
@@ -1254,7 +1214,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "candle-stand-1",
@@ -1271,7 +1230,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "candle-stand-2",
@@ -1288,7 +1246,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "wooden-bowl",
@@ -1305,7 +1262,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "glass-jar-with-lid",
@@ -1322,7 +1278,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
 
   // ── Candle Making Kit ──────────────────────────────────────────
@@ -1341,7 +1296,6 @@ export const products: Product[] = [
       mid: "Customize your own",
       base: "Customize your own"
     },
-    burnTime: "N/A"
   },
   {
     id: "candle-kit-customized",
@@ -1358,7 +1312,6 @@ export const products: Product[] = [
       mid: "Customize your own",
       base: "Customize your own"
     },
-    burnTime: "N/A"
   },
 
   // ── Candle Making (Supplies) ───────────────────────────────────
@@ -1377,7 +1330,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "pure-soy-wax",
@@ -1394,7 +1346,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "gel-wax",
@@ -1411,15 +1362,14 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "heart-mould",
     title: "Heart Mould",
     price: 375,
     sizeTag: "col-span-1 row-span-1",
-    img: "/images/collection_materials.png",
-    gallery: ["/images/collection_materials.png"],
+    img: "/images/IMG_4181.JPG",
+    gallery: ["/images/IMG_4181.JPG"],
     tag: "",
     category: "Candle Making",
     description: "A heart-shaped silicone mould for romantic candle designs.",
@@ -1428,15 +1378,14 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "bubble-mould",
     title: "Bubble Mould",
     price: 365,
     sizeTag: "col-span-1 row-span-1",
-    img: "/images/collection_materials.png",
-    gallery: ["/images/collection_materials.png"],
+    img: "/images/IMG_4175.JPG",
+    gallery: ["/images/IMG_4175.JPG"],
     tag: "",
     category: "Candle Making",
     description: "A bubble-pattern silicone mould for modern geometric designs.",
@@ -1445,15 +1394,14 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "rose-mould",
     title: "Rose Mould",
     price: 485,
     sizeTag: "col-span-1 row-span-1",
-    img: "/images/collection_materials.png",
-    gallery: ["/images/collection_materials.png"],
+    img: "/images/IMG_4188.JPG",
+    gallery: ["/images/IMG_4188.JPG"],
     tag: "",
     category: "Candle Making",
     description: "A detailed rose-shaped silicone mould for elegant floral candles.",
@@ -1462,15 +1410,14 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "tulip-mould",
     title: "Tulip Mould",
     price: 485,
     sizeTag: "col-span-1 row-span-1",
-    img: "/images/collection_materials.png",
-    gallery: ["/images/collection_materials.png"],
+    img: "/images/IMG_4178.JPG",
+    gallery: ["/images/IMG_4178.JPG"],
     tag: "",
     category: "Candle Making",
     description: "A botanical tulip-shaped silicone mould for spring-inspired designs.",
@@ -1479,15 +1426,14 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "mini-flower-mould",
-    title: "Mini Flower",
+    title: "Mini Flower Mould",
     price: 475,
     sizeTag: "col-span-1 row-span-1",
-    img: "/images/collection_materials.png",
-    gallery: ["/images/collection_materials.png"],
+    img: "/images/IMG_4179.JPG",
+    gallery: ["/images/IMG_4179.JPG"],
     tag: "",
     category: "Candle Making",
     description: "A small flower-shaped silicone mould for delicate designs.",
@@ -1496,7 +1442,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "wax-thread",
@@ -1513,7 +1458,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "wick-holder",
@@ -1530,7 +1474,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "thank-you-stickers",
@@ -1547,7 +1490,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "melting-pot",
@@ -1564,7 +1506,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "wax-color",
@@ -1581,7 +1522,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "fragrance-oil",
@@ -1598,7 +1538,6 @@ export const products: Product[] = [
       mid: "Varies",
       base: "Varies"
     },
-    burnTime: "N/A"
   },
   {
     id: "blending-needle",
@@ -1615,7 +1554,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "thermometer",
@@ -1632,7 +1570,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "lid-jar",
@@ -1649,7 +1586,6 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
   {
     id: "heat-gun",
@@ -1666,6 +1602,5 @@ export const products: Product[] = [
       mid: "Unscented",
       base: "Unscented"
     },
-    burnTime: "N/A"
   },
 ];

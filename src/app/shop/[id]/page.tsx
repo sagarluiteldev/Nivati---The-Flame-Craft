@@ -117,10 +117,6 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                 <span className="text-sm uppercase tracking-widest text-olive/50">Base Notes</span>
                 <span className="text-olive/90">{product.scentNotes.base}</span>
               </div>
-              <div className="grid grid-cols-[100px_1fr] gap-4 pt-4">
-                <span className="text-sm uppercase tracking-widest text-olive/50">Burn Time</span>
-                <span className="text-olive/90">{product.burnTime}</span>
-              </div>
             </div>
 
             {/* Add to Cart Area */}

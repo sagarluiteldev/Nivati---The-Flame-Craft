@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import QuickViewModal from "@/components/QuickViewModal";
@@ -39,10 +39,6 @@ export default function ShopPage() {
             </Link>
             <h1 className="text-3xl md:text-6xl font-serif text-olive ">All Collections</h1>
           </div>
-          
-          <button className="flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 border border-olive/20  rounded-full text-olive  hover:bg-olive hover:text-creme   transition-colors text-xs md:text-sm font-medium">
-            <SlidersHorizontal className="w-4 h-4" /> Filters
-          </button>
         </div>
 
         {/* Categories Bar */}
