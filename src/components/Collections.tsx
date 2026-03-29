@@ -20,7 +20,7 @@ export default function Collections() {
 
   const collections = [
     {
-      title: "Signature Jars",
+      title: "Signature Candles",
       description: "Best-selling scented candles for your sanctuary.",
       image: "/images/IMG_4084.jpg",
       span: "md:col-span-2 lg:col-span-2 row-span-2",
@@ -34,7 +34,7 @@ export default function Collections() {
     {
       title: "Mini Candles",
       description: "Pocket-sized luxury for travel & gifting.",
-      image: "/images/IMG_4101.JPG",
+      image: "/images/IMG_4101.jpg",
       span: "md:col-span-1 lg:col-span-1",
     },
     {
@@ -46,7 +46,7 @@ export default function Collections() {
     {
       title: "Raw Materials",
       description: "Premium wax, wicks, and oils for makers.",
-      image: "/images/IMG_4187.png",
+      image: "/images/IMG_4187.PNG",
       span: "md:col-span-1 lg:col-span-1",
     },
     {

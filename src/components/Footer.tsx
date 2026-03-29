@@ -7,8 +7,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
           <div className="md:col-span-2">
-            <div className="mb-4 bg-creme dark:bg-olive p-2.5 rounded-full inline-block transition-colors duration-700">
-              <img src="/images/logo.png" alt="Nivati Logo" className="h-10 w-10 md:h-14 md:w-14 object-contain transition-all" />
+            <div className="mb-4 bg-creme dark:bg-olive p-1 rounded-full inline-block transition-colors duration-700">
+              <img src="/images/logo.png" alt="Nivati Logo" className="h-20 w-20 md:h-20 md:w-20 object-contain transition-all" />
             </div>
             <p className="text-creme/60 dark:text-olive/60 font-sans font-light max-w-sm leading-relaxed mb-4 text-sm md:text-base transition-colors duration-700">
               Empowering your sanctuary with hand-poured scents and mindful crafting. Find your glow.
