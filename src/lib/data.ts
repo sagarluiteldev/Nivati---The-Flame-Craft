@@ -1478,7 +1478,7 @@ export const products: Product[] = [
   {
     id: "gel-wax",
     title: "Gel Wax",
-    price: 915,
+    price: 950,
     sizeTag: "col-span-1 row-span-1",
     img: "/images/IMG_4174.jpg",
     gallery: ["/images/IMG_4174.jpg"],
