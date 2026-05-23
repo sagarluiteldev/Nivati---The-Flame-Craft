@@ -173,22 +173,24 @@ export default function Hero() {
         >
           {/* Image Container with continuous loop gallery */}
           <div 
-            className="relative h-full w-full rounded-[30px] lg:rounded-[40px] overflow-hidden shadow-2xl border-4 lg:border-12 border-white/50 backdrop-blur-md"
+            className="relative h-full w-full rounded-[30px] lg:rounded-[40px] shadow-2xl border-4 lg:border-12 border-white/50 backdrop-blur-md"
           >
-            <div className="absolute inset-0 bg-sage/10 mix-blend-multiply z-10 pointer-events-none" />
-            
-            <AnimatePresence>
-              <motion.img 
-                key={currentImageIndex}
-                src={heroImages[currentImageIndex].src} 
-                alt={heroImages[currentImageIndex].alt}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.0, ease: "easeInOut" }}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            </AnimatePresence>
+            <div className="absolute inset-0 rounded-[26px] lg:rounded-[28px] overflow-hidden" style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}>
+              <div className="absolute inset-0 bg-sage/10 mix-blend-multiply z-10 pointer-events-none" />
+              
+              <AnimatePresence>
+                <motion.img 
+                  key={currentImageIndex}
+                  src={heroImages[currentImageIndex].src} 
+                  alt={heroImages[currentImageIndex].alt}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.0, ease: "easeInOut" }}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </AnimatePresence>
+            </div>
 
             {/* Gallery Navigation Dots */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
