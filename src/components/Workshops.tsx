@@ -59,7 +59,7 @@ export default function Workshops() {
                 href="https://wa.me/9842003249?text=Hi,%20I%20would%20like%20to%20know%20more%20about%20the%20online%20candle%20making%20workshops"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-8 py-4 bg-olive text-creme rounded-full tracking-wide hover:bg-olive/90 transition-all hover:shadow-lg hover:-translate-y-1 inline-flex justify-center"
+                className="px-8 py-4 bg-olive text-creme rounded-full tracking-wide transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-[0.95] inline-flex justify-center"
               >
                 Book a Virtual Seat
               </a>

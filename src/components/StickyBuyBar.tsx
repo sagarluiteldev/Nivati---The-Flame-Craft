@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBagIcon as ShoppingBag } from "@heroicons/react/24/outline";
 import { Product } from "@/lib/data";
 import { useAppContext } from "@/context/AppContext";
 
@@ -53,7 +53,7 @@ export default function StickyBuyBar({ product }: Props) {
           </div>
           <button 
             onClick={handleAddToCart}
-            className="flex-1 md:flex-none bg-olive text-creme   px-8 py-3 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-opacity font-medium tracking-wide shadow-lg"
+            className="flex-1 md:flex-none bg-olive text-creme px-8 py-3 rounded-full flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-95 font-medium tracking-wide shadow-lg"
           >
             <ShoppingBag className="w-4 h-4" /> Add to Cart
           </button>

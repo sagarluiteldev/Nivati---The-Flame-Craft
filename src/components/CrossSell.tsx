@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon as ArrowLeft } from "@heroicons/react/24/outline";
 import { products } from "@/lib/data";
 
 interface Props {
@@ -66,7 +66,7 @@ export default function CrossSell({ currentProductId, category }: Props) {
       </div>
       
       <div className="mt-8 flex justify-center md:hidden">
-        <Link href="/shop" className="inline-flex px-8 py-4 border border-olive/20  rounded-full text-sm uppercase tracking-widest text-olive  hover:bg-olive hover:text-creme   transition-colors items-center gap-2">
+        <Link href="/shop" className="inline-flex px-8 py-4 border border-olive/30 rounded-full text-sm uppercase tracking-widest text-olive transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.1)] active:scale-[0.95] items-center gap-2">
           View All <ArrowLeft className="w-4 h-4 rotate-180" />
         </Link>
       </div>

@@ -1,14 +1,14 @@
 "use client";
 
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { ShoppingBagIcon as ShoppingBag, Bars3Icon as Menu, XMarkIcon as X } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAppContext } from "@/context/AppContext";
 import ScentQuiz from "@/components/ScentQuiz";
 import SearchOverlay from "@/components/SearchOverlay";
-import { Moon, Sun, Search as SearchIcon } from "lucide-react";
+import { MagnifyingGlassIcon as SearchIcon } from "@heroicons/react/24/outline";
 
 export default function Navbar() {
   const { scrollY } = useScroll();
@@ -17,7 +17,7 @@ export default function Navbar() {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
-  const { cart, setIsCartOpen, isNightMode, setIsNightMode } = useAppContext();
+  const { cart, setIsCartOpen } = useAppContext();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -59,7 +59,7 @@ export default function Navbar() {
             <img 
               src="/images/logo.png" 
               alt="Nivati Logo" 
-              className="h-15 w-15 md:h-18 md:w-18 object-contain transition-all dark:invert dark:opacity-80" 
+              className="h-15 w-15 md:h-18 md:w-18 object-contain transition-all" 
             />
           </Link>
           
@@ -74,28 +74,28 @@ export default function Navbar() {
               <div className="absolute top-full -left-12 w-[800px] bg-creme  shadow-2xl rounded-2xl p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 grid grid-cols-4 gap-6 translate-y-4 group-hover:translate-y-0 border border-olive/10  z-50">
                 <Link href="/shop?category=Signature+Candles" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
-                     <img src="/images/IMG_4142.jpg" alt="Signature Candles" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply dark:mix-blend-normal" />
+                     <img src="/images/IMG_4142.jpg" alt="Signature Candles" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">Signature</h4>
                   <p className="text-xs text-olive/60  normal-case tracking-normal">Classic scents</p>
                 </Link>
                 <Link href="/shop?category=Mould+Candles" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
-                     <img src="/images/IMG_4315.jpg" alt="Shaped Candles" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply dark:mix-blend-normal" />
+                     <img src="/images/IMG_4315.jpg" alt="Shaped Candles" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">Shaped</h4>
                   <p className="text-xs text-olive/60  normal-case tracking-normal">Artisan crafted</p>
                 </Link>
                 <Link href="/shop?category=Candle+Making+Kit" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
-                     <img src="/images/IMG_4201.jpg" alt="DIY Kits" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply dark:mix-blend-normal" />
+                     <img src="/images/IMG_4201.jpg" alt="DIY Kits" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">DIY Kits</h4>
                   <p className="text-xs text-olive/60  normal-case tracking-normal">Pour your own</p>
                 </Link>
                 <Link href="/shop?category=Candle+Making+Materials" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
-                     <img src="/images/IMG_4187.png" alt="Raw Materials" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply dark:mix-blend-normal" />
+                     <img src="/images/IMG_4187.png" alt="Raw Materials" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">Materials</h4>
                   <p className="text-xs text-olive/60  normal-case tracking-normal">Crafting supplies</p>
@@ -122,13 +122,7 @@ export default function Navbar() {
             >
               Scent Quiz
             </button>
-            <button 
-              onClick={() => setIsNightMode(!isNightMode)} 
-              className="text-olive hover:opacity-70 transition-opacity"
-              aria-label="Toggle Night Mode"
-            >
-              {isNightMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+
             <button 
               className="text-olive hover:opacity-70 transition-opacity relative" 
               aria-label="Cart"
@@ -145,7 +139,7 @@ export default function Navbar() {
               href="https://wa.me/9842003249?text=Hi,%20I%20would%20like%20to%20know%20more%20about%20the%20online%20candle%20making%20workshops"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 bg-olive text-creme rounded-full text-sm tracking-wide hover:opacity-90 transition-opacity"
+              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 bg-olive text-creme rounded-full text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-95"
             >
               Join a Class
             </a>
@@ -169,13 +163,14 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-40 bg-creme pt-20 px-6 md:hidden flex flex-col"
           >
-            <nav className="flex flex-col gap-6 text-2xl font-serif text-olive mt-8">
+            <nav className="flex flex-col items-center text-center gap-6 text-2xl font-serif text-olive mt-8">
               <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}>Shop Candles</Link>
               <Link href="/#kits" onClick={() => setIsMobileMenuOpen(false)}>DIY Kits</Link>
               <Link href="/#workshops" onClick={() => setIsMobileMenuOpen(false)}>Workshops</Link>
               <Link href="/#story" onClick={() => setIsMobileMenuOpen(false)}>Our Story</Link>
             </nav>
-            <div className="mt-12 pt-12 border-t border-olive/10">
+            <div className="mt-12 pt-12 border-t border-olive/10 flex flex-col items-center gap-8">
+
               <a 
                 href="https://wa.me/9842003249?text=Hi,%20I%20would%20like%20to%20know%20more%20about%20the%20online%20candle%20making%20workshops"
                 target="_blank"

@@ -3,7 +3,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon as ArrowLeft } from "@heroicons/react/24/outline";
 
 export default function ShippingPolicyPage() {
   const router = useRouter();

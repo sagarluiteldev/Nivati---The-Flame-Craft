@@ -2,7 +2,7 @@
 
 import { useState, use } from "react";
 import { motion } from "framer-motion";
-import { Minus, Plus, ShoppingBag } from "lucide-react";
+import { MinusIcon as Minus, PlusIcon as Plus, ShoppingBagIcon as ShoppingBag } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -77,7 +77,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
               <img 
                 src={product.gallery[activeImage]} 
                 alt={product.title} 
-                className="absolute inset-0 w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal transition-opacity duration-500"
+                className="absolute inset-0 w-full h-full object-cover mix-blend-multiply transition-opacity duration-500"
                 style={{ transform: "translateZ(0)" }}
               />
             </div>
@@ -89,7 +89,7 @@ export default function ProductDetail({ params }: { params: Promise<{ id: string
                      onClick={() => setActiveImage(idx)}
                      className={`w-20 h-20 rounded-xl overflow-hidden bg-olive/5 border-2 transition-colors ${activeImage === idx ? 'border-olive' : 'border-transparent'}`}
                    >
-                     <img src={img} alt={`Gallery image ${idx+1}`} className="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal" style={{ transform: "translateZ(0)" }} />
+                     <img src={img} alt={`Gallery image ${idx+1}`} className="w-full h-full object-cover mix-blend-multiply" style={{ transform: "translateZ(0)" }} />
                    </button>
                 ))}
               </div>

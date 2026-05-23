@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { X, ArrowRight } from "lucide-react";
+import { XMarkIcon as X, ArrowRightIcon as ArrowRight } from "@heroicons/react/24/outline";
 import { products } from "@/lib/data";
 import Link from "next/link";
 
@@ -144,7 +144,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                          <Link 
                             href={`/shop/${resultProduct.id}`}
                             onClick={closeAndReset}
-                            className="inline-flex items-center gap-2 bg-olive text-creme   px-8 py-4 rounded-full hover:bg-olive/90  transition-colors"
+                            className="inline-flex items-center gap-2 bg-olive text-creme px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-95"
                          >
                             Shop this Scent <ArrowRight className="w-5 h-5" />
                          </Link>

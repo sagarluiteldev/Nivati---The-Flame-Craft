@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRightIcon as ChevronRight } from "@heroicons/react/24/outline";
 
 interface BreadcrumbItem {
   label: string;

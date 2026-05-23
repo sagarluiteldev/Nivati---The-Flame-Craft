@@ -2,7 +2,7 @@
 
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRightIcon as ArrowRight } from "@heroicons/react/24/outline";
 
 export default function Collections() {
   const container: Variants = {

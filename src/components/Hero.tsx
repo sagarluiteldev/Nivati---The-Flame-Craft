@@ -76,19 +76,19 @@ export default function Hero() {
         src="/images/lavender_sprig.png"
         alt=""
         style={{ rotate: rotate1, x: mousePos.x * 0.5, y: useTransform(scrollYProgress, [0, 1], [(mousePos.y * 0.5), -150 + (mousePos.y * 0.5)]) }}
-        className="absolute top-[15%] left-[5%] w-32 h-auto opacity-60 blur-[0.5px] pointer-events-none z-20 hidden lg:block mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180"
+        className="absolute top-[15%] left-[5%] w-32 h-auto opacity-60 blur-[0.5px] pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
       <motion.img 
         src="/images/orange_slice.png"
         alt=""
         style={{ rotate: rotate2, x: mousePos.x * -0.8, y: useTransform(scrollYProgress, [0, 1], [(mousePos.y * -0.8), -300 + (mousePos.y * -0.8)]) }}
-        className="absolute bottom-[20%] left-[40%] w-24 h-auto opacity-50 blur-[1px] pointer-events-none z-20 hidden lg:block mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180"
+        className="absolute bottom-[20%] left-[40%] w-24 h-auto opacity-50 blur-[1px] pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
       <motion.img 
         src="/images/jasmine_petal.png"
         alt=""
         style={{ rotate: rotate3, x: mousePos.x * 1.2, y: useTransform(scrollYProgress, [0, 1], [(mousePos.y * 1.2), -150 + (mousePos.y * 1.2)]) }}
-        className="absolute top-[40%] left-[25%] w-12 h-auto opacity-70 pointer-events-none z-20 hidden lg:block mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180"
+        className="absolute top-[40%] left-[25%] w-12 h-auto opacity-70 pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
 
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
@@ -132,23 +132,20 @@ export default function Hero() {
           </div>
 
           <motion.div 
-            className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-2 lg:pt-4"
+            className="hidden lg:flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-2 lg:pt-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 1 }}
           >
             <Link 
               href="/shop"
-              className="group relative px-8 py-4 bg-olive text-creme rounded-full overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_rgba(40,54,24,0.3)] text-center"
+              className="px-8 py-4 bg-olive text-creme rounded-full transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-95 text-center font-medium tracking-wide"
             >
-              <span className="relative z-10 font-medium tracking-wide">Shop Collection</span>
-              <motion.div 
-                className="absolute inset-0 bg-sage scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100" 
-              />
+              Shop Collection
             </Link>
             <Link 
               href="#workshops"
-              className="px-8 py-4 border border-olive/30 text-olive rounded-full tracking-wide hover:bg-sage/10 transition-all duration-300 font-light text-center"
+              className="px-8 py-4 border border-olive/30 text-olive rounded-full tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.1)] active:scale-95 font-light text-center"
             >
               Learn the Craft
             </Link>
@@ -159,7 +156,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.4 }}
             transition={{ delay: 1.5, duration: 1 }}
-            className="pt-6 lg:pt-8 border-t border-olive/10 flex justify-center lg:justify-start items-center gap-6"
+            className="hidden lg:flex pt-6 lg:pt-8 border-t border-olive/10 justify-center lg:justify-start items-center gap-6"
           >
             <div className="flex flex-col lg:flex-row gap-2 lg:gap-6">
               <span className="text-[10px] uppercase tracking-[0.3em] text-olive font-bold">Handmade with Love</span>
@@ -176,7 +173,7 @@ export default function Hero() {
         >
           {/* Image Container with continuous loop gallery */}
           <div 
-            className="relative h-full w-full rounded-[30px] lg:rounded-[40px] overflow-hidden shadow-2xl border-4 lg:border-[12px] border-white/50 backdrop-blur-md"
+            className="relative h-full w-full rounded-[30px] lg:rounded-[40px] overflow-hidden shadow-2xl border-4 lg:border-12 border-white/50 backdrop-blur-md"
           >
             <div className="absolute inset-0 bg-sage/10 mix-blend-multiply z-10 pointer-events-none" />
             
@@ -209,6 +206,40 @@ export default function Hero() {
           
           {/* Decorative floating square */}
           <div className="absolute -bottom-4 -right-4 lg:-bottom-8 lg:-right-8 w-24 h-24 lg:w-48 lg:h-48 bg-olive rounded-2xl lg:rounded-3xl -z-10 shadow-2xl opacity-20 blur-xl lg:blur-2xl" />
+        </motion.div>
+
+        {/* Mobile only buttons */}
+        <motion.div 
+          className="flex lg:hidden flex-col sm:flex-row justify-center gap-4 -mt-4 mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8, duration: 1 }}
+        >
+          <Link 
+            href="/shop"
+            className="px-8 py-4 bg-olive text-creme rounded-full text-center font-medium tracking-wide"
+          >
+            Shop Collection
+          </Link>
+          <Link 
+            href="#workshops"
+            className="px-8 py-4 border border-olive/30 text-olive rounded-full tracking-wide font-light text-center"
+          >
+            Learn the Craft
+          </Link>
+        </motion.div>
+
+        {/* Mobile only Luxury Badge */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          transition={{ delay: 1.5, duration: 1 }}
+          className="flex lg:hidden pt-4 border-t border-olive/10 justify-center items-center w-4/5 mx-auto mb-8"
+        >
+          <div className="flex flex-col items-center gap-2 text-center">
+            <span className="text-[10px] uppercase tracking-[0.3em] text-olive font-bold">Handmade with Love</span>
+            <span className="text-[10px] uppercase tracking-[0.3em] text-olive font-bold">Pure Soy Wax</span>
+          </div>
         </motion.div>
       </div>
     </section>

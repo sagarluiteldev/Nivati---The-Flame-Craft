@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon as ArrowLeft } from "@heroicons/react/24/outline";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import QuickViewModal from "@/components/QuickViewModal";

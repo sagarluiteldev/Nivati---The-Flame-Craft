@@ -22,8 +22,6 @@ interface AppContextType {
   updateQuantity: (id: string, quantity: number, metadata?: CartItem['metadata']) => void;
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
-  isNightMode: boolean;
-  setIsNightMode: (isNight: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -31,16 +29,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isNightMode, setIsNightMode] = useState(false);
 
-  // Sync isNightMode with document root for Tailwind dark variant support
-  useEffect(() => {
-    if (isNightMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isNightMode]);
 
   const addToCart = (newItem: CartItem) => {
     setCart((prev) => {
@@ -89,8 +78,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         updateQuantity,
         isCartOpen,
         setIsCartOpen,
-        isNightMode,
-        setIsNightMode,
       }}
     >
       <div className="min-h-screen transition-colors duration-700 w-full relative">

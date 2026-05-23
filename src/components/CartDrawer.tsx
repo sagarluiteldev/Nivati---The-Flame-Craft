@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Minus, Plus, ShoppingBag } from "lucide-react";
+import { XMarkIcon as X, MinusIcon as Minus, PlusIcon as Plus, ShoppingBagIcon as ShoppingBag } from "@heroicons/react/24/outline";
 import { useAppContext } from "@/context/AppContext";
 
 export default function CartDrawer() {

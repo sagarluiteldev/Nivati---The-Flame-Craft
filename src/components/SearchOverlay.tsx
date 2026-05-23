@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Search as SearchIcon, X } from "lucide-react";
+import { MagnifyingGlassIcon as SearchIcon, XMarkIcon as X } from "@heroicons/react/24/outline";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { products } from "@/lib/data";

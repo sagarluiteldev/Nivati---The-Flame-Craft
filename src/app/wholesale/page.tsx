@@ -3,7 +3,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon as ArrowLeft } from "@heroicons/react/24/outline";
 
 export default function WholesalePage() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function WholesalePage() {
            <img 
              src="/images/hero_candle.png" 
              alt="Candle" 
-             className="absolute inset-0 w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal" 
+             className="absolute inset-0 w-full h-full object-cover mix-blend-multiply" 
              style={{ transform: "translateZ(0)" }}
            />
         </div>

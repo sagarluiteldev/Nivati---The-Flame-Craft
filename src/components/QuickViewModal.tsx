@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ShoppingBag, Plus, Minus } from "lucide-react";
+import { XMarkIcon as X, ShoppingBagIcon as ShoppingBag, PlusIcon as Plus, MinusIcon as Minus } from "@heroicons/react/24/outline";
 import { Product, COLORS, FRAGRANCES } from "@/lib/data";
 import { useAppContext } from "@/context/AppContext";
 
@@ -206,7 +206,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
                 </div>
                 <button 
                   onClick={handleAddToCart}
-                  className="flex-1 bg-olive text-creme rounded-full py-4 px-8 flex items-center justify-center gap-3 hover:bg-olive/90 transition-all font-medium tracking-widest text-[10px] shadow-xl shadow-olive/10 hover:scale-[1.02] active:scale-[0.98]"
+                  className="flex-1 bg-olive text-creme rounded-full py-4 px-8 flex items-center justify-center gap-3 transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-[0.95] font-medium tracking-widest text-[10px]"
                 >
                   <ShoppingBag className="w-4 h-4" /> ADD TO CART
                 </button>
