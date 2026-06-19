@@ -44,10 +44,10 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   };
 
   return (
-    <main className="min-h-screen flex flex-col pt-32">
+    <main className="min-h-screen flex flex-col pt-20 md:pt-24">
       <Navbar />
       
-      <div className="grow max-w-7xl mx-auto px-6 w-full py-12 md:py-24">
+      <div className="grow max-w-7xl mx-auto px-6 w-full pt-4 pb-12 md:pt-6 md:pb-24">
         <Breadcrumbs items={[
           { label: 'Shop', href: '/shop' },
           { 
@@ -63,7 +63,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex flex-col gap-4 md:sticky md:top-32"
+            className="flex flex-col gap-4 md:sticky md:top-28"
           >
             <div className="aspect-4/5 md:aspect-square w-full rounded-2xl md:rounded-3xl overflow-hidden bg-olive/5 relative">
               <Image 
