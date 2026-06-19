@@ -142,7 +142,7 @@ export default function Navbar() {
               </div>
             </div>
 
-            <Link href="/#kits" className="hover:text-olive transition-colors py-6">DIY Kits</Link>
+            <Link href="/shop?category=Candle Making Kit" className="hover:text-olive transition-colors py-6">DIY Kits</Link>
             <Link href="/#workshops" className="hover:text-olive transition-colors py-6">Workshops</Link>
             <Link href="/#story" className="hover:text-olive transition-colors py-6">Our Story</Link>
           </nav>
@@ -205,7 +205,7 @@ export default function Navbar() {
           >
             <nav className="flex flex-col items-center text-center gap-6 text-2xl font-serif text-olive mt-8">
               <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}>Shop Candles</Link>
-              <Link href="/#kits" onClick={() => setIsMobileMenuOpen(false)}>DIY Kits</Link>
+              <Link href="/shop?category=Candle Making Kit" onClick={() => setIsMobileMenuOpen(false)}>DIY Kits</Link>
               <Link href="/#workshops" onClick={() => setIsMobileMenuOpen(false)}>Workshops</Link>
               <Link href="/#story" onClick={() => setIsMobileMenuOpen(false)}>Our Story</Link>
             </nav>
