@@ -15,10 +15,10 @@ const slogans = [
 ];
 
 const heroImages = [
-  { src: "/images/IMG_4136.jpg", alt: "Hand-poured Nivati candle lifestyle" },
-  { src: "/images/IMG_4133.jpg", alt: "Cactus Jar Premium Candle" },
-  { src: "/images/IMG_4147.jpg", alt: "Jack Daniels Whiskeysilicone gel candle" },
-  { src: "/images/IMG_4069.jpg", alt: "Large Concrete Bowl Candle" }
+  { src: "/images/IMG_4136.jpg", alt: "Hand-poured Nivati candle lifestyle", position: "center" },
+  { src: "/images/IMG_4133.jpg", alt: "Cactus Jar Premium Candle", position: "center 60%" },
+  { src: "/images/IMG_4147.jpg", alt: "Jack Daniels Whiskeysilicone gel candle", position: "center 65%" },
+  { src: "/images/IMG_4069.jpg", alt: "Large Concrete Bowl Candle", position: "center 60%" }
 ];
 
 export default function Hero() {
@@ -194,6 +194,7 @@ export default function Hero() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 1.0, ease: "easeInOut" }}
                   className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
                 />
               </AnimatePresence>
             </div>
