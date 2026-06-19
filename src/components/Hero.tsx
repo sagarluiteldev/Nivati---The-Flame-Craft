@@ -176,7 +176,7 @@ export default function Hero() {
         >
           {/* Image Container with continuous loop gallery */}
           <div 
-            className="relative h-full w-full rounded-[18px] lg:rounded-[24px] shadow-2xl overflow-hidden"
+            className="relative h-full w-full rounded-[18px] lg:rounded-[24px] shadow-2xl overflow-hidden border border-olive/20"
           >
             <div className="absolute inset-0 rounded-[18px] lg:rounded-[24px] overflow-hidden" style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}>
               <div className="absolute inset-0 bg-sage/10 mix-blend-multiply z-10 pointer-events-none" />
