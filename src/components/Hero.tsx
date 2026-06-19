@@ -176,9 +176,9 @@ export default function Hero() {
         >
           {/* Image Container with continuous loop gallery */}
           <div 
-            className="relative h-full w-full rounded-[30px] lg:rounded-[40px] shadow-2xl border-4 lg:border-12 border-white/50 backdrop-blur-md"
+            className="relative h-full w-full rounded-[18px] lg:rounded-[24px] shadow-2xl overflow-hidden"
           >
-            <div className="absolute inset-0 rounded-[26px] lg:rounded-[28px] overflow-hidden" style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}>
+            <div className="absolute inset-0 rounded-[18px] lg:rounded-[24px] overflow-hidden" style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}>
               <div className="absolute inset-0 bg-sage/10 mix-blend-multiply z-10 pointer-events-none" />
               
               <AnimatePresence>
