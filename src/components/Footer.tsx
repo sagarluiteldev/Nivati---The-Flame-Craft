@@ -19,27 +19,25 @@ const TikTok = ({ className }: { className?: string }) => (
 
 export default function Footer() {
   return (
-    <footer className="relative bg-zinc-950 pt-12 md:pt-20 pb-8 md:pb-10 text-creme border-t border-creme/10 transition-colors duration-700 overflow-hidden">
-      {/* Immersive Background Image */}
-      <div className="absolute inset-0 z-0 opacity-30 grayscale pointer-events-none bg-[url('/images/footer-bg.png')] bg-cover bg-center bg-no-repeat mix-blend-luminosity" />
+    <footer className="relative bg-creme pt-12 md:pt-20 pb-8 md:pb-10 text-olive border-t border-olive/15 transition-colors duration-700 overflow-hidden">
       
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
           <div className="md:col-span-2">
-            <div className="mb-4 inline-block transition-colors duration-700">
+            <div className="mb-4 inline-block">
               <img src="/images/logo.png" alt="Nivati Logo" className="h-20 w-20 md:h-20 md:w-20 object-contain transition-all" />
             </div>
-            <p className="text-creme/60 font-sans font-light max-w-sm leading-relaxed mb-4 text-sm md:text-base transition-colors duration-700">
+            <p className="text-olive/60 font-sans font-light max-w-sm leading-relaxed mb-4 text-sm md:text-base">
               Empowering your sanctuary with hand-poured scents and mindful crafting. Find your glow.
             </p>
             <div className="flex gap-3">
-              <a href="#" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-creme/5 flex items-center justify-center hover:bg-creme/10 transition-colors">
+              <a href="https://www.instagram.com/nivati.np" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-olive/5 text-olive/60 flex items-center justify-center hover:bg-olive/15 hover:text-olive transition-all">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-creme/5 flex items-center justify-center hover:bg-creme/10 transition-colors">
+              <a href="https://www.facebook.com/nivati.np" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-olive/5 text-olive/60 flex items-center justify-center hover:bg-olive/15 hover:text-olive transition-all">
                 <Facebook className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-creme/5 flex items-center justify-center hover:bg-creme/10 transition-colors">
+              <a href="https://www.tiktok.com/@nivati.np" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-olive/5 text-olive/60 flex items-center justify-center hover:bg-olive/15 hover:text-olive transition-all">
                 <TikTok className="w-4 h-4" />
               </a>
             </div>
@@ -48,31 +46,31 @@ export default function Footer() {
           {/* Shop & Support side by side on mobile */}
           <div className="grid grid-cols-2 md:contents gap-6">
             <div>
-              <h4 className="font-serif text-base md:text-lg mb-3 md:mb-4">Shop</h4>
-              <ul className="flex flex-col gap-2 md:gap-3 font-light text-creme/60 text-sm transition-colors duration-700">
-                <li><Link href="#shop" className="hover:text-creme transition-colors">Signature Candles</Link></li>
-                <li><Link href="#kits" className="hover:text-creme transition-colors">DIY Kits</Link></li>
-                <li><Link href="#workshops" className="hover:text-creme transition-colors">Workshops</Link></li>
-                <li><Link href="#shop" className="hover:text-creme transition-colors">Raw Materials</Link></li>
+              <h4 className="font-serif text-olive text-base md:text-lg mb-3 md:mb-4">Shop</h4>
+              <ul className="flex flex-col gap-2 md:gap-3 font-light text-olive/60 text-sm">
+                <li><Link href="/shop?category=Signature Candles" className="hover:text-olive transition-colors">Signature Candles</Link></li>
+                <li><Link href="/shop?category=Candle Making Kit" className="hover:text-olive transition-colors">DIY Kits</Link></li>
+                <li><Link href="/#workshops" className="hover:text-olive transition-colors">Workshops</Link></li>
+                <li><Link href="/shop?category=Candle Making Materials" className="hover:text-olive transition-colors">Raw Materials</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-serif text-base md:text-lg mb-3 md:mb-4">Support</h4>
-              <ul className="flex flex-col gap-2 md:gap-3 font-light text-creme/60 text-sm transition-colors duration-700">
-                <li><Link href="/shipping-policy" className="hover:text-creme transition-colors">Shipping Policy</Link></li>
-                <li><Link href="/wholesale" className="hover:text-creme transition-colors">Wholesale & Bulk</Link></li>
-                <li><a href="tel:+9779842003249" className="hover:text-creme transition-colors">Contact Us: +977 9842003249</a></li>
+              <h4 className="font-serif text-olive text-base md:text-lg mb-3 md:mb-4">Support</h4>
+              <ul className="flex flex-col gap-2 md:gap-3 font-light text-olive/60 text-sm">
+                <li><Link href="/shipping-policy" className="hover:text-olive transition-colors">Shipping Policy</Link></li>
+                <li><Link href="/wholesale" className="hover:text-olive transition-colors">Wholesale & Bulk</Link></li>
+                <li><a href="tel:+9779842003249" className="hover:text-olive transition-colors">Contact Us: +977 9842003249</a></li>
               </ul>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-creme/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-light text-creme/40 transition-colors duration-700">
+        <div className="border-t border-olive/15 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-light text-olive/50">
           <p>© {new Date().getFullYear()} Nivati — The Flame Craft. All rights reserved.</p>
           <div className="flex gap-6">
-            <Link href="#" className="hover:text-creme transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-creme transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-olive transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-olive transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

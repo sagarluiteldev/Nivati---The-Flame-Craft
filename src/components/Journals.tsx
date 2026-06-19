@@ -63,12 +63,15 @@ export default function Journals() {
               Stories from our community of makers and luxury candle enthusiasts.
             </p>
           </div>
-          <div className="hidden md:flex gap-2">
+          <div className="hidden md:flex gap-2" role="tablist" aria-label="Customer reviews slider">
             {cinematicReviews.map((_, idx) => (
               <button 
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
                 className={`h-1 transition-all duration-500 rounded-full ${idx === currentIndex ? 'w-8 bg-sage' : 'w-2 bg-olive/20'}`}
+                role="tab"
+                aria-selected={idx === currentIndex}
+                aria-label={`Go to slide ${idx + 1}`}
               />
             ))}
           </div>
@@ -163,12 +166,15 @@ export default function Journals() {
         </div>
 
         {/* Mobile pagination dots */}
-        <div className="flex md:hidden justify-center gap-2 mt-8">
+        <div className="flex md:hidden justify-center gap-2 mt-8" role="tablist" aria-label="Customer reviews mobile slider">
           {cinematicReviews.map((_, idx) => (
             <button 
               key={idx}
               onClick={() => setCurrentIndex(idx)}
               className={`h-1.5 transition-all duration-500 rounded-full ${idx === currentIndex ? 'w-8 bg-sage' : 'w-2 bg-olive/20'}`}
+              role="tab"
+              aria-selected={idx === currentIndex}
+              aria-label={`Go to slide ${idx + 1}`}
             />
           ))}
         </div>

@@ -1,10 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 export default function SmoothScroller() {
+  const pathname = usePathname();
+  const isAdmin = pathname.startsWith("/admin");
+
   useEffect(() => {
+    if (isAdmin) return;
+
     const lenis = new Lenis({
       duration: 1.0,
       lerp: 0.1,
@@ -17,17 +23,20 @@ export default function SmoothScroller() {
       infinite: false,
     });
 
+    let rafId: number;
+
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
-  }, []);
+  }, [isAdmin]);
 
   return null;
 }

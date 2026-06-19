@@ -15,6 +15,7 @@ const cormorant = Cormorant_Garamond({
 
 import { AppProvider } from "@/context/AppContext";
 import CartDrawer from "@/components/CartDrawer";
+import SmoothScroller from "@/components/SmoothScroller";
 
 export const metadata: Metadata = {
   title: "Nivati - The Flame Craft",
@@ -33,6 +34,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning className={`${jakarta.variable} ${cormorant.variable} antialiased`}>
         <AppProvider>
+          <SmoothScroller />
           {children}
           <CartDrawer />
         </AppProvider>

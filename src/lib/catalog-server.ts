@@ -40,24 +40,30 @@ export async function getPublicCatalogProducts(): Promise<Product[]> {
     return seedProducts;
   }
 
-  const supabase = getSupabasePublicClient();
-  const { data, error } = await supabase
-    .from("products")
-    .select(PRODUCT_SELECT_FIELDS)
-    .eq("is_active", true)
-    .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: false });
+  try {
+    const supabase = getSupabasePublicClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select(PRODUCT_SELECT_FIELDS)
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Unable to load public catalog from Supabase:", error.message);
+    if (error) {
+      console.error("Unable to load public catalog from Supabase:", error.message);
+      return seedProducts;
+    }
+
+    if (!data || data.length === 0) {
+      return seedProducts;
+    }
+
+    return data.map((row) => mapProductRowToProduct(row as ProductRow));
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    console.error("Unable to load public catalog from Supabase:", errorMessage);
     return seedProducts;
   }
-
-  if (!data || data.length === 0) {
-    return seedProducts;
-  }
-
-  return data.map((row) => mapProductRowToProduct(row as ProductRow));
 }
 
 export async function getAdminCatalogProducts(

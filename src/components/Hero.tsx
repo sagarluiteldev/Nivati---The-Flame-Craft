@@ -3,6 +3,9 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+
+const MotionImage = motion(Image);
 
 const slogans = [
   "Scented Handmade Candles",
@@ -12,10 +15,10 @@ const slogans = [
 ];
 
 const heroImages = [
-  { src: "/images/IMG_4136.jpg", alt: "Hand-poured Nivati candle lifestyle" },
-  { src: "/images/IMG_4133.jpg", alt: "Cactus Jar Premium Candle" },
-  { src: "/images/IMG_4147.jpg", alt: "Jack Daniels Whiskeysilicone gel candle" },
-  { src: "/images/IMG_4069.jpg", alt: "Large Concrete Bowl Candle" }
+  { src: "/images/IMG_4136.jpg", alt: "Hand-poured Nivati candle lifestyle", position: "center" },
+  { src: "/images/IMG_4133.jpg", alt: "Cactus Jar Premium Candle", position: "center 70%" },
+  { src: "/images/IMG_4147.jpg", alt: "Jack Daniels Whiskeysilicone gel candle", position: "center 80%" },
+  { src: "/images/IMG_4069.jpg", alt: "Large Concrete Bowl Candle", position: "center 80%" }
 ];
 
 export default function Hero() {
@@ -66,7 +69,7 @@ export default function Hero() {
       className="relative min-h-[90vh] lg:min-h-[95vh] flex items-center pt-24 lg:pt-32 pb-20 lg:pb-0 overflow-hidden bg-creme select-none"
     >
       {/* Texture Overlay */}
-      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')]" />
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[url('/images/paper-fibers.png')]" />
       
       {/* Background abstract shapes */}
       <div className="absolute top-0 right-0 w-full lg:w-[60%] h-full bg-sage/5 rounded-l-none lg:rounded-l-[200px] -z-10" />
@@ -173,27 +176,31 @@ export default function Hero() {
         >
           {/* Image Container with continuous loop gallery */}
           <div 
-            className="relative h-full w-full rounded-[30px] lg:rounded-[40px] shadow-2xl border-4 lg:border-12 border-white/50 backdrop-blur-md"
+            className="relative h-full w-full rounded-[12px] lg:rounded-[16px] shadow-2xl border-[1.3px] border-olive/30"
           >
-            <div className="absolute inset-0 rounded-[26px] lg:rounded-[28px] overflow-hidden" style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}>
+            <div className="absolute inset-[1.3px] rounded-[10.7px] lg:rounded-[14.7px] overflow-hidden" style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}>
               <div className="absolute inset-0 bg-sage/10 mix-blend-multiply z-10 pointer-events-none" />
               
               <AnimatePresence>
-                <motion.img 
+                <MotionImage 
                   key={currentImageIndex}
                   src={heroImages[currentImageIndex].src} 
                   alt={heroImages[currentImageIndex].alt}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 1.0, ease: "easeInOut" }}
                   className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
                 />
               </AnimatePresence>
             </div>
 
             {/* Gallery Navigation Dots */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2" role="tablist" aria-label="Hero gallery slider">
               {heroImages.map((_, i) => (
                 <button
                   key={i}
@@ -201,6 +208,9 @@ export default function Hero() {
                   className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${
                     currentImageIndex === i ? "bg-white w-4" : "bg-white/40"
                   }`}
+                  role="tab"
+                  aria-selected={currentImageIndex === i}
+                  aria-label={`Go to slide ${i + 1}`}
                 />
               ))}
             </div>
