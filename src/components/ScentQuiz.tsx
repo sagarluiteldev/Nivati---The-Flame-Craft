@@ -348,7 +348,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           data-lenis-prevent
-          className="fixed inset-0 z-60 bg-creme/98 backdrop-blur-2xl flex flex-col text-olive overflow-y-auto"
+          className="fixed inset-0 z-60 bg-creme/98 backdrop-blur-2xl flex flex-col text-olive overflow-hidden h-[100dvh]"
         >
           {/* Morphing Ambient Background Glows */}
           <div 
@@ -363,17 +363,17 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
           {/* Close button */}
           <button 
             onClick={onClose}
-            className="absolute top-8 right-6 md:right-12 p-2.5 text-olive/60 hover:text-olive hover:bg-olive/10 rounded-full transition-colors z-20 cursor-pointer"
+            className="absolute top-6 right-4 md:top-8 md:right-12 p-2.5 text-olive/60 hover:text-olive hover:bg-olive/10 rounded-full transition-colors z-20 cursor-pointer"
             aria-label="Close Sommelier"
           >
             <X className="w-6 h-6" />
           </button>
 
           {/* Core container */}
-          <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col pt-24 pb-12 px-6 justify-center">
+          <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col pt-12 md:pt-10 pb-6 px-4 md:px-6 justify-center min-h-0">
             
             {/* Header Title with Nivati logo */}
-            <div className="text-center mb-10 flex flex-col items-center">
+            <div className="text-center mb-6 md:mb-10 flex flex-col items-center shrink-0">
               <span className="inline-flex items-center gap-2.5 px-4 py-1.5 bg-olive/10 border border-olive/20 rounded-full text-xs font-medium tracking-wider text-olive uppercase">
                 <img src="/images/logo.png" alt="Nivati logo" className="w-4 h-4 object-contain opacity-80" /> AI Scent Sommelier
               </span>
@@ -388,23 +388,23 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
-                  className="flex-1 flex flex-col justify-between max-w-2xl mx-auto w-full"
+                  className="flex-1 flex flex-col justify-between max-w-2xl mx-auto w-full min-h-0"
                 >
-                  <div className="space-y-6 overflow-y-auto pr-2 py-4 max-h-[50vh] scrollbar-hide">
+                  <div className="flex-1 overflow-y-auto pr-2 py-3 space-y-4 md:space-y-6 scrollbar-hide min-h-0">
                     {messages.map((msg, index) => (
                       <div 
                         key={msg.id || index}
-                        className={`flex gap-4 items-start ${msg.sender === "user" ? "flex-row-reverse" : ""}`}
+                        className={`flex gap-3 md:gap-4 items-start ${msg.sender === "user" ? "flex-row-reverse" : ""}`}
                       >
                         {/* Avatar with Nivati logo */}
                         {msg.sender === "niva" && (
-                          <div className="w-9 h-9 rounded-full bg-olive/10 border border-olive/20 flex items-center justify-center overflow-hidden shrink-0">
+                          <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-olive/10 border border-olive/20 flex items-center justify-center overflow-hidden shrink-0">
                             <img src="/images/logo.png" alt="Niva logo" className="w-5.5 h-5.5 object-contain opacity-80" />
                           </div>
                         )}
 
                         {/* Bubble */}
-                        <div className={`p-4 md:p-5 rounded-2xl max-w-[85%] text-sm md:text-base leading-relaxed ${
+                        <div className={`p-3 md:p-5 rounded-2xl max-w-[85%] text-sm md:text-base leading-relaxed ${
                           msg.sender === "user"
                             ? "bg-olive text-creme rounded-tr-none"
                             : "bg-olive/5 border border-olive/10 text-olive/90 rounded-tl-none"
@@ -416,11 +416,11 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
 
                     {/* Typing State */}
                     {isTyping && (
-                      <div className="flex gap-4 items-start">
-                        <div className="w-9 h-9 rounded-full bg-olive/10 border border-olive/20 flex items-center justify-center overflow-hidden shrink-0 animate-pulse">
+                      <div className="flex gap-3 md:gap-4 items-start">
+                        <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-olive/10 border border-olive/20 flex items-center justify-center overflow-hidden shrink-0 animate-pulse">
                           <img src="/images/logo.png" alt="Niva logo" className="w-5.5 h-5.5 object-contain opacity-80" />
                         </div>
-                        <div className="bg-olive/5 border border-olive/10 p-4 rounded-2xl rounded-tl-none flex items-center gap-1">
+                        <div className="bg-olive/5 border border-olive/10 p-3 md:p-4 rounded-2xl rounded-tl-none flex items-center gap-1">
                           <motion.span variants={dotVariants} initial="initial" animate="animate" className="w-1.5 h-1.5 rounded-full bg-olive/50" />
                           <motion.span variants={dotVariants} initial="initial" animate="animate" className="w-1.5 h-1.5 rounded-full bg-olive/50 [animation-delay:0.2s]" />
                           <motion.span variants={dotVariants} initial="initial" animate="animate" className="w-1.5 h-1.5 rounded-full bg-olive/50 [animation-delay:0.4s]" />
@@ -431,9 +431,9 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                   </div>
 
                   {/* Options Selector panel with Heroicons */}
-                  <div className="mt-8">
+                  <div className="mt-4 md:mt-8 shrink-0">
                     {messages.length > 0 && messages[messages.length - 1].options && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 md:gap-3 w-full">
                         {messages[messages.length - 1].options?.map((option, idx) => {
                           const lastMsg = messages[messages.length - 1];
                           const IconComponent = getOptionIcon(option.value);
@@ -445,7 +445,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                                   handleSelectOption(lastMsg.field, option.value, option.text);
                                 }
                               }}
-                              className="py-4 px-6 bg-olive/5 border border-olive/10 hover:border-olive hover:bg-olive text-olive hover:text-creme rounded-xl text-sm md:text-base tracking-wide transition-all cursor-pointer text-left flex items-center justify-between group"
+                              className="py-3 px-4 md:py-4 md:px-6 bg-olive/5 border border-olive/10 hover:border-olive hover:bg-olive text-olive hover:text-creme rounded-xl text-sm md:text-base tracking-wide transition-all cursor-pointer text-left flex items-center justify-between group"
                             >
                               <div className="flex items-center gap-3">
                                 {IconComponent && (
@@ -488,34 +488,33 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
               )}
 
               {/* Recommendation Screen (Sized smaller, light-themed, and fully centered) */}
-              {/* Recommendation Screen (Sized smaller, light-themed, and fully centered) */}
               {!isAnalyzing && primaryProduct && (
                 <motion.div
                   key="result-view"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="flex-1 flex flex-col items-center justify-center max-w-2xl mx-auto w-full"
+                  className="flex-1 flex flex-col md:flex-row gap-6 md:gap-10 items-center justify-start md:justify-center w-full min-h-0 overflow-y-auto py-2 pr-1 scrollbar-hide"
                 >
-                  {/* Primary Recommendation Card */}
-                  <div className="bg-olive/5 border border-olive/10 rounded-3xl p-6 md:p-8 w-full relative overflow-hidden flex flex-col items-center text-center shadow-xl">
+                  {/* Left Side: Primary Recommendation Card */}
+                  <div className="bg-olive/5 border border-olive/10 rounded-3xl p-5 md:p-6 w-full md:max-w-xl relative overflow-hidden flex flex-col items-center text-center shadow-xl shrink-0">
                     <div className="absolute top-0 right-0 w-48 h-48 bg-olive/10 rounded-full blur-[80px] -z-10" />
                     
-                    <span className="px-3.5 py-1 bg-olive text-creme text-xs font-semibold rounded-full uppercase tracking-wider mb-5">
+                    <span className="px-3.5 py-0.5 bg-olive text-creme text-[10px] font-semibold rounded-full uppercase tracking-wider mb-3">
                       Niva&apos;s Choice
                     </span>
 
-                    {/* Image (Smaller, centered, and clickable link to detail page) */}
+                    {/* Image (Big, centered, and clickable link to detail page) */}
                     <Link 
                       href={`/shop/${primaryProduct.id}`}
                       onClick={onClose}
-                      className="block group/img mb-5 select-none cursor-pointer"
+                      className="block group/img mb-3.5 select-none cursor-pointer"
                     >
-                      <div className="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden bg-white/20 border border-olive/10 relative shadow-md group-hover/img:scale-105 transition-all duration-300">
+                      <div className="w-40 h-40 md:w-56 md:h-56 rounded-2xl overflow-hidden bg-white/20 border border-olive/10 relative shadow-md group-hover/img:scale-105 transition-all duration-300">
                         <Image 
                           src={primaryProduct.img} 
                           alt={primaryProduct.title} 
                           fill
-                          sizes="(max-width: 768px) 150px, 200px"
+                          sizes="(max-width: 768px) 160px, 240px"
                           className="object-cover mix-blend-multiply"
                         />
                       </div>
@@ -523,112 +522,115 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
 
                     {/* Clickable Title */}
                     <Link href={`/shop/${primaryProduct.id}`} onClick={onClose} className="hover:opacity-85 select-none cursor-pointer">
-                      <h3 className="text-2xl md:text-3xl font-serif text-olive mb-2 hover:underline decoration-olive/55">
+                      <h3 className="text-xl md:text-2xl font-serif text-olive mb-1 hover:underline decoration-olive/55">
                         {primaryProduct.title}
                       </h3>
                     </Link>
                     
-                    <span className="text-olive/60 text-sm font-sans tracking-wide mb-4 block">
+                    <span className="text-olive/60 text-xs md:text-sm font-sans tracking-wide mb-3 block">
                       Rs {primaryProduct.price}
                     </span>
 
-                    <p className="text-olive/80 text-xs md:text-sm leading-relaxed font-light max-w-lg mb-5">
+                    <p className="text-olive/80 text-xs leading-relaxed font-light max-w-lg mb-3 line-clamp-2">
                       {primaryProduct.description}
                     </p>
 
                     {/* Notes display */}
-                    <div className="flex flex-wrap justify-center gap-2 mb-6">
+                    <div className="flex flex-wrap justify-center gap-1.5 mb-3.5">
                       {primaryProduct.scentNotes.top !== "Unscented" && (
-                        <span className="text-[10px] md:text-xs px-2.5 py-1 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
+                        <span className="text-[9px] md:text-xs px-2 py-0.5 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
                           Top: {primaryProduct.scentNotes.top.split(',')[0]}
                         </span>
                       )}
                       {primaryProduct.scentNotes.mid !== "Unscented" && (
-                        <span className="text-[10px] md:text-xs px-2.5 py-1 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
+                        <span className="text-[9px] md:text-xs px-2 py-0.5 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
                           Mid: {primaryProduct.scentNotes.mid.split(',')[0]}
                         </span>
                       )}
                       {primaryProduct.scentNotes.base !== "Unscented" && (
-                        <span className="text-[10px] md:text-xs px-2.5 py-1 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
+                        <span className="text-[9px] md:text-xs px-2 py-0.5 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
                           Base: {primaryProduct.scentNotes.base.split(',')[0]}
                         </span>
                       )}
                     </div>
 
                     {/* AI Rationale Text Box (Sized smaller and centered) */}
-                    <div className="p-4 bg-olive/10 border border-olive/25 rounded-2xl flex items-start gap-3.5 text-left max-w-lg mb-6">
-                      <div className="w-8 h-8 rounded-full bg-olive/20 border border-olive/15 flex items-center justify-center shrink-0 overflow-hidden">
-                        <img src="/images/logo.png" alt="Niva" className="w-5 h-5 object-contain opacity-80" />
+                    <div className="p-3 bg-olive/10 border border-olive/25 rounded-2xl flex items-start gap-3 text-left max-w-lg mb-4 w-full">
+                      <div className="w-7 h-7 rounded-full bg-olive/20 border border-olive/15 flex items-center justify-center shrink-0 overflow-hidden">
+                        <img src="/images/logo.png" alt="Niva" className="w-4 h-4 object-contain opacity-80" />
                       </div>
-                      <p className="text-xs text-olive/90 leading-relaxed italic font-light font-sans">
+                      <p className="text-[11px] text-olive/90 leading-relaxed italic font-light font-sans">
                         &ldquo;{getRationale(primaryProduct)}&rdquo;
                       </p>
                     </div>
 
                     {/* Action buttons */}
-                    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+                    <div className="flex gap-3 w-full max-w-md">
                       <button
                         onClick={() => handleAddToCart(primaryProduct)}
-                        className="flex-1 inline-flex items-center justify-center gap-2 bg-olive text-creme px-5 py-3 rounded-full font-medium transition-all hover:scale-105 active:scale-95 shadow-md select-none cursor-pointer text-sm"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 bg-olive text-creme px-4 py-2.5 rounded-full font-medium transition-all hover:scale-105 active:scale-95 shadow-md select-none cursor-pointer text-xs md:text-sm"
                       >
                         <ShoppingBag className="w-4 h-4" /> 
-                        {cartSuccess ? "Added to Cart!" : "Add to Cart"}
+                        {cartSuccess ? "Added!" : "Add to Cart"}
                       </button>
                       <Link 
                         href={`/shop/${primaryProduct.id}`}
                         onClick={onClose}
-                        className="flex-1 inline-flex items-center justify-center gap-2 border border-olive/20 hover:border-olive text-olive px-5 py-3 rounded-full transition-all hover:scale-105 active:scale-95 select-none text-center text-sm hover:bg-olive/5"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 border border-olive/20 hover:border-olive text-olive px-4 py-2.5 rounded-full transition-all hover:scale-105 active:scale-95 select-none text-center text-xs md:text-sm hover:bg-olive/5"
                       >
-                        Shop Product <ArrowRight className="w-4 h-4" />
+                        Shop Scent <ArrowRight className="w-4 h-4" />
                       </Link>
                     </div>
                   </div>
 
-                  {/* Alternatives Section (Centered row of 2 clickable links directly to their product details) */}
-                  <div className="w-full mt-8">
-                    <h4 className="text-xs font-sans uppercase tracking-[0.2em] text-olive/50 font-semibold mb-4 text-center">
-                      Alternative Matches
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-                      {matchingProducts.slice(1, 3).map((item) => (
-                        <Link 
-                          key={item.id}
-                          href={`/shop/${item.id}`}
-                          onClick={onClose}
-                          className="bg-olive/5 border border-olive/10 hover:border-olive/30 rounded-2xl p-3 flex gap-3.5 items-center transition-all hover:-translate-y-1 cursor-pointer select-none group"
-                        >
-                          <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/20 border border-olive/10 relative shrink-0">
-                            <Image 
-                              src={item.img} 
-                              alt={item.title} 
-                              fill
-                              sizes="80px"
-                              className="object-cover mix-blend-multiply"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0 text-left">
-                            <h5 className="font-serif text-sm text-olive truncate group-hover:text-olive/85 transition-colors">
-                              {item.title}
-                            </h5>
-                            <p className="text-olive/50 text-[10px] mt-0.5 font-sans">
-                              Rs {item.price}
-                            </p>
-                            <span className="inline-flex items-center gap-1 text-[9px] text-olive/60 mt-1.5 font-medium">
-                              View Product &rarr;
-                            </span>
-                          </div>
-                        </Link>
-                      ))}
+                  {/* Right Side: Alternatives Section (Centered row of 2 clickable links directly to their product details, with big images) */}
+                  <div className="w-full md:max-w-md flex flex-col justify-between self-stretch py-2 min-h-0">
+                    <div>
+                      <h4 className="text-xs font-sans uppercase tracking-[0.2em] text-olive/50 font-semibold mb-4 text-center md:text-left px-1">
+                        Alternative Matches
+                      </h4>
+                      <div className="flex flex-col gap-4">
+                        {matchingProducts.slice(1, 3).map((item) => (
+                          <Link 
+                            key={item.id}
+                            href={`/shop/${item.id}`}
+                            onClick={onClose}
+                            className="bg-olive/5 border border-olive/10 hover:border-olive/30 rounded-2xl p-3.5 md:p-4 flex gap-4 items-center transition-all hover:-translate-y-1 cursor-pointer select-none group"
+                          >
+                            {/* Bigger image for secondary products */}
+                            <div className="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden bg-white/20 border border-olive/10 relative shrink-0">
+                              <Image 
+                                src={item.img} 
+                                alt={item.title} 
+                                fill
+                                sizes="96px"
+                                className="object-cover mix-blend-multiply"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0 text-left">
+                              <h5 className="font-serif text-base text-olive truncate group-hover:text-olive/85 transition-colors">
+                                {item.title}
+                              </h5>
+                              <p className="text-olive/50 text-xs mt-0.5 font-sans">
+                                Rs {item.price}
+                              </p>
+                              <span className="inline-flex items-center gap-1 text-[9px] text-olive/60 mt-2 font-medium">
+                                View Product &rarr;
+                              </span>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Restart Quiz button */}
-                  <button 
-                    onClick={handleReset} 
-                    className="py-3 px-6 mt-8 border border-olive/10 hover:bg-olive/5 rounded-2xl text-xs font-sans tracking-widest uppercase text-olive/50 hover:text-olive transition-all flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <ArrowPath className="w-3.5 h-3.5" /> Start Over
-                  </button>
+                    {/* Restart Quiz button */}
+                    <button 
+                      onClick={handleReset} 
+                      className="py-2.5 px-6 mt-6 border border-olive/10 hover:bg-olive/5 rounded-2xl text-xs font-sans tracking-widest uppercase text-olive/50 hover:text-olive transition-all flex items-center justify-center gap-2 cursor-pointer w-full"
+                    >
+                      <ArrowPath className="w-3.5 h-3.5" /> Start Over
+                    </button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

@@ -208,6 +208,15 @@ export default function Navbar() {
               <Link href="/shop?category=Candle Making Kit" onClick={() => setIsMobileMenuOpen(false)}>DIY Kits</Link>
               <Link href="/#workshops" onClick={() => setIsMobileMenuOpen(false)}>Workshops</Link>
               <Link href="/#story" onClick={() => setIsMobileMenuOpen(false)}>Our Story</Link>
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsQuizOpen(true);
+                }}
+                className="hover:opacity-75 transition-opacity font-serif text-olive cursor-pointer"
+              >
+                Scent Quiz
+              </button>
             </nav>
             <div className="mt-12 pt-12 border-t border-olive/10 flex flex-col items-center gap-8">
 
