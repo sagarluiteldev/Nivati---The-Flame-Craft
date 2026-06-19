@@ -28,7 +28,7 @@ export default function Process() {
       number: "02",
       title: "Precision Blending",
       description: "Every fragrance is meticulously tested for the perfect balance of cold and hot throw, making sure your space is always delightfully scented.",
-      image: "/images/process_making_new.png"
+      image: "/images/process_making_new.jpg"
     },
     {
       number: "03",
@@ -81,7 +81,19 @@ export default function Process() {
   );
 }
 
-function ProcessStep({ step, idx, imageYEven, imageYOdd }: any) {
+interface ProcessStepProps {
+  step: {
+    number: string;
+    title: string;
+    description: string;
+    image: string;
+  };
+  idx: number;
+  imageYEven: MotionValue<string>;
+  imageYOdd: MotionValue<string>;
+}
+
+function ProcessStep({ step, idx, imageYEven, imageYOdd }: ProcessStepProps) {
   const stepRef = useRef<HTMLDivElement>(null);
   
   // Local scroll progress for this specific step

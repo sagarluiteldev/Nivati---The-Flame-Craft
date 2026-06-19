@@ -29,8 +29,35 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    try {
+      const storedCart = localStorage.getItem('nivati-cart');
+      if (storedCart) {
+        requestAnimationFrame(() => {
+          setCart(JSON.parse(storedCart));
+        });
+      }
+    } catch (e) {
+      console.error('Error loading cart from localStorage:', e);
+    }
+    requestAnimationFrame(() => {
+      setIsLoaded(true);
+    });
+  }, []);
 
+  // Save cart to localStorage when it changes
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        localStorage.setItem('nivati-cart', JSON.stringify(cart));
+      } catch (e) {
+        console.error('Error saving cart to localStorage:', e);
+      }
+    }
+  }, [cart, isLoaded]);
   const addToCart = (newItem: CartItem) => {
     setCart((prev) => {
       // Create a unique key for comparing items (ID + metadata)

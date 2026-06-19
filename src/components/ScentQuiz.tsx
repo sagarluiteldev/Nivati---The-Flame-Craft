@@ -17,8 +17,8 @@ const questions = [
     title: "What's your ideal evening?",
     options: [
       { text: "A quiet dinner with wine", attribute: "berry-wine" },
-      { text: "Reading by a warm fire", attribute: "rose-bloom-signature" },
-      { text: "Early to bed, early to rise", attribute: "iced-matcha" },
+      { text: "Reading by a warm fire", attribute: "rose-bloom-mould" },
+      { text: "Early to bed, early to rise", attribute: "iced-matcha-gel-soy" },
       { text: "A late night walk", attribute: "concrete-moon" },
     ]
   },
@@ -26,9 +26,9 @@ const questions = [
     id: 2,
     title: "Pick a texture",
     options: [
-      { text: "Crushed Velvet", attribute: "rose-bloom-signature" },
+      { text: "Crushed Velvet", attribute: "rose-bloom-mould" },
       { text: "Linen", attribute: "concrete-moon" },
-      { text: "Smooth Ceramic", attribute: "iced-matcha" },
+      { text: "Smooth Ceramic", attribute: "iced-matcha-gel-soy" },
       { text: "Raw Wood", attribute: "berry-wine" },
     ]
   },
@@ -38,8 +38,8 @@ const questions = [
     options: [
       { text: "Mediterranean Coast", attribute: "berry-wine" },
       { text: "Deep Forest", attribute: "concrete-moon" },
-      { text: "Minimalist Studio", attribute: "iced-matcha" },
-      { text: "Rose Garden", attribute: "rose-bloom-signature" },
+      { text: "Minimalist Studio", attribute: "iced-matcha-gel-soy" },
+      { text: "Rose Garden", attribute: "rose-bloom-mould" },
     ]
   }
 ];

@@ -3,6 +3,9 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+
+const MotionImage = motion(Image);
 
 const slogans = [
   "Scented Handmade Candles",
@@ -66,7 +69,7 @@ export default function Hero() {
       className="relative min-h-[90vh] lg:min-h-[95vh] flex items-center pt-24 lg:pt-32 pb-20 lg:pb-0 overflow-hidden bg-creme select-none"
     >
       {/* Texture Overlay */}
-      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')]" />
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[url('/images/paper-fibers.png')]" />
       
       {/* Background abstract shapes */}
       <div className="absolute top-0 right-0 w-full lg:w-[60%] h-full bg-sage/5 rounded-l-none lg:rounded-l-[200px] -z-10" />
@@ -179,10 +182,13 @@ export default function Hero() {
               <div className="absolute inset-0 bg-sage/10 mix-blend-multiply z-10 pointer-events-none" />
               
               <AnimatePresence>
-                <motion.img 
+                <MotionImage 
                   key={currentImageIndex}
                   src={heroImages[currentImageIndex].src} 
                   alt={heroImages[currentImageIndex].alt}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -193,7 +199,7 @@ export default function Hero() {
             </div>
 
             {/* Gallery Navigation Dots */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2" role="tablist" aria-label="Hero gallery slider">
               {heroImages.map((_, i) => (
                 <button
                   key={i}
@@ -201,6 +207,9 @@ export default function Hero() {
                   className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${
                     currentImageIndex === i ? "bg-white w-4" : "bg-white/40"
                   }`}
+                  role="tab"
+                  aria-selected={currentImageIndex === i}
+                  aria-label={`Go to slide ${i + 1}`}
                 />
               ))}
             </div>

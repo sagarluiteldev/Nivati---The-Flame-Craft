@@ -33,13 +33,13 @@ export default function Footer() {
               Empowering your sanctuary with hand-poured scents and mindful crafting. Find your glow.
             </p>
             <div className="flex gap-3">
-              <a href="#" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-creme/5 flex items-center justify-center hover:bg-creme/10 transition-colors">
+              <a href="https://www.instagram.com/nivati.np" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-creme/5 flex items-center justify-center hover:bg-creme/10 transition-colors">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-creme/5 flex items-center justify-center hover:bg-creme/10 transition-colors">
+              <a href="https://www.facebook.com/nivati.np" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-creme/5 flex items-center justify-center hover:bg-creme/10 transition-colors">
                 <Facebook className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-creme/5 flex items-center justify-center hover:bg-creme/10 transition-colors">
+              <a href="https://www.tiktok.com/@nivati.np" target="_blank" rel="noopener noreferrer" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-creme/5 flex items-center justify-center hover:bg-creme/10 transition-colors">
                 <TikTok className="w-4 h-4" />
               </a>
             </div>
@@ -50,10 +50,10 @@ export default function Footer() {
             <div>
               <h4 className="font-serif text-base md:text-lg mb-3 md:mb-4">Shop</h4>
               <ul className="flex flex-col gap-2 md:gap-3 font-light text-creme/60 text-sm transition-colors duration-700">
-                <li><Link href="#shop" className="hover:text-creme transition-colors">Signature Candles</Link></li>
-                <li><Link href="#kits" className="hover:text-creme transition-colors">DIY Kits</Link></li>
-                <li><Link href="#workshops" className="hover:text-creme transition-colors">Workshops</Link></li>
-                <li><Link href="#shop" className="hover:text-creme transition-colors">Raw Materials</Link></li>
+                <li><Link href="/shop?category=Signature Candles" className="hover:text-creme transition-colors">Signature Candles</Link></li>
+                <li><Link href="/shop?category=Candle Making Kit" className="hover:text-creme transition-colors">DIY Kits</Link></li>
+                <li><Link href="/#workshops" className="hover:text-creme transition-colors">Workshops</Link></li>
+                <li><Link href="/shop?category=Candle Making Materials" className="hover:text-creme transition-colors">Raw Materials</Link></li>
               </ul>
             </div>
 
@@ -71,8 +71,8 @@ export default function Footer() {
         <div className="border-t border-creme/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-light text-creme/40 transition-colors duration-700">
           <p>© {new Date().getFullYear()} Nivati — The Flame Craft. All rights reserved.</p>
           <div className="flex gap-6">
-            <Link href="#" className="hover:text-creme transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-creme transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-creme transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-creme transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>
