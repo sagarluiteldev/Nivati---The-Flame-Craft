@@ -347,6 +347,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          data-lenis-prevent
           className="fixed inset-0 z-60 bg-creme/98 backdrop-blur-2xl flex flex-col text-olive overflow-y-auto"
         >
           {/* Morphing Ambient Background Glows */}
@@ -487,6 +488,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
               )}
 
               {/* Recommendation Screen (Sized smaller, light-themed, and fully centered) */}
+              {/* Recommendation Screen (Sized smaller, light-themed, and fully centered) */}
               {!isAnalyzing && primaryProduct && (
                 <motion.div
                   key="result-view"
@@ -502,20 +504,29 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                       Niva&apos;s Choice
                     </span>
 
-                    {/* Image (Smaller and centered) */}
-                    <div className="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden bg-white/20 border border-olive/10 relative mb-5 shadow-md">
-                      <Image 
-                        src={primaryProduct.img} 
-                        alt={primaryProduct.title} 
-                        fill
-                        sizes="(max-width: 768px) 150px, 200px"
-                        className="object-cover mix-blend-multiply"
-                      />
-                    </div>
+                    {/* Image (Smaller, centered, and clickable link to detail page) */}
+                    <Link 
+                      href={`/shop/${primaryProduct.id}`}
+                      onClick={onClose}
+                      className="block group/img mb-5 select-none cursor-pointer"
+                    >
+                      <div className="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden bg-white/20 border border-olive/10 relative shadow-md group-hover/img:scale-105 transition-all duration-300">
+                        <Image 
+                          src={primaryProduct.img} 
+                          alt={primaryProduct.title} 
+                          fill
+                          sizes="(max-width: 768px) 150px, 200px"
+                          className="object-cover mix-blend-multiply"
+                        />
+                      </div>
+                    </Link>
 
-                    <h3 className="text-2xl md:text-3xl font-serif text-olive mb-2">
-                      {primaryProduct.title}
-                    </h3>
+                    {/* Clickable Title */}
+                    <Link href={`/shop/${primaryProduct.id}`} onClick={onClose} className="hover:opacity-85 select-none cursor-pointer">
+                      <h3 className="text-2xl md:text-3xl font-serif text-olive mb-2 hover:underline decoration-olive/55">
+                        {primaryProduct.title}
+                      </h3>
+                    </Link>
                     
                     <span className="text-olive/60 text-sm font-sans tracking-wide mb-4 block">
                       Rs {primaryProduct.price}
@@ -573,25 +584,17 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                     </div>
                   </div>
 
-                  {/* Alternatives Section (Centered row) */}
+                  {/* Alternatives Section (Centered row of 2 clickable links directly to their product details) */}
                   <div className="w-full mt-8">
                     <h4 className="text-xs font-sans uppercase tracking-[0.2em] text-olive/50 font-semibold mb-4 text-center">
                       Alternative Matches
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-                      {matchingProducts.slice(1, 3).map((item, idx) => (
-                        <div 
+                      {matchingProducts.slice(1, 3).map((item) => (
+                        <Link 
                           key={item.id}
-                          onClick={() => {
-                            // Swap alternative with primary suggestion
-                            const newMatches = [...matchingProducts];
-                            const clickedIndex = idx + 1;
-                            const currentPrimary = newMatches[0];
-                            newMatches[0] = newMatches[clickedIndex];
-                            newMatches[clickedIndex] = currentPrimary;
-                            setMatchingProducts(newMatches);
-                            setPrimaryProduct(newMatches[0]);
-                          }}
+                          href={`/shop/${item.id}`}
+                          onClick={onClose}
                           className="bg-olive/5 border border-olive/10 hover:border-olive/30 rounded-2xl p-3 flex gap-3.5 items-center transition-all hover:-translate-y-1 cursor-pointer select-none group"
                         >
                           <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/20 border border-olive/10 relative shrink-0">
@@ -604,17 +607,17 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                             />
                           </div>
                           <div className="flex-1 min-w-0 text-left">
-                            <h5 className="font-serif text-sm text-olive truncate group-hover:text-olive/80 transition-colors">
+                            <h5 className="font-serif text-sm text-olive truncate group-hover:text-olive/85 transition-colors">
                               {item.title}
                             </h5>
                             <p className="text-olive/50 text-[10px] mt-0.5 font-sans">
                               Rs {item.price}
                             </p>
                             <span className="inline-flex items-center gap-1 text-[9px] text-olive/60 mt-1.5 font-medium">
-                              <ArrowPath className="w-2.5 h-2.5" /> Swap Match
+                              View Product &rarr;
                             </span>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>
