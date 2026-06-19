@@ -16,9 +16,9 @@ const slogans = [
 
 const heroImages = [
   { src: "/images/IMG_4136.jpg", alt: "Hand-poured Nivati candle lifestyle", position: "center" },
-  { src: "/images/IMG_4133.jpg", alt: "Cactus Jar Premium Candle", position: "center 60%" },
-  { src: "/images/IMG_4147.jpg", alt: "Jack Daniels Whiskeysilicone gel candle", position: "center 65%" },
-  { src: "/images/IMG_4069.jpg", alt: "Large Concrete Bowl Candle", position: "center 60%" }
+  { src: "/images/IMG_4133.jpg", alt: "Cactus Jar Premium Candle", position: "center 70%" },
+  { src: "/images/IMG_4147.jpg", alt: "Jack Daniels Whiskeysilicone gel candle", position: "center 80%" },
+  { src: "/images/IMG_4069.jpg", alt: "Large Concrete Bowl Candle", position: "center 80%" }
 ];
 
 export default function Hero() {
