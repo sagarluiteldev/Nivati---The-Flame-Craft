@@ -7,7 +7,15 @@ import {
   ArrowRightIcon as ArrowRight, 
   SparklesIcon as Sparkles, 
   ShoppingBagIcon as ShoppingBag, 
-  ArrowPathIcon as ArrowPath 
+  ArrowPathIcon as ArrowPath,
+  FireIcon,
+  GlobeAmericasIcon,
+  BoltIcon,
+  HeartIcon,
+  MoonIcon,
+  UserGroupIcon,
+  BriefcaseIcon,
+  TagIcon
 } from "@heroicons/react/24/outline";
 import { products, Product } from "@/lib/data";
 import { useAppContext } from "@/context/AppContext";
@@ -38,16 +46,16 @@ const dotVariants = {
   }
 };
 
-// Sommelier Prompts Setup (Defined outside component to prevent render dependency cycles)
+// Sommelier Prompts Setup (Cleaned of emojis, mapped to icons dynamically)
 const askMoodMessage = (): ChatMessage => ({
   id: "q-mood",
   sender: "niva",
   text: "Hello! I am Niva, Nivati's AI Scent Sommelier. Tell me, what kind of vibe or mood are you looking to bring into your space today?",
   options: [
-    { text: "🕯️ Cozy, warm, comforting evening", value: "cozy" },
-    { text: "🌿 Fresh, grounding, earthy forest", value: "earthy" },
-    { text: "🍊 Energetic, bright, citrusy lift", value: "fresh" },
-    { text: "🌸 Romantic, elegant, floral sanctuary", value: "floral" }
+    { text: "Cozy, warm, comforting evening", value: "cozy" },
+    { text: "Fresh, grounding, earthy forest", value: "earthy" },
+    { text: "Energetic, bright, citrusy lift", value: "fresh" },
+    { text: "Romantic, elegant, floral sanctuary", value: "floral" }
   ],
   field: "mood"
 });
@@ -64,10 +72,10 @@ const askNotesMessage = (moodVal: string): ChatMessage => {
     sender: "niva",
     text: `Ah, a ${vibeDesc} sounds absolutely wonderful. Next, what kind of scent profiles draw you in the most?`,
     options: [
-      { text: "🪵 Woody & Earthy notes (Cedarwood, Patchouli, Pine)", value: "woody" },
-      { text: "🍯 Sweet & Warm notes (Vanilla, Honey, Cream)", value: "sweet" },
-      { text: "🌱 Fresh & Crisp notes (Green Tea, Mint, Bergamot)", value: "fresh-notes" },
-      { text: "🌷 Soft & Floral notes (Rose, Lily, Lavender)", value: "floral-notes" }
+      { text: "Woody & Earthy notes (Cedarwood, Patchouli, Pine)", value: "woody" },
+      { text: "Sweet & Warm notes (Vanilla, Honey, Cream)", value: "sweet" },
+      { text: "Fresh & Crisp notes (Green Tea, Mint, Bergamot)", value: "fresh-notes" },
+      { text: "Soft & Floral notes (Rose, Lily, Lavender)", value: "floral-notes" }
     ],
     field: "notes"
   };
@@ -78,13 +86,51 @@ const askRoomMessage = (): ChatMessage => ({
   sender: "niva",
   text: "Lastly, where will this candle live? Tell me about the energy of the room you have in mind.",
   options: [
-    { text: "🛌 Bedroom (Relaxing, intimate, calming)", value: "bedroom" },
-    { text: "🛋️ Living Room (Ambient, warm, welcoming)", value: "living" },
-    { text: "💻 Workspace (Alert, focused, clean)", value: "workspace" },
-    { text: "🛁 Bathroom / Spa (Purifying, fresh, tranquil)", value: "bathroom" }
+    { text: "Bedroom (Relaxing, intimate, calming)", value: "bedroom" },
+    { text: "Living Room (Ambient, warm, welcoming)", value: "living" },
+    { text: "Workspace (Alert, focused, clean)", value: "workspace" },
+    { text: "Bathroom / Spa (Purifying, fresh, tranquil)", value: "bathroom" }
   ],
   field: "room"
 });
+
+// Helper to match options to premium outline Heroicons
+function getOptionIcon(value: string) {
+  switch (value) {
+    // Moods
+    case "cozy":
+      return FireIcon;
+    case "earthy":
+      return GlobeAmericasIcon;
+    case "fresh":
+      return BoltIcon;
+    case "floral":
+      return HeartIcon;
+    
+    // Notes
+    case "woody":
+      return TagIcon;
+    case "sweet":
+      return FireIcon;
+    case "fresh-notes":
+      return BoltIcon;
+    case "floral-notes":
+      return HeartIcon;
+
+    // Rooms
+    case "bedroom":
+      return MoonIcon;
+    case "living":
+      return UserGroupIcon;
+    case "workspace":
+      return BriefcaseIcon;
+    case "bathroom":
+      return Sparkles;
+
+    default:
+      return null;
+  }
+}
 
 export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
   const { addToCart } = useAppContext();
@@ -112,6 +158,18 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
+
+  // Lock body scrolling when the quiz modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   // Ambient glows mapping
   const ambient = getAmbientStyles(selections.mood);
@@ -289,7 +347,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-60 bg-zinc-950/95 backdrop-blur-2xl flex flex-col text-creme overflow-y-auto"
+          className="fixed inset-0 z-60 bg-creme/98 backdrop-blur-2xl flex flex-col text-olive overflow-y-auto"
         >
           {/* Morphing Ambient Background Glows */}
           <div 
@@ -304,21 +362,21 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
           {/* Close button */}
           <button 
             onClick={onClose}
-            className="absolute top-8 right-6 md:right-12 p-2.5 text-creme/60 hover:text-creme hover:bg-white/10 rounded-full transition-colors z-20 cursor-pointer"
+            className="absolute top-8 right-6 md:right-12 p-2.5 text-olive/60 hover:text-olive hover:bg-olive/10 rounded-full transition-colors z-20 cursor-pointer"
             aria-label="Close Sommelier"
           >
             <X className="w-6 h-6" />
           </button>
 
           {/* Core container */}
-          <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col pt-24 pb-12 px-6">
+          <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col pt-24 pb-12 px-6 justify-center">
             
-            {/* Header Title */}
-            <div className="text-center mb-10">
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-olive/30 border border-olive/20 rounded-full text-xs font-medium tracking-wider text-sage uppercase">
-                <Sparkles className="w-3.5 h-3.5" /> AI Scent Sommelier
+            {/* Header Title with Nivati logo */}
+            <div className="text-center mb-10 flex flex-col items-center">
+              <span className="inline-flex items-center gap-2.5 px-4 py-1.5 bg-olive/10 border border-olive/20 rounded-full text-xs font-medium tracking-wider text-olive uppercase">
+                <img src="/images/logo.png" alt="Nivati logo" className="w-4 h-4 object-contain opacity-80" /> AI Scent Sommelier
               </span>
-              <h2 className="text-3xl md:text-5xl font-serif text-creme mt-3">Find Your Vibe</h2>
+              <h2 className="text-3xl md:text-5xl font-serif text-olive mt-3">Find Your Vibe</h2>
             </div>
 
             <AnimatePresence mode="wait">
@@ -337,10 +395,10 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                         key={msg.id || index}
                         className={`flex gap-4 items-start ${msg.sender === "user" ? "flex-row-reverse" : ""}`}
                       >
-                        {/* Avatar */}
+                        {/* Avatar with Nivati logo */}
                         {msg.sender === "niva" && (
-                          <div className="w-9 h-9 rounded-full bg-olive/30 border border-olive/20 flex items-center justify-center text-sage shrink-0">
-                            <Sparkles className="w-4.5 h-4.5" />
+                          <div className="w-9 h-9 rounded-full bg-olive/10 border border-olive/20 flex items-center justify-center overflow-hidden shrink-0">
+                            <img src="/images/logo.png" alt="Niva logo" className="w-5.5 h-5.5 object-contain opacity-80" />
                           </div>
                         )}
 
@@ -348,7 +406,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                         <div className={`p-4 md:p-5 rounded-2xl max-w-[85%] text-sm md:text-base leading-relaxed ${
                           msg.sender === "user"
                             ? "bg-olive text-creme rounded-tr-none"
-                            : "bg-white/5 border border-white/10 text-creme/90 rounded-tl-none"
+                            : "bg-olive/5 border border-olive/10 text-olive/90 rounded-tl-none"
                         }`}>
                           <p>{msg.text}</p>
                         </div>
@@ -358,38 +416,46 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                     {/* Typing State */}
                     {isTyping && (
                       <div className="flex gap-4 items-start">
-                        <div className="w-9 h-9 rounded-full bg-olive/30 border border-olive/20 flex items-center justify-center text-sage shrink-0 animate-pulse">
-                          <Sparkles className="w-4.5 h-4.5" />
+                        <div className="w-9 h-9 rounded-full bg-olive/10 border border-olive/20 flex items-center justify-center overflow-hidden shrink-0 animate-pulse">
+                          <img src="/images/logo.png" alt="Niva logo" className="w-5.5 h-5.5 object-contain opacity-80" />
                         </div>
-                        <div className="bg-white/5 border border-white/10 p-4 rounded-2xl rounded-tl-none flex items-center gap-1">
-                          <motion.span variants={dotVariants} initial="initial" animate="animate" className="w-1.5 h-1.5 rounded-full bg-creme/50" />
-                          <motion.span variants={dotVariants} initial="initial" animate="animate" className="w-1.5 h-1.5 rounded-full bg-creme/50 [animation-delay:0.2s]" />
-                          <motion.span variants={dotVariants} initial="initial" animate="animate" className="w-1.5 h-1.5 rounded-full bg-creme/50 [animation-delay:0.4s]" />
+                        <div className="bg-olive/5 border border-olive/10 p-4 rounded-2xl rounded-tl-none flex items-center gap-1">
+                          <motion.span variants={dotVariants} initial="initial" animate="animate" className="w-1.5 h-1.5 rounded-full bg-olive/50" />
+                          <motion.span variants={dotVariants} initial="initial" animate="animate" className="w-1.5 h-1.5 rounded-full bg-olive/50 [animation-delay:0.2s]" />
+                          <motion.span variants={dotVariants} initial="initial" animate="animate" className="w-1.5 h-1.5 rounded-full bg-olive/50 [animation-delay:0.4s]" />
                         </div>
                       </div>
                     )}
                     <div ref={chatEndRef} />
                   </div>
 
-                  {/* Options Selector panel */}
+                  {/* Options Selector panel with Heroicons */}
                   <div className="mt-8">
                     {messages.length > 0 && messages[messages.length - 1].options && (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-                        {messages[messages.length - 1].options?.map((option, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              const lastMsg = messages[messages.length - 1];
-                              if (lastMsg.field) {
-                                handleSelectOption(lastMsg.field, option.value, option.text);
-                              }
-                            }}
-                            className="py-4 px-6 bg-white/5 border border-white/10 hover:border-olive hover:bg-olive text-creme hover:text-creme rounded-xl text-sm md:text-base tracking-wide transition-all cursor-pointer text-left flex items-center justify-between"
-                          >
-                            <span>{option.text}</span>
-                            <ArrowRight className="w-4 h-4 opacity-50" />
-                          </button>
-                        ))}
+                        {messages[messages.length - 1].options?.map((option, idx) => {
+                          const lastMsg = messages[messages.length - 1];
+                          const IconComponent = getOptionIcon(option.value);
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                if (lastMsg.field) {
+                                  handleSelectOption(lastMsg.field, option.value, option.text);
+                                }
+                              }}
+                              className="py-4 px-6 bg-olive/5 border border-olive/10 hover:border-olive hover:bg-olive text-olive hover:text-creme rounded-xl text-sm md:text-base tracking-wide transition-all cursor-pointer text-left flex items-center justify-between group"
+                            >
+                              <div className="flex items-center gap-3">
+                                {IconComponent && (
+                                  <IconComponent className="w-5 h-5 text-olive/70 group-hover:text-creme transition-colors shrink-0" />
+                                )}
+                                <span>{option.text}</span>
+                              </div>
+                              <ArrowRight className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity shrink-0" />
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -407,169 +473,159 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                 >
                   <div className="relative w-32 h-32 mb-8">
                     {/* Multi-layered concentric rings */}
-                    <div className="absolute inset-0 border border-sage/20 rounded-full animate-ping [animation-duration:2.5s]" />
+                    <div className="absolute inset-0 border border-olive/20 rounded-full animate-ping [animation-duration:2.5s]" />
                     <div className="absolute inset-4 border border-olive/30 rounded-full animate-ping [animation-duration:1.8s]" />
                     <div className="absolute inset-2 border-2 border-dashed border-olive/40 rounded-full animate-spin [animation-duration:8s]" />
-                    <div className="absolute inset-6 border border-creme/25 rounded-full animate-spin [animation-duration:4s] [animation-direction:reverse]" />
-                    <div className="absolute inset-8 bg-olive/20 rounded-full flex items-center justify-center text-sage">
-                      <Sparkles className="w-8 h-8 animate-pulse" />
+                    <div className="absolute inset-6 border border-olive/20 rounded-full animate-spin [animation-duration:4s] [animation-direction:reverse]" />
+                    <div className="absolute inset-8 bg-olive/10 rounded-full flex items-center justify-center overflow-hidden">
+                      <img src="/images/logo.png" alt="Niva logo" className="w-10 h-10 object-contain opacity-85 animate-pulse" />
                     </div>
                   </div>
-                  <h3 className="text-xl font-serif text-creme mb-2 uppercase tracking-widest animate-pulse">Analyzing Scent DNA</h3>
-                  <p className="text-sm text-creme/50 font-light tracking-wide h-6">{analysisText}</p>
+                  <h3 className="text-xl font-serif text-olive mb-2 uppercase tracking-widest animate-pulse">Analyzing Scent DNA</h3>
+                  <p className="text-sm text-olive/60 font-light tracking-wide h-6">{analysisText}</p>
                 </motion.div>
               )}
 
-              {/* Recommendation Screen */}
+              {/* Recommendation Screen (Sized smaller, light-themed, and fully centered) */}
               {!isAnalyzing && primaryProduct && (
                 <motion.div
                   key="result-view"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="flex-1 flex flex-col"
+                  className="flex-1 flex flex-col items-center justify-center max-w-2xl mx-auto w-full"
                 >
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+                  {/* Primary Recommendation Card */}
+                  <div className="bg-olive/5 border border-olive/10 rounded-3xl p-6 md:p-8 w-full relative overflow-hidden flex flex-col items-center text-center shadow-xl">
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-olive/10 rounded-full blur-[80px] -z-10" />
                     
-                    {/* Primary suggestions info */}
-                    <div className="lg:col-span-8 bg-white/5 border border-white/10 rounded-3xl p-6 md:p-8 flex flex-col justify-between relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-64 h-64 bg-olive/10 rounded-full blur-[80px] -z-10" />
-                      
-                      <div>
-                        <div className="flex items-center justify-between gap-4 mb-6">
-                          <span className="px-3.5 py-1 bg-olive text-creme text-xs font-semibold rounded-full uppercase tracking-wider">
-                            Niva&apos;s Choice
-                          </span>
-                          <span className="text-creme/50 text-sm font-sans tracking-wide">
-                            Rs {primaryProduct.price}
-                          </span>
-                        </div>
+                    <span className="px-3.5 py-1 bg-olive text-creme text-xs font-semibold rounded-full uppercase tracking-wider mb-5">
+                      Niva&apos;s Choice
+                    </span>
 
-                        <h3 className="text-3xl md:text-5xl font-serif text-creme mb-6 leading-tight">
-                          {primaryProduct.title}
-                        </h3>
+                    {/* Image (Smaller and centered) */}
+                    <div className="w-36 h-36 md:w-44 md:h-44 rounded-2xl overflow-hidden bg-white/20 border border-olive/10 relative mb-5 shadow-md">
+                      <Image 
+                        src={primaryProduct.img} 
+                        alt={primaryProduct.title} 
+                        fill
+                        sizes="(max-width: 768px) 150px, 200px"
+                        className="object-cover mix-blend-multiply"
+                      />
+                    </div>
 
-                        {/* Image + Description grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-start mb-6">
-                          <div className="sm:col-span-5 aspect-square rounded-2xl overflow-hidden bg-olive/5 relative">
+                    <h3 className="text-2xl md:text-3xl font-serif text-olive mb-2">
+                      {primaryProduct.title}
+                    </h3>
+                    
+                    <span className="text-olive/60 text-sm font-sans tracking-wide mb-4 block">
+                      Rs {primaryProduct.price}
+                    </span>
+
+                    <p className="text-olive/80 text-xs md:text-sm leading-relaxed font-light max-w-lg mb-5">
+                      {primaryProduct.description}
+                    </p>
+
+                    {/* Notes display */}
+                    <div className="flex flex-wrap justify-center gap-2 mb-6">
+                      {primaryProduct.scentNotes.top !== "Unscented" && (
+                        <span className="text-[10px] md:text-xs px-2.5 py-1 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
+                          Top: {primaryProduct.scentNotes.top.split(',')[0]}
+                        </span>
+                      )}
+                      {primaryProduct.scentNotes.mid !== "Unscented" && (
+                        <span className="text-[10px] md:text-xs px-2.5 py-1 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
+                          Mid: {primaryProduct.scentNotes.mid.split(',')[0]}
+                        </span>
+                      )}
+                      {primaryProduct.scentNotes.base !== "Unscented" && (
+                        <span className="text-[10px] md:text-xs px-2.5 py-1 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
+                          Base: {primaryProduct.scentNotes.base.split(',')[0]}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* AI Rationale Text Box (Sized smaller and centered) */}
+                    <div className="p-4 bg-olive/10 border border-olive/25 rounded-2xl flex items-start gap-3.5 text-left max-w-lg mb-6">
+                      <div className="w-8 h-8 rounded-full bg-olive/20 border border-olive/15 flex items-center justify-center shrink-0 overflow-hidden">
+                        <img src="/images/logo.png" alt="Niva" className="w-5 h-5 object-contain opacity-80" />
+                      </div>
+                      <p className="text-xs text-olive/90 leading-relaxed italic font-light font-sans">
+                        &ldquo;{getRationale(primaryProduct)}&rdquo;
+                      </p>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+                      <button
+                        onClick={() => handleAddToCart(primaryProduct)}
+                        className="flex-1 inline-flex items-center justify-center gap-2 bg-olive text-creme px-5 py-3 rounded-full font-medium transition-all hover:scale-105 active:scale-95 shadow-md select-none cursor-pointer text-sm"
+                      >
+                        <ShoppingBag className="w-4 h-4" /> 
+                        {cartSuccess ? "Added to Cart!" : "Add to Cart"}
+                      </button>
+                      <Link 
+                        href={`/shop/${primaryProduct.id}`}
+                        onClick={onClose}
+                        className="flex-1 inline-flex items-center justify-center gap-2 border border-olive/20 hover:border-olive text-olive px-5 py-3 rounded-full transition-all hover:scale-105 active:scale-95 select-none text-center text-sm hover:bg-olive/5"
+                      >
+                        Shop Product <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Alternatives Section (Centered row) */}
+                  <div className="w-full mt-8">
+                    <h4 className="text-xs font-sans uppercase tracking-[0.2em] text-olive/50 font-semibold mb-4 text-center">
+                      Alternative Matches
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                      {matchingProducts.slice(1, 3).map((item, idx) => (
+                        <div 
+                          key={item.id}
+                          onClick={() => {
+                            // Swap alternative with primary suggestion
+                            const newMatches = [...matchingProducts];
+                            const clickedIndex = idx + 1;
+                            const currentPrimary = newMatches[0];
+                            newMatches[0] = newMatches[clickedIndex];
+                            newMatches[clickedIndex] = currentPrimary;
+                            setMatchingProducts(newMatches);
+                            setPrimaryProduct(newMatches[0]);
+                          }}
+                          className="bg-olive/5 border border-olive/10 hover:border-olive/30 rounded-2xl p-3 flex gap-3.5 items-center transition-all hover:-translate-y-1 cursor-pointer select-none group"
+                        >
+                          <div className="w-14 h-14 rounded-xl overflow-hidden bg-white/20 border border-olive/10 relative shrink-0">
                             <Image 
-                              src={primaryProduct.img} 
-                              alt={primaryProduct.title} 
+                              src={item.img} 
+                              alt={item.title} 
                               fill
-                              sizes="300px"
-                              className="object-cover mix-blend-lighten"
+                              sizes="80px"
+                              className="object-cover mix-blend-multiply"
                             />
                           </div>
-                          <div className="sm:col-span-7 space-y-4">
-                            <p className="text-creme/80 text-sm md:text-base leading-relaxed font-light">
-                              {primaryProduct.description}
+                          <div className="flex-1 min-w-0 text-left">
+                            <h5 className="font-serif text-sm text-olive truncate group-hover:text-olive/80 transition-colors">
+                              {item.title}
+                            </h5>
+                            <p className="text-olive/50 text-[10px] mt-0.5 font-sans">
+                              Rs {item.price}
                             </p>
-                            
-                            {/* Notes display */}
-                            <div className="flex flex-wrap gap-2 pt-2">
-                              {primaryProduct.scentNotes.top !== "Unscented" && (
-                                <span className="text-xs px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-creme/60">
-                                  Top: {primaryProduct.scentNotes.top.split(',')[0]}
-                                </span>
-                              )}
-                              {primaryProduct.scentNotes.mid !== "Unscented" && (
-                                <span className="text-xs px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-creme/60">
-                                  Mid: {primaryProduct.scentNotes.mid.split(',')[0]}
-                                </span>
-                              )}
-                              {primaryProduct.scentNotes.base !== "Unscented" && (
-                                <span className="text-xs px-2.5 py-1 bg-white/5 border border-white/10 rounded-md text-creme/60">
-                                  Base: {primaryProduct.scentNotes.base.split(',')[0]}
-                                </span>
-                              )}
-                            </div>
+                            <span className="inline-flex items-center gap-1 text-[9px] text-olive/60 mt-1.5 font-medium">
+                              <ArrowPath className="w-2.5 h-2.5" /> Swap Match
+                            </span>
                           </div>
                         </div>
-                      </div>
-
-                      {/* AI Rationale Text Box */}
-                      <div className="mt-4 p-4 md:p-5 bg-olive/20 border border-olive/35 rounded-2xl flex items-start gap-4">
-                        <div className="w-8 h-8 rounded-full bg-olive/30 border border-olive/20 flex items-center justify-center text-sage shrink-0">
-                          <Sparkles className="w-4.5 h-4.5" />
-                        </div>
-                        <p className="text-xs md:text-sm text-creme/90 leading-relaxed italic font-light font-sans">
-                          &ldquo;{getRationale(primaryProduct)}&rdquo;
-                        </p>
-                      </div>
-
-                      {/* Action buttons */}
-                      <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                        <button
-                          onClick={() => handleAddToCart(primaryProduct)}
-                          className="flex-1 inline-flex items-center justify-center gap-2 bg-creme text-zinc-950 px-6 py-4 rounded-full font-medium transition-all hover:scale-105 active:scale-95 shadow-lg select-none cursor-pointer"
-                        >
-                          <ShoppingBag className="w-5 h-5" /> 
-                          {cartSuccess ? "Added to Cart!" : "Add to Cart"}
-                        </button>
-                        <Link 
-                          href={`/shop/${primaryProduct.id}`}
-                          onClick={onClose}
-                          className="flex-1 inline-flex items-center justify-center gap-2 border border-white/20 hover:border-white text-creme px-6 py-4 rounded-full transition-all hover:scale-105 active:scale-95 select-none text-center"
-                        >
-                          Shop Product <ArrowRight className="w-4.5 h-4.5" />
-                        </Link>
-                      </div>
+                      ))}
                     </div>
-
-                    {/* Alternatives Panel */}
-                    <div className="lg:col-span-4 flex flex-col gap-6">
-                      <h4 className="text-sm font-sans uppercase tracking-[0.2em] text-creme/50 font-semibold px-1">
-                        Alternative Matches
-                      </h4>
-                      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-                        {matchingProducts.slice(1, 3).map((item, idx) => (
-                          <div 
-                            key={item.id}
-                            onClick={() => {
-                              // Swap alternative with primary suggestion
-                              const newMatches = [...matchingProducts];
-                              const clickedIndex = idx + 1;
-                              const currentPrimary = newMatches[0];
-                              newMatches[0] = newMatches[clickedIndex];
-                              newMatches[clickedIndex] = currentPrimary;
-                              setMatchingProducts(newMatches);
-                              setPrimaryProduct(newMatches[0]);
-                            }}
-                            className="bg-white/5 border border-white/10 hover:border-olive/50 rounded-2xl p-4 flex gap-4 items-center transition-all hover:-translate-y-1 cursor-pointer select-none group"
-                          >
-                            <div className="w-20 h-20 rounded-xl overflow-hidden bg-olive/5 relative shrink-0">
-                              <Image 
-                                src={item.img} 
-                                alt={item.title} 
-                                fill
-                                sizes="100px"
-                                className="object-cover mix-blend-lighten"
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h5 className="font-serif text-base text-creme truncate group-hover:text-sage transition-colors">
-                                {item.title}
-                              </h5>
-                              <p className="text-creme/50 text-xs mt-1 font-sans">
-                                Rs {item.price}
-                              </p>
-                              <span className="inline-flex items-center gap-1 text-[10px] text-sage mt-2 font-medium">
-                                <ArrowPath className="w-3 h-3" /> Swap Match
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Restart Quiz button */}
-                      <button 
-                        onClick={handleReset} 
-                        className="w-full py-4 mt-auto border border-white/5 hover:bg-white/5 rounded-2xl text-xs md:text-sm font-sans tracking-widest uppercase text-creme/40 hover:text-creme transition-all flex items-center justify-center gap-2 cursor-pointer"
-                      >
-                        <ArrowPath className="w-4 h-4" /> Start Over
-                      </button>
-                    </div>
-
                   </div>
+
+                  {/* Restart Quiz button */}
+                  <button 
+                    onClick={handleReset} 
+                    className="py-3 px-6 mt-8 border border-olive/10 hover:bg-olive/5 rounded-2xl text-xs font-sans tracking-widest uppercase text-olive/50 hover:text-olive transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <ArrowPath className="w-3.5 h-3.5" /> Start Over
+                  </button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -581,33 +637,33 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
   );
 }
 
-// Helper to resolve dynamic ambient radial background styles based on selections
+// Helper to resolve dynamic ambient radial background styles based on selections (Adapted for light mode opacity)
 function getAmbientStyles(mood: string | null) {
   switch (mood) {
     case "cozy":
       return {
-        bg1: "rgba(217, 119, 6, 0.15)", // amber-600
-        bg2: "rgba(245, 158, 11, 0.08)"  // amber-500
+        bg1: "rgba(245, 158, 11, 0.08)", // amber-500
+        bg2: "rgba(251, 191, 36, 0.04)"  // amber-400
       };
     case "earthy":
       return {
-        bg1: "rgba(4, 120, 87, 0.15)",   // emerald-700
-        bg2: "rgba(13, 148, 136, 0.08)"  // teal-600
+        bg1: "rgba(16, 185, 129, 0.08)", // emerald-500
+        bg2: "rgba(20, 184, 166, 0.04)"  // teal-500
       };
     case "fresh":
       return {
-        bg1: "rgba(6, 182, 212, 0.15)",  // cyan-500
-        bg2: "rgba(59, 130, 246, 0.08)"  // blue-500
+        bg1: "rgba(6, 182, 212, 0.08)",  // cyan-500
+        bg2: "rgba(14, 165, 233, 0.04)"  // sky-500
       };
     case "floral":
       return {
-        bg1: "rgba(219, 39, 119, 0.15)", // pink-600
-        bg2: "rgba(162, 28, 175, 0.08)"  // fuchsia-600
+        bg1: "rgba(236, 72, 153, 0.08)", // pink-500
+        bg2: "rgba(217, 70, 239, 0.04)"  // fuchsia-500
       };
     default:
       return {
-        bg1: "rgba(95, 111, 82, 0.15)",  // olive theme color
-        bg2: "rgba(162, 173, 156, 0.08)" // sage
+        bg1: "rgba(95, 111, 82, 0.08)",  // olive theme color
+        bg2: "rgba(162, 173, 156, 0.04)" // sage
       };
   }
 }
