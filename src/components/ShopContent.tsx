@@ -30,7 +30,7 @@ export default function ShopContent({ products }: ShopContentProps) {
     : products.filter(p => Array.isArray(p.category) ? p.category.includes(activeCategory) : p.category === activeCategory);
 
   return (
-    <main className="min-h-screen flex flex-col pt-20 md:pt-32 bg-creme transition-colors duration-700">
+    <main className="min-h-screen flex flex-col pt-20 md:pt-24 bg-creme transition-colors duration-700">
       <Navbar />
       <QuickViewModal 
         isOpen={isQuickViewOpen} 
@@ -38,10 +38,10 @@ export default function ShopContent({ products }: ShopContentProps) {
         product={quickViewProduct} 
       />
       
-      <div className="grow max-w-7xl mx-auto px-6 w-full pt-4 pb-12 md:py-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-12 gap-4 md:gap-6">
+      <div className="grow max-w-7xl mx-auto px-6 w-full pt-4 pb-12 md:pt-6 md:pb-24">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 gap-4 md:gap-6">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2 text-olive/60 hover:text-olive transition-colors mb-3 md:mb-6 text-sm">
+            <Link href="/" className="inline-flex items-center gap-2 text-olive/60 hover:text-olive transition-colors mb-3 md:mb-4 text-sm">
               <ArrowLeft className="w-4 h-4" /> Back to Home
             </Link>
             <h1 className="text-3xl md:text-6xl font-serif text-olive ">All Collections</h1>
@@ -49,7 +49,7 @@ export default function ShopContent({ products }: ShopContentProps) {
         </div>
 
         {/* Categories Dropdown Filter */}
-        <div className="relative mb-6 md:mb-12 z-40">
+        <div className="relative mb-6 md:mb-8 z-40">
           <button 
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="inline-flex items-center gap-3 px-6 py-3 bg-olive/5 border border-olive/10 text-olive rounded-full text-sm font-medium hover:bg-olive/10 transition-all select-none cursor-pointer"
