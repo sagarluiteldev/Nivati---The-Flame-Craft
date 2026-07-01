@@ -201,7 +201,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-creme pt-20 px-6 md:hidden flex flex-col"
+            className="fixed inset-0 z-45 bg-creme pt-20 px-6 md:hidden flex flex-col"
           >
             <nav className="flex flex-col items-center text-center gap-6 text-2xl font-serif text-olive mt-8">
               <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}>Shop Candles</Link>
