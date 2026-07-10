@@ -73,22 +73,22 @@ export default function Footer() {
           </motion.h2>
           
           {/* Left Overlapping Image (overlapping N) */}
-          <div className="absolute top-[50%] left-0 w-[17vw] h-[17vw] md:w-44 md:h-44 -translate-x-1/2 -translate-y-1/2 rotate-[-15deg] z-20 pointer-events-none">
+          <div className="absolute top-[50%] left-0 w-[22vw] h-[22vw] md:w-56 md:h-56 -translate-x-1/2 -translate-y-1/2 rotate-[-15deg] z-20 pointer-events-none">
             <img src="/images/footer_1.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
           </div>
 
           {/* Top Overlapping Image (overlapping top of V/A) */}
-          <div className="absolute top-0 left-[38%] w-[13.5vw] h-[13.5vw] md:w-36 md:h-36 -translate-x-1/2 -translate-y-[40%] rotate-[12deg] z-20 pointer-events-none">
+          <div className="absolute top-0 left-[38%] w-[17.5vw] h-[17.5vw] md:w-48 md:h-48 -translate-x-1/2 -translate-y-[40%] rotate-[12deg] z-20 pointer-events-none">
             <img src="/images/footer_2.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
           </div>
 
           {/* Bottom Overlapping Image (overlapping bottom of A/T) */}
-          <div className="absolute bottom-0 left-[62%] w-[13.5vw] h-[13.5vw] md:w-36 md:h-36 -translate-x-1/2 translate-y-[40%] rotate-[-10deg] z-20 pointer-events-none">
+          <div className="absolute bottom-0 left-[62%] w-[17.5vw] h-[17.5vw] md:w-48 md:h-48 -translate-x-1/2 translate-y-[40%] rotate-[-10deg] z-20 pointer-events-none">
             <img src="/images/footer_3.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
           </div>
 
           {/* Right Overlapping Image (overlapping final I) */}
-          <div className="absolute top-[50%] right-0 w-[17vw] h-[17vw] md:w-44 md:h-44 translate-x-1/2 -translate-y-1/2 rotate-[18deg] z-20 pointer-events-none">
+          <div className="absolute top-[50%] right-0 w-[22vw] h-[22vw] md:w-56 md:h-56 translate-x-1/2 -translate-y-1/2 rotate-[18deg] z-20 pointer-events-none">
             <img src="/images/footer_4.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
           </div>
         </div>
