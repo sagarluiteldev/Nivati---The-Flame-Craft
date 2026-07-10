@@ -13,7 +13,27 @@ interface Props {
 
 export default function SearchOverlay({ isOpen, onClose }: Props) {
   const [query, setQuery] = useState("");
+  const [catalogProducts, setCatalogProducts] = useState<typeof products>(products);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch active products from the API when the search overlay is opened
+  useEffect(() => {
+    if (!isOpen) return;
+
+    fetch("/api/products")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch products");
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setCatalogProducts(data);
+        }
+      })
+      .catch((err) => {
+        console.error("Error loading products for search:", err);
+      });
+  }, [isOpen]);
 
   // Focus input when opened and lock body scroll
   useEffect(() => {
@@ -30,7 +50,7 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
 
   const results = query.trim() === "" 
     ? [] 
-    : products.filter(p => {
+    : catalogProducts.filter(p => {
         const categoryMatch = Array.isArray(p.category) 
           ? p.category.some(c => c.toLowerCase().includes(query.toLowerCase()))
           : p.category.toLowerCase().includes(query.toLowerCase());

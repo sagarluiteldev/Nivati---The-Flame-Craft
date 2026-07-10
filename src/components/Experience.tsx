@@ -76,13 +76,8 @@ export default function Experience() {
               key={idx} 
               variants={item}
               whileHover={{ y: -8 }}
-              className="relative group p-8 md:p-10 rounded-[32px] bg-linear-to-br from-olive/5 to-transparent border border-olive/10 hover:border-olive/20 hover:shadow-2xl hover:shadow-olive/5 transition-all duration-500 overflow-hidden"
+              className="relative group p-8 md:p-10 rounded-2xl md:rounded-3xl bg-linear-to-br from-olive/5 to-transparent border border-olive/10 hover:border-olive/20 hover:shadow-2xl hover:shadow-olive/5 transition-all duration-500 overflow-hidden"
             >
-              {/* Giant Watermark Number */}
-              <div className="absolute -top-6 -right-4 text-[120px] font-serif font-bold text-olive/3 pointer-events-none group-hover:text-olive/5 group-hover:-translate-y-2 group-hover:rotate-6 transition-all duration-500">
-                {feature.number}
-              </div>
-
               {/* Icon Container */}
               <div className="w-14 h-14 rounded-full bg-white/50 backdrop-blur-sm border border-olive/10 flex items-center justify-center mb-8 text-sage group-hover:scale-110 group-hover:bg-sage group-hover:text-white transition-all duration-500">
                 <feature.icon className="w-6 h-6" />
