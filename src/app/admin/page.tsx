@@ -7,7 +7,7 @@ import { hasSupabaseEnv } from "@/lib/supabase/env";
 export default async function AdminPage() {
   if (!hasSupabaseEnv()) {
     return (
-      <main className="min-h-screen bg-[radial-gradient(circle_at_top,#f4eee4_0%,#f9f7f2_38%,#f2eee6_100%)] px-4 py-12 md:px-8">
+      <main className="min-h-screen bg-[radial-gradient(circle_at_top,#f4eee4_0%,#FBFEF9_38%,#f2eee6_100%)] px-4 py-12 md:px-8">
         <div className="mx-auto flex min-h-[80vh] max-w-7xl items-center justify-center">
           <AdminSetupNotice />
         </div>

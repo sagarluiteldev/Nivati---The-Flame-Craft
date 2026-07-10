@@ -3,7 +3,8 @@
 
 @theme inline {
   --color-olive: var(--theme-olive, #3b4132);
-  --color-creme: var(--theme-creme, #f9f7f2);
+  --color-creme: var(--theme-creme, #FBFEF9);
+  --color-white: #FBFEF9;
   --color-sage: #a2ad9c;
   --color-terracotta: #d3a795;
 
@@ -19,7 +20,7 @@
 
 :root {
   --theme-olive: #3b4132;
-  --theme-creme: #f9f7f2;
+  --theme-creme: #FBFEF9;
 }
 
 

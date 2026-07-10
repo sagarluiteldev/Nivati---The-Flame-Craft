@@ -387,7 +387,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab }: Props) {
                       cy={pt.salesY} 
                       r="4.5" 
                       fill="#3b4132" 
-                      stroke="#f9f7f2" 
+                      stroke="#FBFEF9" 
                       strokeWidth="1.5" 
                       style={{ transformOrigin: `${pt.x}px ${pt.salesY}px` }}
                       className="transition-transform duration-200 group-hover:scale-125 shadow-sm pointer-events-none"
@@ -399,7 +399,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab }: Props) {
                       cy={pt.expY} 
                       r="4.5" 
                       fill="#d3a795" 
-                      stroke="#f9f7f2" 
+                      stroke="#FBFEF9" 
                       strokeWidth="1.5" 
                       style={{ transformOrigin: `${pt.x}px ${pt.expY}px` }}
                       className="transition-transform duration-200 group-hover:scale-125 shadow-sm pointer-events-none"
@@ -418,7 +418,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab }: Props) {
                       <text 
                         x={textX} 
                         y={textY1} 
-                        fill="#f9f7f2" 
+                        fill="#FBFEF9" 
                         fontSize="9" 
                         textAnchor="middle" 
                         className="font-bold font-sans"

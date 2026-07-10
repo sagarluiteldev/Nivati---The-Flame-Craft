@@ -20,7 +20,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
 
   if (session.status === "missing-env") {
     return (
-      <main className="min-h-screen bg-[radial-gradient(circle_at_top,#f4eee4_0%,#f9f7f2_38%,#f2eee6_100%)] px-4 py-12 md:px-8">
+      <main className="min-h-screen bg-[radial-gradient(circle_at_top,#f4eee4_0%,#FBFEF9_38%,#f2eee6_100%)] px-4 py-12 md:px-8">
         <div className="mx-auto flex min-h-[80vh] max-w-7xl items-center justify-center">
           <AdminSetupNotice />
         </div>
@@ -34,7 +34,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
       : undefined;
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,#f4eee4_0%,#f9f7f2_38%,#f2eee6_100%)] px-4 py-12 md:px-8">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top,#f4eee4_0%,#FBFEF9_38%,#f2eee6_100%)] px-4 py-12 md:px-8">
       <div className="mx-auto flex min-h-[80vh] max-w-7xl items-center justify-center">
         <AdminLoginForm
           defaultEmail={session.user?.email ?? ""}

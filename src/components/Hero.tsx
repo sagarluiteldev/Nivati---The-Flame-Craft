@@ -72,7 +72,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[url('/images/paper-fibers.png')]" />
       
       {/* Background abstract shapes */}
-      <div className="absolute top-0 right-0 w-full lg:w-[60%] h-full bg-sage/5 rounded-l-none lg:rounded-l-[200px] -z-10" />
+      <div className="absolute top-0 right-0 w-full lg:w-[60%] h-full bg-sage/5 rounded-l-none lg:rounded-l-[200px] -z-10 hidden lg:block" />
 
       {/* Floating Parallax Elements - Restricted to Desktop for performance and clarity */}
       <motion.img 
@@ -93,6 +93,54 @@ export default function Hero() {
         style={{ rotate: rotate3, x: mousePos.x * 1.2, y: useTransform(scrollYProgress, [0, 1], [(mousePos.y * 1.2), -150 + (mousePos.y * 1.2)]) }}
         className="absolute top-[40%] left-[25%] w-12 h-auto opacity-70 pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
+
+      {/* Big Blending Hero Image - Desktop Full Bleed View */}
+      <motion.div 
+        className="absolute right-0 top-0 bottom-0 w-[50vw] overflow-hidden z-0 hidden lg:block"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5, ease: "circOut" }}
+      >
+        <AnimatePresence>
+          <MotionImage 
+            key={currentImageIndex}
+            src={heroImages[currentImageIndex].src} 
+            alt={heroImages[currentImageIndex].alt}
+            fill
+            priority
+            sizes="50vw"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.4, ease: "easeInOut" }}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
+          />
+        </AnimatePresence>
+
+        {/* Soft edge blend overlays to blend with creme background */}
+        {/* Left-to-Right Blend (Subtle, long gradient transition) */}
+        <div 
+          className="absolute inset-y-0 left-0 w-[45%] z-10 pointer-events-none" 
+          style={{
+            background: 'linear-gradient(to right, #FBFEF9 0%, rgba(251, 254, 249, 0.98) 12%, rgba(251, 254, 249, 0.85) 30%, rgba(251, 254, 249, 0.5) 60%, rgba(251, 254, 249, 0.18) 82%, rgba(251, 254, 249, 0) 100%)'
+          }}
+        />
+        {/* Top-to-Bottom Blend (Prevents harsh top boundaries) */}
+        <div 
+          className="absolute inset-x-0 top-0 h-[20%] z-10 pointer-events-none" 
+          style={{
+            background: 'linear-gradient(to bottom, #FBFEF9 0%, rgba(251, 254, 249, 0.7) 35%, rgba(251, 254, 249, 0.25) 70%, rgba(251, 254, 249, 0) 100%)'
+          }}
+        />
+        {/* Bottom-to-Top Blend (Prevents harsh bottom boundaries) */}
+        <div 
+          className="absolute inset-x-0 bottom-0 h-[20%] z-10 pointer-events-none" 
+          style={{
+            background: 'linear-gradient(to top, #FBFEF9 0%, rgba(251, 254, 249, 0.7) 35%, rgba(251, 254, 249, 0.25) 70%, rgba(251, 254, 249, 0) 100%)'
+          }}
+        />
+      </motion.div>
 
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
         <div className="flex flex-col gap-8 lg:gap-10 text-center lg:text-left">
@@ -168,57 +216,41 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        <motion.div 
-          className="relative h-[40vh] lg:h-[75vh] w-full mt-4 lg:mt-0"
-          initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
-          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-          transition={{ duration: 1.5, ease: "circOut" }}
-        >
-          {/* Image Container with continuous loop gallery */}
-          <div 
-            className="relative h-full w-full rounded-[12px] lg:rounded-[16px] shadow-2xl border-[1.3px] border-olive/30"
-          >
-            <div className="absolute inset-[1.3px] rounded-[10.7px] lg:rounded-[14.7px] overflow-hidden" style={{ WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}>
-              <div className="absolute inset-0 bg-sage/10 mix-blend-multiply z-10 pointer-events-none" />
-              
-              <AnimatePresence>
-                <MotionImage 
-                  key={currentImageIndex}
-                  src={heroImages[currentImageIndex].src} 
-                  alt={heroImages[currentImageIndex].alt}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.0, ease: "easeInOut" }}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
-                />
-              </AnimatePresence>
-            </div>
-
-            {/* Gallery Navigation Dots */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2" role="tablist" aria-label="Hero gallery slider">
-              {heroImages.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentImageIndex(i)}
-                  className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${
-                    currentImageIndex === i ? "bg-white w-4" : "bg-white/40"
-                  }`}
-                  role="tab"
-                  aria-selected={currentImageIndex === i}
-                  aria-label={`Go to slide ${i + 1}`}
-                />
-              ))}
-            </div>
+        {/* Mobile View Image container / Desktop Grid Spacer */}
+        <div className="relative w-screen left-1/2 right-1/2 -translate-x-1/2 h-[45vh] lg:h-[75vh] lg:w-full lg:translate-x-0 lg:left-0 lg:right-0 mt-4 lg:mt-0 z-0 lg:opacity-0 lg:pointer-events-none">
+          <div className="relative h-full w-full overflow-hidden">
+            <AnimatePresence>
+              <MotionImage 
+                key={currentImageIndex}
+                src={heroImages[currentImageIndex].src} 
+                alt={heroImages[currentImageIndex].alt}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.4, ease: "easeInOut" }}
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
+              />
+            </AnimatePresence>
+            
+            {/* Soft vertical blends for mobile (Subtle, long gradient transition) */}
+            <div 
+              className="absolute inset-x-0 top-0 h-[30%] z-10 pointer-events-none" 
+              style={{
+                background: 'linear-gradient(to bottom, #FBFEF9 0%, rgba(251, 254, 249, 0.95) 15%, rgba(251, 254, 249, 0.7) 45%, rgba(251, 254, 249, 0.25) 75%, rgba(251, 254, 249, 0) 100%)'
+              }}
+            />
+            <div 
+              className="absolute inset-x-0 bottom-0 h-[30%] z-10 pointer-events-none" 
+              style={{
+                background: 'linear-gradient(to top, #FBFEF9 0%, rgba(251, 254, 249, 0.95) 15%, rgba(251, 254, 249, 0.7) 45%, rgba(251, 254, 249, 0.25) 75%, rgba(251, 254, 249, 0) 100%)'
+              }}
+            />
           </div>
-          
-          {/* Decorative floating square */}
-          <div className="absolute -bottom-4 -right-4 lg:-bottom-8 lg:-right-8 w-24 h-24 lg:w-48 lg:h-48 bg-olive rounded-2xl lg:rounded-3xl -z-10 shadow-2xl opacity-20 blur-xl lg:blur-2xl" />
-        </motion.div>
+        </div>
 
         {/* Mobile only buttons */}
         <motion.div 
