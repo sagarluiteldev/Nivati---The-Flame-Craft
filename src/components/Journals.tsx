@@ -1,182 +1,197 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StarIcon as Star } from "@heroicons/react/24/solid";
-import { useState, useEffect } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
-const cinematicReviews = [
+const reviews = [
   {
     name: "Sarah Jenkins",
     badge: "Verified Maker",
     quote: "The beginner's kit completely changed my weekend routine. The instructions were flawless, and the scent fills my entire living room.",
     scent: "Oud & Bergamot",
-    image: "/images/IMG_4136.jpg"
+    rating: 5,
   },
   {
     name: "Marcus T.",
     badge: "Verified Maker",
     quote: "I took the virtual masterclass and it was incredible. Learning the science behind scent throw made my own DIY candles perform like luxury brands.",
     scent: "Sandalwood & Rose",
-    image: "/images/IMG_4133.jpg"
+    rating: 5,
   },
   {
     name: "Elena R.",
     badge: "Verified Buyer",
     quote: "The unboxing experience alone is worth it. Absolutely stunning packaging, zero plastic, and the candle burns so evenly.",
     scent: "Fig & Vetiver",
-    image: "/images/IMG_4147.jpg"
-  }
-];
-
-const editorialReviews = [
+    rating: 5,
+  },
   {
     name: "Chloe M.",
     badge: "Verified Buyer",
     quote: "The most beautiful candles I've ever owned. They feel more like art pieces than just home fragrance.",
-    scent: "Lavender & Sage"
+    scent: "Lavender & Sage",
+    rating: 5,
   },
   {
     name: "David L.",
     badge: "Verified Maker",
     quote: "The raw materials in the DIY kit are top tier. You can really feel the difference when pouring the pure soy wax.",
-    scent: "Cedar & Vanilla"
+    scent: "Cedar & Vanilla",
+    rating: 5,
+  },
+  {
+    name: "Amara K.",
+    badge: "Verified Buyer",
+    quote: "Scent throw is 10/10. Even unlit, the room smells subtle and inviting. Highly recommended!",
+    scent: "Amber & Botanical",
+    rating: 5,
   }
 ];
 
 export default function Journals() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % cinematicReviews.length);
-    }, 6000);
-    return () => clearInterval(timer);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  const itemsPerPage = isMobile ? 1 : 2;
+  const totalPages = Math.ceil(reviews.length / itemsPerPage);
+
+  const handlePrev = () => {
+    setIndex((prev) => (prev - 1 + totalPages) % totalPages);
+  };
+
+  const handleNext = () => {
+    setIndex((prev) => (prev + 1) % totalPages);
+  };
+
+  const currentReviews = reviews.slice(index * itemsPerPage, index * itemsPerPage + itemsPerPage);
+
   return (
-    <section className="py-14 md:py-24 bg-creme text-olive transition-colors duration-700 overflow-hidden" id="journals">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center md:text-left mb-12 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <h2 className="text-3xl md:text-5xl font-serif mb-3 md:mb-4 text-olive transition-colors duration-700">Customer Journals</h2>
-            <p className="font-sans font-light text-olive/70 max-w-xl text-sm md:text-base transition-colors duration-700">
-              Stories from our community of makers and luxury candle enthusiasts.
-            </p>
-          </div>
-          <div className="hidden md:flex gap-2" role="tablist" aria-label="Customer reviews slider">
-            {cinematicReviews.map((_, idx) => (
-              <button 
-                key={idx}
-                onClick={() => setCurrentIndex(idx)}
-                className={`h-1 transition-all duration-500 rounded-full ${idx === currentIndex ? 'w-8 bg-sage' : 'w-2 bg-olive/20'}`}
-                role="tab"
-                aria-selected={idx === currentIndex}
-                aria-label={`Go to slide ${idx + 1}`}
-              />
-            ))}
-          </div>
+    <section className="py-16 md:py-28 bg-creme text-olive overflow-hidden" id="journals">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Section Header */}
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="text-3xl md:text-5xl font-serif text-olive mb-3 md:mb-4">Customer Journals</h2>
+          <p className="font-sans font-light text-olive/70 max-w-xl mx-auto text-sm md:text-base px-2">
+            Stories and experiences from our community of makers and luxury candle enthusiasts.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          {/* Cinematic Hero Review (Col Span 8) */}
-          <div className="lg:col-span-8 relative min-h-[400px] flex items-center">
-            <div className="absolute -inset-4 md:-inset-8 bg-olive/5 rounded-[30px] md:rounded-[40px] -z-10 transition-colors duration-700" />
-            
-            <AnimatePresence mode="wait">
-              <motion.div 
-                key={currentIndex}
-                initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full relative z-10"
-              >
-                {/* Floating Image */}
-                <div className="relative h-64 md:h-[400px] w-full rounded-2xl md:rounded-[30px] overflow-hidden shadow-2xl">
-                  <motion.img 
-                    src={cinematicReviews[currentIndex].image}
-                    alt={cinematicReviews[currentIndex].scent}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 6, ease: "linear" }}
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs uppercase tracking-widest text-white mb-2">
-                      {cinematicReviews[currentIndex].scent}
-                    </span>
-                  </div>
-                </div>
+        {/* Desktop Carousel Container with Side Arrows */}
+        <div className="relative">
+          {/* Desktop Left Arrow Button */}
+          <button
+            onClick={handlePrev}
+            className="hidden md:flex absolute -left-6 lg:-left-12 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-olive/20 bg-white/90 text-olive hover:bg-olive hover:text-white items-center justify-center transition-all duration-300 shadow-md cursor-pointer"
+            aria-label="Previous reviews"
+          >
+            <ChevronLeftIcon className="w-6 h-6" />
+          </button>
 
-                {/* Giant Typography */}
-                <div className="flex flex-col justify-center py-4">
-                  <div className="flex gap-1 mb-6">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-sage text-sage" />
-                    ))}
-                  </div>
-                  <blockquote className="font-serif text-2xl md:text-3xl leading-relaxed md:leading-snug mb-8 text-olive">
-                    &quot;{cinematicReviews[currentIndex].quote}&quot;
-                  </blockquote>
-                  <div>
-                    <div className="font-serif text-xl tracking-wide">{cinematicReviews[currentIndex].name}</div>
-                    <div className="text-sm font-light text-olive/50 mt-1 uppercase tracking-widest flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-sage" />
-                      {cinematicReviews[currentIndex].badge}
+          {/* Cards Display Area */}
+          <div className="overflow-hidden min-h-[260px] md:min-h-[280px] px-1 py-1">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={index + (isMobile ? "-m" : "-d")}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 w-full"
+              >
+                {currentReviews.map((review, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-olive border border-olive/20 rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-olive/10 hover:border-sage/40 transition-all duration-300"
+                  >
+                    <div>
+                      {/* Rating Stars & Badge */}
+                      <div className="flex items-center justify-between mb-4 sm:mb-6">
+                        <div className="flex gap-1">
+                          {[...Array(review.rating)].map((_, i) => (
+                            <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-sage text-sage" />
+                          ))}
+                        </div>
+                        <span className="text-[11px] sm:text-xs font-light text-creme/70 uppercase tracking-wider flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-sage" />
+                          {review.badge}
+                        </span>
+                      </div>
+
+                      {/* Quote */}
+                      <blockquote className="font-serif text-base sm:text-lg md:text-xl text-creme/95 leading-relaxed mb-6 sm:mb-8">
+                        &quot;{review.quote}&quot;
+                      </blockquote>
+                    </div>
+
+                    {/* Reviewer & Scent Tag */}
+                    <div className="pt-4 sm:pt-6 border-t border-creme/15 flex items-center justify-between">
+                      <div>
+                        <div className="font-serif text-base sm:text-lg text-creme font-medium">{review.name}</div>
+                      </div>
+                      <span className="inline-block px-3 py-1 bg-creme/10 border border-creme/20 rounded-full text-xs font-sans text-creme/90">
+                        {review.scent}
+                      </span>
                     </div>
                   </div>
-                </div>
+                ))}
               </motion.div>
             </AnimatePresence>
           </div>
 
-          {/* Editorial Supporting Reviews (Col Span 4) */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            {editorialReviews.map((t, idx) => (
-              <motion.div 
-                key={idx}
-                className="bg-olive/5 border border-olive/10 p-6 md:p-8 rounded-2xl md:rounded-[30px] flex flex-col justify-between hover:bg-olive/10 transition-colors duration-500 group h-full"
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 + (idx * 0.2) }}
-              >
-                <div>
-                  <div className="flex gap-1 mb-4 opacity-70 group-hover:opacity-100 transition-opacity">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-sage text-sage" />
-                    ))}
-                  </div>
-                  <blockquote className="text-sm md:text-base font-light leading-relaxed mb-6 italic text-olive/90">
-                    &quot;{t.quote}&quot;
-                  </blockquote>
-                </div>
-                
-                <div className="border-t border-olive/10 pt-4 mt-auto">
-                  <div className="font-serif text-base mb-1">{t.name}</div>
-                  <div className="text-xs font-light text-olive/50 flex justify-between items-center">
-                    <span>{t.badge}</span>
-                    <span className="italic">{t.scent}</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          {/* Desktop Right Arrow Button */}
+          <button
+            onClick={handleNext}
+            className="hidden md:flex absolute -right-6 lg:-right-12 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-olive/20 bg-white/90 text-olive hover:bg-olive hover:text-white items-center justify-center transition-all duration-300 shadow-md cursor-pointer"
+            aria-label="Next reviews"
+          >
+            <ChevronRightIcon className="w-6 h-6" />
+          </button>
         </div>
 
-        {/* Mobile pagination dots */}
-        <div className="flex md:hidden justify-center gap-2 mt-8" role="tablist" aria-label="Customer reviews mobile slider">
-          {cinematicReviews.map((_, idx) => (
-            <button 
-              key={idx}
-              onClick={() => setCurrentIndex(idx)}
-              className={`h-1.5 transition-all duration-500 rounded-full ${idx === currentIndex ? 'w-8 bg-sage' : 'w-2 bg-olive/20'}`}
-              role="tab"
-              aria-selected={idx === currentIndex}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
+        {/* Mobile Navigation Controls & Page Indicator Dots */}
+        <div className="flex items-center justify-between md:justify-center gap-4 mt-6 md:mt-10 max-w-xs mx-auto md:max-w-none">
+          {/* Mobile Previous Button */}
+          <button
+            onClick={handlePrev}
+            className="flex md:hidden w-10 h-10 rounded-full border border-olive/20 bg-white/90 text-olive active:bg-olive active:text-white items-center justify-center transition-all shadow-xs shrink-0 cursor-pointer"
+            aria-label="Previous review"
+          >
+            <ChevronLeftIcon className="w-5 h-5" />
+          </button>
+
+          {/* Pagination Dots */}
+          <div className="flex justify-center items-center gap-2">
+            {[...Array(totalPages)].map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setIndex(idx)}
+                className={`transition-all duration-300 rounded-full cursor-pointer ${
+                  idx === index ? "w-6 sm:w-8 h-2 bg-olive" : "w-2 h-2 bg-olive/20 hover:bg-olive/40"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Mobile Next Button */}
+          <button
+            onClick={handleNext}
+            className="flex md:hidden w-10 h-10 rounded-full border border-olive/20 bg-white/90 text-olive active:bg-olive active:text-white items-center justify-center transition-all shadow-xs shrink-0 cursor-pointer"
+            aria-label="Next review"
+          >
+            <ChevronRightIcon className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </section>

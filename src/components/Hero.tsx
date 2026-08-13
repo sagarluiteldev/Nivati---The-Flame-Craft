@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
-const MotionImage = motion(Image);
+const MotionImage = motion.create(Image);
 
 const slogans = [
   "Scented Handmade Candles",
@@ -153,7 +153,21 @@ export default function Hero() {
             {/* Editorial Heading Design */}
             <h1 className="font-serif text-olive leading-none">
               <span className="text-6xl md:text-8xl lg:text-[11rem] block tracking-tighter mix-blend-multiply">
-                Nivati
+                N
+                <span className="relative inline-block">
+                  ı
+                  <span 
+                    className="absolute left-[50%] -translate-x-[40%] top-[0.21em] pointer-events-none"
+                  >
+                    <svg
+                      viewBox="0 0 100 155"
+                      className="w-[0.13em] h-[0.20em] fill-olive text-olive"
+                    >
+                      <path d="M 40.91,0.0 L 43.51,9.86 L 41.95,21.66 L 36.62,31.39 L 17.14,55.26 L 7.79,69.13 L 1.69,83.66 L 0.0,100.65 L 4.16,115.83 L 11.43,128.28 L 17.53,136.06 L 37.92,154.87 L 30.0,145.4 L 24.29,134.77 L 22.6,128.15 L 22.6,119.85 L 26.36,107.92 L 31.82,99.23 L 34.16,108.44 L 38.57,112.46 L 37.27,97.02 L 39.74,84.05 L 45.84,73.15 L 54.94,65.11 L 53.64,69.91 L 54.42,78.86 L 72.73,106.36 L 77.27,119.85 L 77.27,128.15 L 74.42,137.62 L 69.87,145.4 L 61.95,154.87 L 81.95,136.45 L 91.69,123.48 L 98.57,107.66 L 99.87,92.35 L 95.32,75.62 L 83.12,56.03 L 82.47,62.26 L 79.61,70.04 L 74.55,75.88 L 70.52,77.56 L 72.6,50.07 L 68.57,31.78 L 64.55,23.35 L 56.75,12.71 L 48.96,5.32 Z" />
+                    </svg>
+                  </span>
+                </span>
+                vati
               </span>
               <motion.span 
                 initial={{ opacity: 0, y: 10 }}
