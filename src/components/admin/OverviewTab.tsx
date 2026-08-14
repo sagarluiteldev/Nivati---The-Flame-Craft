@@ -26,7 +26,7 @@ interface Props {
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export default function OverviewTab({ catalogProducts, setActiveTab, timeRange = "This Month" }: Props) {
-  const { sales, expenses, stockLevels } = useDashboardStore();
+  const { sales, expenses, rawMaterials } = useDashboardStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"date" | "amount" | "customer">("date");
   const [selectedMonthIdx, setSelectedMonthIdx] = useState<number>(7); // Default to August (idx 7)
@@ -58,17 +58,11 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
     // Total Orders count
     const totalOrdersCount = sales.length;
 
-    // Stock Valuation (cost basis & retail basis)
-    let stockCostBasis = 0;
-    let stockRetailValue = 0;
-
-    stockLevels.forEach((s) => {
-      const prod = catalogProducts.find((p) => p.id === s.productId);
-      if (prod) {
-        stockCostBasis += s.stockLevel * s.unitCost;
-        stockRetailValue += s.stockLevel * Number(prod.price);
-      }
-    });
+    // Raw Materials Valuation
+    const rawMaterialsValuation = rawMaterials.reduce(
+      (sum, m) => sum + (m.stockLevel * m.unitCost), 
+      0
+    );
 
     return {
       totalRevenue,
@@ -77,10 +71,9 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
       profitMargin,
       totalUnitsSold,
       totalOrdersCount,
-      stockCostBasis,
-      stockRetailValue,
+      rawMaterialsValuation,
     };
-  }, [sales, expenses, stockLevels, catalogProducts]);
+  }, [sales, expenses, rawMaterials]);
 
   // 2. Real Monthly Performance Calculation (May - Dec)
   const currentMonthKey = useMemo(() => {
@@ -217,7 +210,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         
         {/* Card 1: Primary Dark Green Highlight Card */}
-        <div className="relative overflow-hidden rounded-[24px] sm:rounded-[28px] bg-gradient-to-br from-[#242c1e] via-[#2c3725] to-[#384630] p-6 text-white shadow-xl shadow-[#283322]/15 transition-all duration-300 hover:scale-[1.01]">
+        <div className="relative overflow-hidden rounded-3xl sm:rounded-[28px] bg-linear-to-br from-[#242c1e] via-[#2c3725] to-[#384630] p-6 text-white shadow-xl shadow-[#283322]/15 transition-all duration-300 hover:scale-[1.01]">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-white/80 tracking-wide">
               Total Units Sold
@@ -243,7 +236,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
         </div>
 
         {/* Card 2: Total Orders */}
-        <div className="rounded-[24px] sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01]">
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01]">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
               Total Orders Logged
@@ -269,7 +262,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
         </div>
 
         {/* Card 3: Operating Costs / Expenses */}
-        <div className="rounded-[24px] sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01]">
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01]">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
               Operating Costs
@@ -292,7 +285,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
         </div>
 
         {/* Card 4: Net Profit */}
-        <div className="rounded-[24px] sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01]">
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01]">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
               Net Profit
@@ -319,7 +312,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
       <div className="grid gap-6 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px]">
         
         {/* Left: Performance Overview Bar Chart */}
-        <div className="rounded-[24px] sm:rounded-[28px] bg-white p-6 sm:p-7 border border-[#e3e8e2] shadow-sm flex flex-col justify-between">
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 sm:p-7 border border-[#e3e8e2] shadow-sm flex flex-col justify-between">
           
           {/* Chart Header */}
           <div className="flex items-center justify-between mb-6">
@@ -385,7 +378,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
             </div>
 
             {/* Vertical Rounded Bars Container */}
-            <div className="relative z-10 grid grid-cols-8 gap-2 sm:gap-4 h-[240px] items-end pl-9 pr-2 pb-8">
+            <div className="relative z-10 grid grid-cols-8 gap-2 sm:gap-4 h-60 items-end pl-9 pr-2 pb-8">
               {monthsData.map((item, idx) => {
                 const isSelected = selectedMonthIdx === idx;
                 const hasData = item.revenue > 0 || item.sales > 0;
@@ -427,9 +420,9 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                     <div className="w-full flex justify-center items-end h-full">
                       <div
                         style={{ height: `${item.heightPct}%` }}
-                        className={`w-full max-w-[48px] rounded-xl sm:rounded-2xl transition-all duration-300 group-hover:scale-y-[1.03] ${
+                        className={`w-full max-w-12 rounded-xl sm:rounded-2xl transition-all duration-300 group-hover:scale-y-[1.03] ${
                           item.isCurrent
-                            ? "bg-gradient-to-t from-[#242c1e] to-[#45573b] shadow-lg shadow-[#283322]/20"
+                            ? "bg-linear-to-t from-[#242c1e] to-[#45573b] shadow-lg shadow-[#283322]/20"
                             : isSelected
                             ? "bg-[#283322]/25 ring-2 ring-[#283322]/40"
                             : "bg-[#e8ede7] hover:bg-[#dbe2da]"
@@ -466,7 +459,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
         </div>
 
         {/* Right: Sales Overview Radial Arc Gauge */}
-        <div className="rounded-[24px] sm:rounded-[28px] bg-white p-6 sm:p-7 border border-[#e3e8e2] shadow-sm flex flex-col justify-between">
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 sm:p-7 border border-[#e3e8e2] shadow-sm flex flex-col justify-between">
           
           {/* Card Header */}
           <div className="flex items-center justify-between">
@@ -490,7 +483,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
           <div className="relative flex flex-col items-center justify-center my-4">
             <svg 
               viewBox="0 0 240 140" 
-              className="w-full max-w-[240px] overflow-visible"
+              className="w-full max-w-60 overflow-visible"
             >
               {Array.from({ length: 18 }).map((_, i) => {
                 const angle = 180 + (i * (180 / 17));
@@ -571,7 +564,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
       </div>
 
       {/* 3. BOTTOM SECTION: RECENT ORDERS TABLE */}
-      <div className="rounded-[24px] sm:rounded-[28px] bg-white p-6 sm:p-7 border border-[#e3e8e2] shadow-sm">
+      <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 sm:p-7 border border-[#e3e8e2] shadow-sm">
         
         {/* Table Top Controls Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6">
@@ -641,7 +634,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
 
         {/* Data Table */}
         <div className="overflow-x-auto scrollbar-hide -mx-6 sm:-mx-7 px-6 sm:px-7">
-          <table className="w-full text-left border-collapse min-w-[760px]">
+          <table className="w-full text-left border-collapse min-w-190">
             <thead>
               <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
                 <th className="pb-3 pl-2 w-8">
@@ -698,7 +691,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                           )}
                         </div>
                         <div>
-                          <p className="font-bold text-[#222a1d] line-clamp-1 max-w-[160px]">
+                          <p className="font-bold text-[#222a1d] line-clamp-1 max-w-40">
                             {order.firstProductTitle}
                           </p>
                           <p className="text-[10px] text-[#222a1d]/40">
@@ -721,7 +714,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                     {/* Customer Details */}
                     <td className="py-4">
                       <p className="font-bold text-[#222a1d]">{order.customerName}</p>
-                      <p className="text-[10px] text-[#222a1d]/40 truncate max-w-[140px]">{order.customerEmail || "Walk-in"}</p>
+                      <p className="text-[10px] text-[#222a1d]/40 truncate max-w-35">{order.customerEmail || "Walk-in"}</p>
                     </td>
 
                     {/* Category */}

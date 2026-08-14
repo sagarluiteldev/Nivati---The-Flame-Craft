@@ -10,69 +10,85 @@ import {
   CircleStackIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
-  XCircleIcon
+  XCircleIcon,
+  PencilSquareIcon,
+  TrashIcon,
+  ArrowPathIcon
 } from "@heroicons/react/24/outline";
-import { useDashboardStore } from "@/lib/dashboard-store";
-import type { AdminCatalogProduct } from "@/lib/catalog";
+import { 
+  useDashboardStore, 
+  type RawMaterialStock, 
+  type MaterialCategory 
+} from "@/lib/dashboard-store";
 
-interface Props {
-  catalogProducts: AdminCatalogProduct[];
-}
+const CATEGORY_TABS: { id: string; label: string }[] = [
+  { id: "all", label: "All Materials" },
+  { id: "wax", label: "Waxes & Dyes" },
+  { id: "wicks", label: "Wicks & Stickers" },
+  { id: "fragrance", label: "Fragrance Oils" },
+  { id: "moulding", label: "Plaster & Moulds" },
+  { id: "packaging", label: "Labels & Packaging" },
+  { id: "vessels", label: "Jars & Lids" },
+  { id: "tools", label: "Studio Tools" },
+];
 
-export default function StockTab({ catalogProducts }: Props) {
+export default function StockTab() {
   const { 
-    stockLevels, 
+    rawMaterials, 
     stockLogs, 
-    updateStockProfile, 
-    adjustStockLevel, 
-    logRestock 
+    addRawMaterial,
+    updateRawMaterial,
+    deleteRawMaterial,
+    adjustMaterialStock, 
+    restockMaterial 
   } = useDashboardStore();
   
   const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   
   // Modals state
   const [isRestockOpen, setIsRestockOpen] = useState(false);
+  const [isAddMaterialOpen, setIsAddMaterialOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogsOpen, setIsLogsOpen] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
+
+  // Form State - Add New Material
+  const [newMatName, setNewMatName] = useState("");
+  const [newMatCategory, setNewMatCategory] = useState<MaterialCategory>("wax");
+  const [newMatUnit, setNewMatUnit] = useState("kg");
+  const [newMatStock, setNewMatStock] = useState(10);
+  const [newMatSafety, setNewMatSafety] = useState(5);
+  const [newMatCost, setNewMatCost] = useState(500);
 
   // Form State - Restock
   const [restockQty, setRestockQty] = useState(10);
   const [restockCost, setRestockCost] = useState(0);
-  const [restockNote, setRestockNote] = useState("Restock shipment received");
+  const [restockNote, setRestockNote] = useState("Raw material batch received");
 
   // Form State - Profile Config
+  const [profileName, setProfileName] = useState("");
+  const [profileCategory, setProfileCategory] = useState<MaterialCategory>("wax");
+  const [profileUnit, setProfileUnit] = useState("kg");
   const [profileStock, setProfileStock] = useState(0);
   const [profileSafety, setProfileSafety] = useState(5);
   const [profileCost, setProfileCost] = useState(0);
-  const [profileNote, setProfileNote] = useState("Inventory audit adjustment");
 
   // Table items mapping
-  const stockItems = useMemo(() => {
-    return stockLevels.map((s) => {
-      const prod = catalogProducts.find((p) => p.id === s.productId);
-      const retailPrice = prod ? Number(prod.price) : 0;
-      const marginVal = retailPrice > 0 ? ((retailPrice - s.unitCost) / retailPrice) * 100 : 0;
-      
+  const materialItems = useMemo(() => {
+    return rawMaterials.map((m) => {
       let status: "in-stock" | "low-stock" | "out-of-stock" = "in-stock";
-      if (s.stockLevel === 0) status = "out-of-stock";
-      else if (s.stockLevel <= s.safetyThreshold) status = "low-stock";
+      if (m.stockLevel === 0) status = "out-of-stock";
+      else if (m.stockLevel <= m.safetyThreshold) status = "low-stock";
 
       return {
-        productId: s.productId,
-        title: prod?.title || s.productId,
-        img: prod?.img || "",
-        retailPrice,
-        stockLevel: s.stockLevel,
-        safetyThreshold: s.safetyThreshold,
-        unitCost: s.unitCost,
-        margin: marginVal,
+        ...m,
         status,
-        assetValue: s.stockLevel * s.unitCost,
+        assetValue: m.stockLevel * m.unitCost,
       };
     });
-  }, [stockLevels, catalogProducts]);
+  }, [rawMaterials]);
 
   // Inventory KPI Summary
   const inventoryMetrics = useMemo(() => {
@@ -81,7 +97,7 @@ export default function StockTab({ catalogProducts }: Props) {
     let lowCount = 0;
     let outCount = 0;
 
-    stockItems.forEach((item) => {
+    materialItems.forEach((item) => {
       totalValuation += item.assetValue;
       if (item.status === "in-stock") healthyCount++;
       else if (item.status === "low-stock") lowCount++;
@@ -89,116 +105,203 @@ export default function StockTab({ catalogProducts }: Props) {
     });
 
     return { totalValuation, healthyCount, lowCount, outCount };
-  }, [stockItems]);
+  }, [materialItems]);
 
   // Filtered Stock Items
   const filteredStock = useMemo(() => {
-    return stockItems.filter((item) => {
+    return materialItems.filter((item) => {
       const matchesSearch = 
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.productId.toLowerCase().includes(searchQuery.toLowerCase());
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.id.toLowerCase().includes(searchQuery.toLowerCase());
         
-      const matchesStatus = 
-        statusFilter === "all" || 
-        (statusFilter === "low" && item.status === "low-stock") ||
-        (statusFilter === "out" && item.status === "out-of-stock") ||
-        (statusFilter === "good" && item.status === "in-stock");
-
-      return matchesSearch && matchesStatus;
+      const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
+      const matchesStatus = statusFilter === "all" || item.status === statusFilter;
+      
+      return matchesSearch && matchesCategory && matchesStatus;
     });
-  }, [stockItems, searchQuery, statusFilter]);
+  }, [materialItems, searchQuery, categoryFilter, statusFilter]);
 
-  const handleOpenRestock = (productId: string) => {
-    setSelectedProductId(productId);
-    const item = stockLevels.find((s) => s.productId === productId);
-    setRestockQty(15);
-    setRestockCost(item ? item.unitCost : 0);
-    setRestockNote("Restock shipment received");
+  // Modal Triggers
+  const handleOpenRestock = (material: RawMaterialStock) => {
+    setSelectedMaterialId(material.id);
+    setRestockQty(material.unit === "kg" ? 10 : material.unit === "pcs" ? 100 : 5);
+    setRestockCost(material.unitCost);
+    setRestockNote(`Restock: ${material.name}`);
     setIsRestockOpen(true);
   };
 
-  const handleOpenProfile = (productId: string) => {
-    setSelectedProductId(productId);
-    const item = stockLevels.find((s) => s.productId === productId);
-    if (item) {
-      setProfileStock(item.stockLevel);
-      setProfileSafety(item.safetyThreshold);
-      setProfileCost(item.unitCost);
-      setProfileNote("Inventory audit adjustment");
-      setIsProfileOpen(true);
-    }
+  const handleOpenProfile = (material: RawMaterialStock) => {
+    setSelectedMaterialId(material.id);
+    setProfileName(material.name);
+    setProfileCategory(material.category);
+    setProfileUnit(material.unit);
+    setProfileStock(material.stockLevel);
+    setProfileSafety(material.safetyThreshold);
+    setProfileCost(material.unitCost);
+    setIsProfileOpen(true);
   };
 
-  const handleSaveRestock = (e: React.FormEvent) => {
+  const handleCreateMaterial = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedProductId || restockQty <= 0 || restockCost <= 0) return;
-    logRestock(selectedProductId, restockQty, restockCost, restockNote);
+    if (!newMatName.trim()) return;
+
+    await addRawMaterial({
+      name: newMatName.trim(),
+      category: newMatCategory,
+      unit: newMatUnit.trim(),
+      stockLevel: Number(newMatStock),
+      safetyThreshold: Number(newMatSafety),
+      unitCost: Number(newMatCost),
+      img: "",
+    });
+
+    setIsAddMaterialOpen(false);
+    setNewMatName("");
+  };
+
+  const handleSaveRestock = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedMaterialId) return;
+
+    await restockMaterial(
+      selectedMaterialId, 
+      Number(restockQty), 
+      Number(restockCost), 
+      restockNote
+    );
     setIsRestockOpen(false);
+    setSelectedMaterialId(null);
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedProductId || profileStock < 0 || profileSafety < 0 || profileCost < 0) return;
-    updateStockProfile(selectedProductId, profileStock, profileSafety, profileCost, profileNote);
+    if (!selectedMaterialId) return;
+
+    await updateRawMaterial(selectedMaterialId, {
+      name: profileName,
+      category: profileCategory,
+      unit: profileUnit,
+      stockLevel: Number(profileStock),
+      safetyThreshold: Number(profileSafety),
+      unitCost: Number(profileCost),
+    });
     setIsProfileOpen(false);
+    setSelectedMaterialId(null);
   };
+
+  const handleDeleteMaterial = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to remove "${name}" from raw materials stock?`)) return;
+    await deleteRawMaterial(id);
+  };
+
+  const activeMaterial = rawMaterials.find((m) => m.id === selectedMaterialId);
 
   return (
     <div className="space-y-6 sm:space-y-8">
       
-      {/* 1. STOCK SUMMARY CARDS */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
-            Warehouse Valuation
-          </span>
-          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#283322]">
-            Rs {inventoryMetrics.totalValuation.toLocaleString()}
-          </h4>
-          <span className="text-[10px] text-emerald-600 font-semibold mt-1 block">
-            At wholesale cost basis
-          </span>
+      {/* 1. TOP STATS CARDS */}
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        
+        {/* Card 1: Asset Valuation */}
+        <div className="rounded-3xl sm:rounded-[28px] bg-linear-to-br from-[#242c1e] via-[#2c3725] to-[#384630] p-6 text-white shadow-xl shadow-[#283322]/15">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-white/80 tracking-wide">
+              Raw Materials Valuation
+            </span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#283322]">
+              <CircleStackIcon className="h-5 w-5 text-[#283322]" />
+            </div>
+          </div>
+          <div className="mt-5">
+            <div className="text-3xl sm:text-4xl font-bold font-sans tracking-tight text-white">
+              Rs {inventoryMetrics.totalValuation.toLocaleString()}
+            </div>
+            <p className="mt-2 text-xs text-white/60 font-medium">
+              Total studio supplies on hand ({rawMaterials.length} items)
+            </p>
+          </div>
         </div>
 
-        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
-            Healthy In-Stock
-          </span>
-          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#15803d]">
-            {inventoryMetrics.healthyCount}
-          </h4>
-          <span className="text-[10px] text-[#222a1d]/40 font-medium mt-1 block">
-            Above safety thresholds
-          </span>
+        {/* Card 2: Healthy Stock Count */}
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
+              Optimal Stock Supplies
+            </span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#dcfce7] text-[#16a34a]">
+              <CheckCircleIcon className="h-5 w-5" />
+            </div>
+          </div>
+          <div className="mt-5">
+            <div className="text-3xl sm:text-4xl font-bold font-sans tracking-tight text-[#222a1d]">
+              {inventoryMetrics.healthyCount}
+            </div>
+            <p className="mt-2 text-xs text-[#222a1d]/40 font-medium">
+              Above safety inventory threshold
+            </p>
+          </div>
         </div>
 
-        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
-            Low Stock Alerts
-          </span>
-          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#d97706]">
-            {inventoryMetrics.lowCount}
-          </h4>
-          <span className="text-[10px] text-amber-600 font-semibold mt-1 block">
-            Refill recommended
-          </span>
+        {/* Card 3: Low Stock Warnings */}
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
+              Low Stock Warnings
+            </span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#fef3c7] text-[#d97706]">
+              <ExclamationTriangleIcon className="h-5 w-5" />
+            </div>
+          </div>
+          <div className="mt-5">
+            <div className="text-3xl sm:text-4xl font-bold font-sans tracking-tight text-[#d97706]">
+              {inventoryMetrics.lowCount}
+            </div>
+            <p className="mt-2 text-xs text-[#222a1d]/40 font-medium">
+              Needs restock soon
+            </p>
+          </div>
         </div>
 
-        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
-            Out of Stock
-          </span>
-          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#dc2626]">
-            {inventoryMetrics.outCount}
-          </h4>
-          <span className="text-[10px] text-red-600 font-semibold mt-1 block">
-            Action required
-          </span>
+        {/* Card 4: Depleted / Out of Stock */}
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
+              Depleted Materials
+            </span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#fee2e2] text-[#dc2626]">
+              <XCircleIcon className="h-5 w-5" />
+            </div>
+          </div>
+          <div className="mt-5">
+            <div className="text-3xl sm:text-4xl font-bold font-sans tracking-tight text-[#dc2626]">
+              {inventoryMetrics.outCount}
+            </div>
+            <p className="mt-2 text-xs text-[#222a1d]/40 font-medium">
+              Requires immediate ordering
+            </p>
+          </div>
         </div>
       </div>
 
+      {/* CATEGORY FILTER CHIPS */}
+      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1">
+        {CATEGORY_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setCategoryFilter(tab.id)}
+            className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              categoryFilter === tab.id
+                ? "bg-[#283322] text-white shadow-sm"
+                : "bg-white border border-[#e3e8e2] text-[#222a1d]/70 hover:bg-[#f1f4f1]"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {/* 2. FILTER & ACTION BAR */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-[24px] sm:rounded-[28px] border border-[#e3e8e2] shadow-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-3xl sm:rounded-[28px] border border-[#e3e8e2] shadow-sm">
         
         <div className="flex flex-1 flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
           {/* Search Input */}
@@ -208,7 +311,7 @@ export default function StockTab({ catalogProducts }: Props) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search products in warehouse..."
+              placeholder="Search raw materials (wax, wicks, plaster, oils)..."
               className="w-full rounded-full border border-[#e3e8e2] bg-[#f8faf8] pl-10 pr-4 py-2.5 text-xs text-[#222a1d] placeholder:text-[#222a1d]/35 outline-none transition-all focus:border-[#283322]/40 focus:bg-white"
             />
           </div>
@@ -219,137 +322,152 @@ export default function StockTab({ catalogProducts }: Props) {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
           >
-            <option value="all">All Stock Levels</option>
-            <option value="good">Healthy Stock (Good)</option>
-            <option value="low">Low Stock (Alert)</option>
-            <option value="out">Out of Stock</option>
+            <option value="all">All Inventory Statuses</option>
+            <option value="in-stock">Healthy Stock (Optimal)</option>
+            <option value="low-stock">Low Stock (Alert)</option>
+            <option value="out-of-stock">Depleted (0 left)</option>
           </select>
         </div>
 
-        {/* Audit Logs Button */}
-        <button
-          onClick={() => setIsLogsOpen(true)}
-          className="flex items-center justify-center gap-2 rounded-full border border-[#e3e8e2] bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-[#222a1d] shadow-sm hover:border-[#283322]/30 hover:bg-[#f1f4f1] transition-all cursor-pointer w-full sm:w-auto"
-        >
-          <ClockIcon className="h-4 w-4 text-[#222a1d]/60" />
-          <span>Audit Logs ({stockLogs.length})</span>
-        </button>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <button
+            onClick={() => setIsAddMaterialOpen(true)}
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 rounded-full bg-[#283322] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer active:scale-95"
+          >
+            <PlusIcon className="h-4 w-4" />
+            <span>Add Material</span>
+          </button>
+
+          <button
+            onClick={() => setIsLogsOpen(true)}
+            className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 rounded-full border border-[#e3e8e2] bg-white px-4 py-2.5 text-xs font-bold text-[#222a1d] shadow-sm hover:border-[#283322]/30 hover:bg-[#f1f4f1] transition-all cursor-pointer"
+          >
+            <ClockIcon className="h-4 w-4 text-[#222a1d]/60" />
+            <span>Audit Logs ({stockLogs.length})</span>
+          </button>
+        </div>
       </div>
 
       {/* 3. STOCK MATRIX DATA TABLE */}
-      <div className="rounded-[24px] sm:rounded-[28px] bg-white p-5 sm:p-7 border border-[#e3e8e2] shadow-sm">
+      <div className="rounded-3xl sm:rounded-[28px] bg-white p-5 sm:p-7 border border-[#e3e8e2] shadow-sm">
         <div className="overflow-x-auto scrollbar-hide -mx-5 sm:-mx-7 px-5 sm:px-7">
-          <table className="w-full text-left border-collapse min-w-[780px]">
+          <table className="w-full text-left border-collapse min-w-195">
             <thead>
               <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
-                <th className="pb-3 pl-2">Product</th>
-                <th className="pb-3 text-center">In Stock</th>
+                <th className="pb-3 pl-2">Raw Material</th>
+                <th className="pb-3">Category</th>
+                <th className="pb-3 text-center">Current Quantity</th>
                 <th className="pb-3 text-center">Status</th>
-                <th className="pb-3 text-center">Safety</th>
-                <th className="pb-3 text-right">Cost Price</th>
-                <th className="pb-3 text-right">Retail</th>
-                <th className="pb-3 text-right">Margin</th>
-                <th className="pb-3 text-right">Valuation</th>
+                <th className="pb-3 text-center">Safety Alert</th>
+                <th className="pb-3 text-right">Unit Cost</th>
+                <th className="pb-3 text-right">Asset Valuation</th>
                 <th className="pb-3 pr-2 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#f2f6f1] text-xs text-[#222a1d]">
               {filteredStock.map((item) => (
-                <tr key={item.productId} className="hover:bg-[#f8faf8] transition-colors group">
+                <tr key={item.id} className="hover:bg-[#f8faf8] transition-colors group">
                   
-                  {/* Product Info */}
+                  {/* Material Info */}
                   <td className="py-4 pl-2">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[#f1f4f1] border border-[#e8ede7]">
                         {item.img ? (
-                          <img src={item.img} alt={item.title} className="h-full w-full object-cover" />
+                          <img src={item.img} alt={item.name} className="h-full w-full object-cover" />
                         ) : (
-                          <div className="h-full w-full flex items-center justify-center text-[#283322]/20 font-serif text-xs">🕯️</div>
+                          <div className="h-full w-full flex items-center justify-center text-[#283322]/40 font-serif text-sm">
+                            📦
+                          </div>
                         )}
                       </div>
                       <div className="min-w-0">
-                        <div className="font-bold text-[#222a1d] truncate max-w-[150px]">{item.title}</div>
-                        <div className="text-[10px] text-[#222a1d]/45 font-mono truncate max-w-[150px]">{item.productId}</div>
+                        <div className="font-bold text-[#222a1d] truncate max-w-40">{item.name}</div>
+                        <div className="text-[10px] text-[#222a1d]/45 font-mono truncate max-w-40">{item.id}</div>
                       </div>
                     </div>
+                  </td>
+
+                  {/* Category */}
+                  <td className="py-4">
+                    <span className="inline-block rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70 uppercase tracking-wider">
+                      {item.category}
+                    </span>
                   </td>
 
                   {/* Inline +/- Stock Counter */}
                   <td className="py-4">
-                    <div className="flex items-center justify-center gap-1.5">
+                    <div className="flex items-center justify-center gap-2">
                       <button 
-                        onClick={() => adjustStockLevel(item.productId, -1, "Manual inline subtraction")}
-                        className="h-6 w-6 rounded-lg border border-[#e3e8e2] bg-[#f8faf8] text-[#222a1d]/60 hover:bg-[#283322] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-                        title="Deduct 1"
+                        onClick={() => adjustMaterialStock(item.id, -1, "Manual deduction")}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:border-[#283322] hover:bg-[#283322] hover:text-white transition-colors cursor-pointer active:scale-90"
+                        title={`Deduct 1 ${item.unit}`}
                       >
-                        <MinusIcon className="h-3 w-3" />
+                        <MinusIcon className="h-3.5 w-3.5" />
                       </button>
-                      <span className="font-bold font-mono text-sm w-7 text-center">{item.stockLevel}</span>
+                      <div className="min-w-16 text-center font-mono font-bold text-sm text-[#222a1d]">
+                        {item.stockLevel} <span className="text-[10px] font-normal text-[#222a1d]/50">{item.unit}</span>
+                      </div>
                       <button 
-                        onClick={() => adjustStockLevel(item.productId, 1, "Manual inline addition")}
-                        className="h-6 w-6 rounded-lg border border-[#e3e8e2] bg-[#f8faf8] text-[#222a1d]/60 hover:bg-[#283322] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-                        title="Add 1"
+                        onClick={() => adjustMaterialStock(item.id, 1, "Manual addition")}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:border-[#283322] hover:bg-[#283322] hover:text-white transition-colors cursor-pointer active:scale-90"
+                        title={`Add 1 ${item.unit}`}
                       >
-                        <PlusIcon className="h-3 w-3" />
+                        <PlusIcon className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </td>
 
-                  {/* Status Pill */}
+                  {/* Status Badge */}
                   <td className="py-4 text-center">
-                    <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${
+                    <span className={`inline-block text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider ${
                       item.status === "in-stock"
                         ? "bg-[#dcfce7] text-[#15803d]"
                         : item.status === "low-stock"
                         ? "bg-[#fef3c7] text-[#b45309]"
                         : "bg-[#fee2e2] text-[#b91c1c]"
                     }`}>
-                      {item.status.replace("-", " ")}
+                      {item.status === "in-stock" ? "Healthy" : item.status === "low-stock" ? "Low Stock" : "Depleted"}
                     </span>
                   </td>
 
-                  {/* Safety */}
-                  <td className="py-4 text-center font-mono font-medium text-[#222a1d]/60">
-                    {item.safetyThreshold} pcs
+                  {/* Safety Alert Threshold */}
+                  <td className="py-4 text-center font-mono text-[11px] text-[#222a1d]/60">
+                    &lt; {item.safetyThreshold} {item.unit}
                   </td>
 
                   {/* Unit Cost */}
-                  <td className="py-4 text-right font-mono text-[#222a1d]/60">
-                    Rs {item.unitCost.toLocaleString()}
+                  <td className="py-4 text-right font-mono font-semibold text-xs text-[#222a1d]">
+                    Rs {item.unitCost} <span className="text-[10px] text-[#222a1d]/40">/{item.unit}</span>
                   </td>
 
-                  {/* Retail Price */}
-                  <td className="py-4 text-right font-mono font-medium text-[#222a1d]">
-                    Rs {item.retailPrice.toLocaleString()}
-                  </td>
-
-                  {/* Margin */}
-                  <td className="py-4 text-right">
-                    <span className={`font-bold font-mono text-xs ${item.margin > 50 ? "text-emerald-700" : "text-[#222a1d]/70"}`}>
-                      {item.margin.toFixed(0)}%
-                    </span>
-                  </td>
-
-                  {/* Asset Value */}
-                  <td className="py-4 text-right font-mono font-bold text-[#283322]">
+                  {/* Total Asset Valuation */}
+                  <td className="py-4 text-right font-mono font-bold text-xs text-[#283322]">
                     Rs {item.assetValue.toLocaleString()}
                   </td>
 
-                  {/* Actions */}
+                  {/* Action Buttons */}
                   <td className="py-4 pr-2 text-right">
-                    <div className="flex items-center justify-end gap-1.5 opacity-90 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center justify-end gap-1.5">
                       <button
-                        onClick={() => handleOpenRestock(item.productId)}
-                        className="rounded-full bg-[#283322] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white hover:bg-[#34422c] transition-all cursor-pointer"
+                        onClick={() => handleOpenRestock(item)}
+                        className="rounded-full bg-[#283322] px-3 py-1.5 text-[10px] font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer"
                       >
                         Restock
                       </button>
                       <button
-                        onClick={() => handleOpenProfile(item.productId)}
-                        className="rounded-full border border-[#e3e8e2] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-all cursor-pointer"
-                        title="Configure Stock Profile"
+                        onClick={() => handleOpenProfile(item)}
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-[#e3e8e2] text-[#222a1d]/60 hover:bg-[#f1f4f1] hover:text-[#222a1d] transition-colors cursor-pointer"
+                        title="Edit Material Profile"
                       >
-                        Edit
+                        <PencilSquareIcon className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMaterial(item.id, item.name)}
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-red-100 text-red-400 hover:bg-red-50 hover:text-red-700 transition-colors cursor-pointer"
+                        title="Delete Material"
+                      >
+                        <TrashIcon className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </td>
@@ -358,8 +476,8 @@ export default function StockTab({ catalogProducts }: Props) {
 
               {filteredStock.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="py-16 text-center text-[#222a1d]/40 font-serif">
-                    No items in inventory matching filters.
+                  <td colSpan={8} className="py-16 text-center text-[#222a1d]/40 font-serif">
+                    No raw materials match your filter or search criteria.
                   </td>
                 </tr>
               )}
@@ -368,16 +486,146 @@ export default function StockTab({ catalogProducts }: Props) {
         </div>
       </div>
 
-      {/* 4. RESTOCK SHIPMENT DIALOG */}
-      {isRestockOpen && selectedProductId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-[28px] bg-white p-6 sm:p-7 shadow-2xl border border-[#e3e8e2] animate-fade-in">
-            
-            {/* Header */}
+      {/* ===================================================================== */}
+      {/* MODAL 1: ADD NEW RAW MATERIAL                                         */}
+      {/* ===================================================================== */}
+      {isAddMaterialOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#e3e8e2]">
             <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
               <div>
-                <h3 className="text-xl font-serif font-bold text-[#222a1d]">Restock Inventory</h3>
-                <p className="text-[10px] font-mono text-[#222a1d]/40 mt-0.5">Product ID: {selectedProductId}</p>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#283322] px-2 py-0.5 rounded bg-[#283322]/10">
+                  New Raw Material
+                </span>
+                <h3 className="text-xl font-serif font-bold text-[#222a1d] mt-1">
+                  Add Supply to Warehouse
+                </h3>
+              </div>
+              <button 
+                onClick={() => setIsAddMaterialOpen(false)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f8faf8] text-[#222a1d]/50 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
+              >
+                <XMarkIcon className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateMaterial} className="mt-6 space-y-4">
+              <label className="block">
+                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Material Name *</span>
+                <input
+                  type="text"
+                  required
+                  value={newMatName}
+                  onChange={(e) => setNewMatName(e.target.value)}
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  placeholder="e.g. Coconut Wax Flakes, Wooden Wicks, Ceramic Jar"
+                />
+              </label>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block">
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Category</span>
+                  <select
+                    value={newMatCategory}
+                    onChange={(e) => setNewMatCategory(e.target.value as MaterialCategory)}
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
+                  >
+                    <option value="wax">Waxes & Dyes</option>
+                    <option value="wicks">Wicks & Accessories</option>
+                    <option value="fragrance">Fragrance Oils</option>
+                    <option value="moulding">Plaster & Moulds</option>
+                    <option value="packaging">Labels & Packaging</option>
+                    <option value="vessels">Jars & Vessels</option>
+                    <option value="tools">Studio Tools</option>
+                    <option value="other">Other Supplies</option>
+                  </select>
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Unit of Measure</span>
+                  <input
+                    type="text"
+                    required
+                    value={newMatUnit}
+                    onChange={(e) => setNewMatUnit(e.target.value)}
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    placeholder="kg, pcs, packs, bottles, rolls"
+                  />
+                </label>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                <label className="block">
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Initial Stock</span>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={newMatStock}
+                    onChange={(e) => setNewMatStock(Number(e.target.value))}
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Safety Threshold</span>
+                  <input
+                    type="number"
+                    required
+                    min={1}
+                    value={newMatSafety}
+                    onChange={(e) => setNewMatSafety(Number(e.target.value))}
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Unit Cost (Rs)</span>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={newMatCost}
+                    onChange={(e) => setNewMatCost(Number(e.target.value))}
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  />
+                </label>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-[#eef2ee]">
+                <button
+                  type="button"
+                  onClick={() => setIsAddMaterialOpen(false)}
+                  className="flex-1 rounded-full border border-[#e3e8e2] py-2.5 text-xs font-semibold text-[#222a1d] hover:bg-[#f1f4f1] transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 rounded-full bg-[#283322] py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer"
+                >
+                  Add to Inventory
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ===================================================================== */}
+      {/* MODAL 2: RESTOCK SHIPMENT                                             */}
+      {/* ===================================================================== */}
+      {isRestockOpen && activeMaterial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="relative w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#e3e8e2]">
+            <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#16a34a] px-2 py-0.5 rounded bg-[#dcfce7]">
+                  Receive Supply
+                </span>
+                <h3 className="text-xl font-serif font-bold text-[#222a1d] mt-1">
+                  Restock {activeMaterial.name}
+                </h3>
               </div>
               <button 
                 onClick={() => setIsRestockOpen(false)}
@@ -387,68 +635,78 @@ export default function StockTab({ catalogProducts }: Props) {
               </button>
             </div>
 
-            <form onSubmit={handleSaveRestock} className="mt-5 space-y-4">
-              <div className="grid gap-4 grid-cols-2">
+            <form onSubmit={handleSaveRestock} className="mt-6 space-y-4">
+              <div className="rounded-2xl bg-[#f8faf8] p-3.5 border border-[#e8ede7] text-xs space-y-1.5">
+                <div className="flex justify-between text-[#222a1d]/60">
+                  <span>Current On-Hand:</span>
+                  <span className="font-bold text-[#222a1d]">{activeMaterial.stockLevel} {activeMaterial.unit}</span>
+                </div>
+                <div className="flex justify-between text-[#222a1d]/60">
+                  <span>Current Unit Cost:</span>
+                  <span className="font-bold text-[#222a1d]">Rs {activeMaterial.unitCost} /{activeMaterial.unit}</span>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Refill Quantity *</span>
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Quantity Received ({activeMaterial.unit}) *</span>
                   <input
                     type="number"
                     required
                     min={1}
                     value={restockQty}
                     onChange={(e) => setRestockQty(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
+
                 <label className="block">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Unit Cost (Rs) *</span>
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Purchase Cost / Unit (Rs) *</span>
                   <input
                     type="number"
                     required
-                    min={1}
+                    min={0}
                     value={restockCost}
                     onChange={(e) => setRestockCost(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
               </div>
 
               <label className="block">
-                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Shipment Log Note</span>
+                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Batch Note / Supplier</span>
                 <input
                   type="text"
-                  required
                   value={restockNote}
                   onChange={(e) => setRestockNote(e.target.value)}
                   className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
-                  placeholder="e.g. Received bulk jar batch"
+                  placeholder="e.g. Batch #402, Supplier XYZ"
                 />
               </label>
 
-              {/* Automatic Linked Ledger Notice */}
-              <div className="rounded-2xl bg-[#f8faf8] p-4 border border-[#e8ede7] text-xs text-[#222a1d]/70 space-y-1">
-                <p className="font-bold uppercase tracking-wider text-[9px] text-[#283322]">
-                  ✓ Automatic Ledger Sync
-                </p>
-                <p className="text-[11px] leading-relaxed">
-                  This restock will automatically log a paid expense of <strong className="text-[#283322]">Rs {(restockQty * restockCost).toLocaleString()}</strong> under Materials in your Operating Expenses.
+              <div className="rounded-2xl bg-[#eff6ff] p-3.5 text-xs text-[#1e40af] border border-[#dbeafe]">
+                <div className="flex justify-between font-bold">
+                  <span>Total Expense to Log:</span>
+                  <span>Rs {(restockQty * restockCost).toLocaleString()}</span>
+                </div>
+                <p className="text-[10px] text-[#1e40af]/70 mt-0.5">
+                  This purchase will automatically be recorded in your Operating Expenses ledger.
                 </p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-3 border-t border-[#eef2ee] pt-4">
+              <div className="flex gap-3 pt-4 border-t border-[#eef2ee]">
                 <button
                   type="button"
                   onClick={() => setIsRestockOpen(false)}
-                  className="rounded-full px-5 py-2 text-xs font-semibold text-[#222a1d]/50 hover:bg-[#f1f4f1] cursor-pointer"
+                  className="flex-1 rounded-full border border-[#e3e8e2] py-2.5 text-xs font-semibold text-[#222a1d] hover:bg-[#f1f4f1] transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#283322] px-7 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer active:scale-95"
+                  className="flex-1 rounded-full bg-[#283322] py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer"
                 >
-                  Confirm Shipment
+                  Confirm Restock
                 </button>
               </div>
             </form>
@@ -456,16 +714,20 @@ export default function StockTab({ catalogProducts }: Props) {
         </div>
       )}
 
-      {/* 5. INVENTORY PROFILE CONFIG MODAL */}
-      {isProfileOpen && selectedProductId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-[28px] bg-white p-6 sm:p-7 shadow-2xl border border-[#e3e8e2] animate-fade-in">
-            
-            {/* Header */}
+      {/* ===================================================================== */}
+      {/* MODAL 3: EDIT MATERIAL PROFILE                                        */}
+      {/* ===================================================================== */}
+      {isProfileOpen && activeMaterial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="relative w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#e3e8e2]">
             <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
               <div>
-                <h3 className="text-xl font-serif font-bold text-[#222a1d]">Stock Profile Settings</h3>
-                <p className="text-[10px] font-mono text-[#222a1d]/40 mt-0.5">Product ID: {selectedProductId}</p>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#283322] px-2 py-0.5 rounded bg-[#283322]/10">
+                  Settings
+                </span>
+                <h3 className="text-xl font-serif font-bold text-[#222a1d] mt-1">
+                  Configure Material Profile
+                </h3>
               </div>
               <button 
                 onClick={() => setIsProfileOpen(false)}
@@ -475,70 +737,100 @@ export default function StockTab({ catalogProducts }: Props) {
               </button>
             </div>
 
-            <form onSubmit={handleSaveProfile} className="mt-5 space-y-4">
+            <form onSubmit={handleSaveProfile} className="mt-6 space-y-4">
               <label className="block">
-                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Physical Count Adjustment *</span>
+                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Material Name</span>
                 <input
-                  type="number"
+                  type="text"
                   required
-                  min={0}
-                  value={profileStock}
-                  onChange={(e) => setProfileStock(Number(e.target.value))}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  value={profileName}
+                  onChange={(e) => setProfileName(e.target.value)}
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                 />
               </label>
 
-              <div className="grid gap-4 grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Safety Stock (Threshold) *</span>
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Category</span>
+                  <select
+                    value={profileCategory}
+                    onChange={(e) => setProfileCategory(e.target.value as MaterialCategory)}
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
+                  >
+                    <option value="wax">Waxes & Dyes</option>
+                    <option value="wicks">Wicks & Accessories</option>
+                    <option value="fragrance">Fragrance Oils</option>
+                    <option value="moulding">Plaster & Moulds</option>
+                    <option value="packaging">Labels & Packaging</option>
+                    <option value="vessels">Jars & Vessels</option>
+                    <option value="tools">Studio Tools</option>
+                    <option value="other">Other Supplies</option>
+                  </select>
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Unit of Measure</span>
+                  <input
+                    type="text"
+                    required
+                    value={profileUnit}
+                    onChange={(e) => setProfileUnit(e.target.value)}
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  />
+                </label>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                <label className="block">
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Stock Level</span>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={profileStock}
+                    onChange={(e) => setProfileStock(Number(e.target.value))}
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Safety Alert</span>
                   <input
                     type="number"
                     required
                     min={0}
                     value={profileSafety}
                     onChange={(e) => setProfileSafety(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
+
                 <label className="block">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Wholesale Unit Cost (Rs) *</span>
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Unit Cost (Rs)</span>
                   <input
                     type="number"
                     required
                     min={0}
                     value={profileCost}
                     onChange={(e) => setProfileCost(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
               </div>
 
-              <label className="block">
-                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Audit Log Reason</span>
-                <input
-                  type="text"
-                  required
-                  value={profileNote}
-                  onChange={(e) => setProfileNote(e.target.value)}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
-                  placeholder="e.g. End of month physical inventory count"
-                />
-              </label>
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-3 border-t border-[#eef2ee] pt-4">
+              <div className="flex gap-3 pt-4 border-t border-[#eef2ee]">
                 <button
                   type="button"
                   onClick={() => setIsProfileOpen(false)}
-                  className="rounded-full px-5 py-2 text-xs font-semibold text-[#222a1d]/50 hover:bg-[#f1f4f1] cursor-pointer"
+                  className="flex-1 rounded-full border border-[#e3e8e2] py-2.5 text-xs font-semibold text-[#222a1d] hover:bg-[#f1f4f1] transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#283322] px-7 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer active:scale-95"
+                  className="flex-1 rounded-full bg-[#283322] py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer"
                 >
-                  Save Profile Settings
+                  Save Profile
                 </button>
               </div>
             </form>
@@ -546,76 +838,61 @@ export default function StockTab({ catalogProducts }: Props) {
         </div>
       )}
 
-      {/* 6. AUDIT TRAIL LOGS DRAWER */}
+      {/* ===================================================================== */}
+      {/* DRAWER: AUDIT LOGS TRAIL                                              */}
+      {/* ===================================================================== */}
       {isLogsOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/30 backdrop-blur-sm p-0 sm:p-4">
-          <div className="h-full w-full max-w-xl bg-white p-6 sm:p-8 shadow-2xl flex flex-col justify-between border-l border-[#e3e8e2] sm:rounded-3xl animate-slide-in overflow-y-auto">
-            <div>
-              
-              {/* Header */}
-              <div className="flex items-center justify-between border-b border-[#eef2ee] pb-5">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#283322] px-2 py-0.5 rounded bg-[#283322]/10">
-                    Warehouse History
-                  </span>
-                  <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#222a1d] mt-1">
-                    Stock Audit Trail
-                  </h2>
-                </div>
-                <button 
-                  onClick={() => setIsLogsOpen(false)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e3e8e2] bg-[#f8faf8] text-[#222a1d]/50 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
-                >
-                  <XMarkIcon className="h-4 w-4" />
-                </button>
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm animate-fade-in">
+          <div className="relative h-full w-full max-w-lg bg-white p-6 sm:p-8 shadow-2xl overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#283322] px-2 py-0.5 rounded bg-[#283322]/10">
+                  Warehouse Audit
+                </span>
+                <h3 className="text-2xl font-serif font-bold text-[#222a1d] mt-1">
+                  Raw Materials Activity Trail
+                </h3>
               </div>
-
-              {/* Logs List */}
-              <div className="mt-6 space-y-3 overflow-y-auto max-h-[70vh] pr-1 scrollbar-hide">
-                {stockLogs.map((log) => (
-                  <div key={log.id} className="p-4 rounded-2xl border border-[#e8ede7] bg-[#f8faf8] text-xs space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-[#222a1d]">{log.productTitle}</span>
-                      <span className={`inline-block text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                        log.type === "restock"
-                          ? "bg-[#dcfce7] text-[#15803d]"
-                          : log.type === "sale"
-                          ? "bg-[#283322]/10 text-[#283322]"
-                          : "bg-[#fef3c7] text-[#b45309]"
-                      }`}>
-                        {log.type}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-[#222a1d]/70">
-                      <span>{log.note}</span>
-                      <span className={`font-mono font-bold text-sm ${log.quantity > 0 ? "text-emerald-700" : "text-red-600"}`}>
-                        {log.quantity > 0 ? `+${log.quantity}` : log.quantity} pcs
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between text-[10px] text-[#222a1d]/40 font-mono pt-1 border-t border-[#eef2ee]">
-                      <span>{log.id}</span>
-                      <span>{log.date}</span>
-                    </div>
-                  </div>
-                ))}
-
-                {stockLogs.length === 0 && (
-                  <p className="text-center py-12 text-xs text-[#222a1d]/40 font-serif">
-                    No warehouse stock adjustments logged yet.
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-6 border-t border-[#eef2ee] pt-4 text-center">
               <button 
                 onClick={() => setIsLogsOpen(false)}
-                className="rounded-full border border-[#e3e8e2] px-7 py-2 text-xs font-bold uppercase tracking-wider text-[#222a1d]/70 hover:bg-[#f1f4f1] cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f8faf8] text-[#222a1d]/50 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
               >
-                Close Audit Logs
+                <XMarkIcon className="h-4 w-4" />
               </button>
+            </div>
+
+            <div className="mt-6 space-y-4">
+              {stockLogs.map((log) => (
+                <div key={log.id} className="rounded-2xl bg-[#f8faf8] p-4 border border-[#e8ede7] text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#222a1d]">{log.materialName}</span>
+                    <span className="font-mono text-[10px] text-[#222a1d]/40">{log.date}</span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className={`inline-block text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase ${
+                      log.type === "restock"
+                        ? "bg-[#dcfce7] text-[#15803d]"
+                        : log.type === "usage"
+                        ? "bg-[#fef3c7] text-[#b45309]"
+                        : "bg-[#eff6ff] text-[#2563eb]"
+                    }`}>
+                      {log.type} ({log.quantity > 0 ? `+${log.quantity}` : log.quantity} {log.unit})
+                    </span>
+                    <span className="font-mono text-[10px] text-[#222a1d]/40">ID: {log.id}</span>
+                  </div>
+                  {log.note && (
+                    <p className="mt-2 text-[11px] text-[#222a1d]/60 bg-white p-2 rounded-xl border border-[#e8ede7]">
+                      {log.note}
+                    </p>
+                  )}
+                </div>
+              ))}
+
+              {stockLogs.length === 0 && (
+                <div className="py-12 text-center text-[#222a1d]/40 font-serif">
+                  No stock adjustments or restock events logged yet.
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -162,7 +162,7 @@ export default function ExpensesTab() {
       </div>
 
       {/* 2. FILTER AND ACTION BAR */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-[24px] sm:rounded-[28px] border border-[#e3e8e2] shadow-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-3xl sm:rounded-[28px] border border-[#e3e8e2] shadow-sm">
         
         <div className="flex flex-1 flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
           {/* Search Input */}
@@ -212,9 +212,9 @@ export default function ExpensesTab() {
       </div>
 
       {/* 3. EXPENSES TABLE */}
-      <div className="rounded-[24px] sm:rounded-[28px] bg-white p-5 sm:p-7 border border-[#e3e8e2] shadow-sm">
+      <div className="rounded-3xl sm:rounded-[28px] bg-white p-5 sm:p-7 border border-[#e3e8e2] shadow-sm">
         <div className="overflow-x-auto scrollbar-hide -mx-5 sm:-mx-7 px-5 sm:px-7">
-          <table className="w-full text-left border-collapse min-w-[680px]">
+          <table className="w-full text-left border-collapse min-w-170">
             <thead>
               <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
                 <th className="pb-3 pl-2">ID</th>

@@ -169,13 +169,17 @@ using (public.is_admin_user(auth.uid()))
 with check (public.is_admin_user(auth.uid()));
 
 -- ==============================================================================
--- STOCK LEVELS TABLE (Warehouse Inventory)
+-- STOCK LEVELS TABLE (Raw Materials & Supplies Inventory)
 -- ==============================================================================
 create table if not exists public.stock_levels (
-  product_id text primary key references public.products (id) on delete cascade,
-  stock_level integer not null default 0 check (stock_level >= 0),
-  safety_threshold integer not null default 5 check (safety_threshold >= 0),
+  product_id text primary key,
+  product_name text not null default '',
+  category text not null default 'wax',
+  unit text not null default 'kg',
+  stock_level numeric(10, 2) not null default 0 check (stock_level >= 0),
+  safety_threshold numeric(10, 2) not null default 5 check (safety_threshold >= 0),
   unit_cost numeric(10, 2) not null default 0 check (unit_cost >= 0),
+  img text not null default '',
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
 );
@@ -203,8 +207,9 @@ create table if not exists public.stock_logs (
   id text primary key,
   product_id text not null,
   product_title text not null,
-  type text not null check (type in ('restock', 'sale', 'adjustment')),
-  quantity integer not null,
+  type text not null check (type in ('restock', 'usage', 'adjustment')),
+  quantity numeric(10, 2) not null,
+  unit text not null default 'units',
   log_date text not null,
   note text not null default '',
   created_at timestamptz not null default timezone('utc', now())

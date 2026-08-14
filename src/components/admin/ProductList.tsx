@@ -102,7 +102,7 @@ export default function ProductList({
       </div>
 
       {/* Products Scrollable List */}
-      <div className="space-y-2.5 overflow-y-auto pr-1 max-h-[580px] scrollbar-hide">
+      <div className="space-y-2.5 overflow-y-auto pr-1 max-h-145 scrollbar-hide">
         {filteredProducts.map((product) => {
           const isSelected = selectedId === product.id;
 

@@ -445,7 +445,7 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
                       isSaving={isPending}
                     />
                   ) : (
-                    <div className="flex min-h-[420px] flex-col items-center justify-center rounded-3xl border border-dashed border-[#d5ded4] bg-white/60 p-8 text-center">
+                    <div className="flex min-h-105 flex-col items-center justify-center rounded-3xl border border-dashed border-[#d5ded4] bg-white/60 p-8 text-center">
                       <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f1f4f1] text-[#283322] shadow-sm mb-4">
                         <Package2 className="h-7 w-7 text-[#283322]" />
                       </div>
@@ -479,7 +479,7 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
           )}
 
           {activeTab === "stock" && (
-            <StockTab catalogProducts={products} />
+            <StockTab />
           )}
         </main>
 
