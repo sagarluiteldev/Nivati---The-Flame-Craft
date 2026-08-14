@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext, useCallback } from "react";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import type { AdminCatalogProduct } from "@/lib/catalog";
 
 export interface SaleItem {
   productId: string;
   productTitle: string;
   quantity: number;
-  price: number; // Unit price at checkout
+  price: number;
 }
 
 export interface Sale {
@@ -43,7 +44,7 @@ export interface StockLog {
   productId: string;
   productTitle: string;
   type: "restock" | "sale" | "adjustment";
-  quantity: number; // Positive or negative
+  quantity: number;
   date: string;
   note: string;
 }
@@ -53,21 +54,25 @@ interface DashboardContextType {
   expenses: Expense[];
   stockLevels: StockLevel[];
   stockLogs: StockLog[];
+  isLoading: boolean;
   
   // Sales CRUD
-  addSale: (sale: Omit<Sale, "id" | "totalAmount">) => void;
-  updateSale: (id: string, sale: Partial<Sale>) => void;
-  deleteSale: (id: string) => void;
+  addSale: (sale: Omit<Sale, "id" | "totalAmount">) => Promise<void>;
+  updateSale: (id: string, sale: Partial<Sale>) => Promise<void>;
+  deleteSale: (id: string) => Promise<void>;
   
   // Expenses CRUD
-  addExpense: (expense: Omit<Expense, "id">) => void;
-  updateExpense: (id: string, expense: Partial<Expense>) => void;
-  deleteExpense: (id: string) => void;
+  addExpense: (expense: Omit<Expense, "id">) => Promise<void>;
+  updateExpense: (id: string, expense: Partial<Expense>) => Promise<void>;
+  deleteExpense: (id: string) => Promise<void>;
   
   // Stock Actions
-  updateStockProfile: (productId: string, stockLevel: number, safetyThreshold: number, unitCost: number, logNote?: string) => void;
-  adjustStockLevel: (productId: string, delta: number, note?: string) => void;
-  logRestock: (productId: string, quantity: number, unitCost: number, note?: string) => void;
+  updateStockProfile: (productId: string, stockLevel: number, safetyThreshold: number, unitCost: number, logNote?: string) => Promise<void>;
+  adjustStockLevel: (productId: string, delta: number, note?: string) => Promise<void>;
+  logRestock: (productId: string, quantity: number, unitCost: number, note?: string) => Promise<void>;
+  
+  // Reload
+  refreshData: () => Promise<void>;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -86,219 +91,169 @@ interface ProviderProps {
 }
 
 export function DashboardStoreProvider({ children, catalogProducts }: ProviderProps) {
-  const [sales, setSales] = useState<Sale[]>(() => {
-    if (typeof window === "undefined") return [];
-    const saved = localStorage.getItem("nivati_sales");
-    if (saved) return JSON.parse(saved);
+  const [sales, setSales] = useState<Sale[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [stockLevels, setStockLevels] = useState<StockLevel[]>([]);
+  const [stockLogs, setStockLogs] = useState<StockLog[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-    // Seed data if empty
-    if (catalogProducts.length > 0) {
-      const p1 = catalogProducts[0];
-      const p2 = catalogProducts[1] || p1;
-      const p3 = catalogProducts[2] || p1;
+  // Fetch all live records from Supabase on mount
+  const fetchAllData = useCallback(async () => {
+    setIsLoading(true);
+    const supabase = createSupabaseBrowserClient();
 
-      return [
-        {
-          id: "SAL-1001",
-          customerName: "Aarav Sharma",
-          customerEmail: "aarav@example.com",
-          items: [
-            { productId: p1.id, productTitle: p1.title, quantity: 2, price: p1.price }
-          ],
-          totalAmount: p1.price * 2,
-          date: "2026-06-22",
-          status: "completed",
-        },
-        {
-          id: "SAL-1002",
-          customerName: "Priya Patel",
-          customerEmail: "priya@example.com",
-          items: [
-            { productId: p2.id, productTitle: p2.title, quantity: 1, price: p2.price }
-          ],
-          totalAmount: p2.price,
-          date: "2026-06-25",
-          status: "completed",
-        },
-        {
-          id: "SAL-1003",
-          customerName: "Kabir Joshi",
-          customerEmail: "kabir@example.com",
-          items: [
-            { productId: p1.id, productTitle: p1.title, quantity: 1, price: p1.price },
-            { productId: p3.id, productTitle: p3.title, quantity: 1, price: p3.price }
-          ],
-          totalAmount: p1.price + p3.price,
-          date: "2026-06-27",
-          status: "pending",
-        },
-        {
-          id: "SAL-1004",
-          customerName: "Neha Rao",
-          customerEmail: "neha@example.com",
-          items: [
-            { productId: p2.id, productTitle: p2.title, quantity: 3, price: p2.price }
-          ],
-          totalAmount: p2.price * 3,
-          date: "2026-06-28",
-          status: "completed",
-        }
-      ];
-    }
-    return [];
-  });
+    try {
+      // 1. Fetch Sales
+      const { data: salesData, error: salesErr } = await supabase
+        .from("sales")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-  const [expenses, setExpenses] = useState<Expense[]>(() => {
-    if (typeof window === "undefined") return [];
-    const saved = localStorage.getItem("nivati_expenses");
-    if (saved) return JSON.parse(saved);
-    return [
-      {
-        id: "EXP-101",
-        title: "Organic Soy Wax (50kg Bag)",
-        amount: 12500,
-        category: "materials",
-        date: "2026-06-10",
-        status: "paid",
-      },
-      {
-        id: "EXP-102",
-        title: "Amber Glass Jars & Lids (200 pcs)",
-        amount: 8000,
-        category: "packaging",
-        date: "2026-06-12",
-        status: "paid",
-      },
-      {
-        id: "EXP-103",
-        title: "Premium Lavender Essential Oil",
-        amount: 4500,
-        category: "materials",
-        date: "2026-06-18",
-        status: "paid",
-      },
-      {
-        id: "EXP-104",
-        title: "DHL Shipping to Customers (Batch)",
-        amount: 3500,
-        category: "shipping",
-        date: "2026-06-24",
-        status: "paid",
-      },
-      {
-        id: "EXP-105",
-        title: "Instagram Ads Campaign",
-        amount: 6000,
-        category: "marketing",
-        date: "2026-06-26",
-        status: "paid",
-      },
-      {
-        id: "EXP-106",
-        title: "Showroom Utilities",
-        amount: 5000,
-        category: "rent-utilities",
-        date: "2026-06-28",
-        status: "pending",
+      if (!salesErr && salesData) {
+        setSales(salesData.map((row) => ({
+          id: row.id,
+          customerName: row.customer_name,
+          customerEmail: row.customer_email,
+          items: Array.isArray(row.items) ? row.items : [],
+          totalAmount: Number(row.total_amount),
+          date: row.sale_date,
+          status: row.status,
+        })));
+      } else {
+        // Fallback to local storage if table not yet created in Supabase
+        const saved = localStorage.getItem("nivati_real_sales");
+        if (saved) setSales(JSON.parse(saved));
       }
-    ];
-  });
 
-  const [stockLevels, setStockLevels] = useState<StockLevel[]>(() => {
-    if (typeof window === "undefined") return [];
-    const saved = localStorage.getItem("nivati_stock_levels");
-    if (saved) return JSON.parse(saved);
+      // 2. Fetch Expenses
+      const { data: expensesData, error: expErr } = await supabase
+        .from("expenses")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    // Seed stock levels
-    return catalogProducts.map((p) => ({
-      productId: p.id,
-      stockLevel: 35,
-      safetyThreshold: 8,
-      unitCost: Math.round(Number(p.price) * 0.35),
-    }));
-  });
+      if (!expErr && expensesData) {
+        setExpenses(expensesData.map((row) => ({
+          id: row.id,
+          title: row.title,
+          amount: Number(row.amount),
+          category: row.category,
+          date: row.expense_date,
+          status: row.status,
+        })));
+      } else {
+        const saved = localStorage.getItem("nivati_real_expenses");
+        if (saved) setExpenses(JSON.parse(saved));
+      }
 
-  const [stockLogs, setStockLogs] = useState<StockLog[]>(() => {
-    if (typeof window === "undefined") return [];
-    const saved = localStorage.getItem("nivati_stock_logs");
-    if (saved) return JSON.parse(saved);
+      // 3. Fetch Stock Levels
+      const { data: stockData, error: stockErr } = await supabase
+        .from("stock_levels")
+        .select("*");
 
-    // Seed stock logs
-    const initialStock = catalogProducts.map((p) => ({
-      productId: p.id,
-      stockLevel: 35,
-      safetyThreshold: 8,
-      unitCost: Math.round(Number(p.price) * 0.35),
-    }));
+      if (!stockErr && stockData && stockData.length > 0) {
+        const dbStockMap = new Map(stockData.map((s) => [s.product_id, s]));
+        const combined = catalogProducts.map((p) => {
+          const existing = dbStockMap.get(p.id);
+          if (existing) {
+            return {
+              productId: existing.product_id,
+              stockLevel: Number(existing.stock_level),
+              safetyThreshold: Number(existing.safety_threshold),
+              unitCost: Number(existing.unit_cost),
+            };
+          }
+          return {
+            productId: p.id,
+            stockLevel: 0,
+            safetyThreshold: 5,
+            unitCost: Math.round(Number(p.price) * 0.35),
+          };
+        });
+        setStockLevels(combined);
+      } else {
+        // Initialize stock from catalog products with 0 initial inventory
+        const saved = localStorage.getItem("nivati_real_stock_levels");
+        if (saved) {
+          const parsed: StockLevel[] = JSON.parse(saved);
+          const map = new Map(parsed.map((s) => [s.productId, s]));
+          setStockLevels(catalogProducts.map((p) => map.get(p.id) || ({
+            productId: p.id,
+            stockLevel: 0,
+            safetyThreshold: 5,
+            unitCost: Math.round(Number(p.price) * 0.35),
+          })));
+        } else {
+          setStockLevels(catalogProducts.map((p) => ({
+            productId: p.id,
+            stockLevel: 0,
+            safetyThreshold: 5,
+            unitCost: Math.round(Number(p.price) * 0.35),
+          })));
+        }
+      }
 
-    return initialStock.map((item) => {
-      const prod = catalogProducts.find((p) => p.id === item.productId);
-      return {
-        id: `LOG-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-        productId: item.productId,
-        productTitle: prod?.title || item.productId,
-        type: "adjustment" as const,
-        quantity: item.stockLevel,
-        date: "2026-06-01",
-        note: "Initial warehouse count synchronization",
-      };
-    });
-  });
+      // 4. Fetch Stock Logs
+      const { data: logsData, error: logsErr } = await supabase
+        .from("stock_logs")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-  const [isLoaded, setIsLoaded] = useState(false);
+      if (!logsErr && logsData) {
+        setStockLogs(logsData.map((row) => ({
+          id: row.id,
+          productId: row.product_id,
+          productTitle: row.product_title,
+          type: row.type,
+          quantity: row.quantity,
+          date: row.log_date,
+          note: row.note,
+        })));
+      } else {
+        const saved = localStorage.getItem("nivati_real_stock_logs");
+        if (saved) setStockLogs(JSON.parse(saved));
+      }
 
-  // Mark load on mount using async defer
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoaded(true), 0);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Sync new products if catalog updates (using render-time state adjustment pattern)
-  const [prevCatalog, setPrevCatalog] = useState(catalogProducts);
-  if (catalogProducts !== prevCatalog) {
-    setPrevCatalog(catalogProducts);
-    const stockMap = new Map(stockLevels.map((s) => [s.productId, s]));
-    const hasNewProducts = catalogProducts.some((p) => !stockMap.has(p.id));
-    
-    if (hasNewProducts) {
-      const synchronized = catalogProducts.map((p) => {
-        const existing = stockMap.get(p.id);
-        if (existing) return existing;
-        return {
-          productId: p.id,
-          stockLevel: 35,
-          safetyThreshold: 8,
-          unitCost: Math.round(Number(p.price) * 0.35),
-        };
-      });
-      setStockLevels(synchronized);
+    } catch (err) {
+      console.warn("Using persistent local store fallback:", err);
+    } finally {
+      setIsLoading(false);
     }
-  }
-
-  // Sync state back to local storage
-  useEffect(() => {
-    if (!isLoaded) return;
-    localStorage.setItem("nivati_sales", JSON.stringify(sales));
-  }, [sales, isLoaded]);
+  }, [catalogProducts]);
 
   useEffect(() => {
-    if (!isLoaded) return;
-    localStorage.setItem("nivati_expenses", JSON.stringify(expenses));
-  }, [expenses, isLoaded]);
+    fetchAllData();
+  }, [fetchAllData]);
+
+  // Sync to local storage backup
+  useEffect(() => {
+    if (!isLoading) {
+      localStorage.setItem("nivati_real_sales", JSON.stringify(sales));
+    }
+  }, [sales, isLoading]);
 
   useEffect(() => {
-    if (!isLoaded) return;
-    localStorage.setItem("nivati_stock_levels", JSON.stringify(stockLevels));
-  }, [stockLevels, isLoaded]);
+    if (!isLoading) {
+      localStorage.setItem("nivati_real_expenses", JSON.stringify(expenses));
+    }
+  }, [expenses, isLoading]);
 
   useEffect(() => {
-    if (!isLoaded) return;
-    localStorage.setItem("nivati_stock_logs", JSON.stringify(stockLogs));
-  }, [stockLogs, isLoaded]);
+    if (!isLoading) {
+      localStorage.setItem("nivati_real_stock_levels", JSON.stringify(stockLevels));
+    }
+  }, [stockLevels, isLoading]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      localStorage.setItem("nivati_real_stock_logs", JSON.stringify(stockLogs));
+    }
+  }, [stockLogs, isLoading]);
 
 
-  // SALES CRUD
-  const addSale = (saleData: Omit<Sale, "id" | "totalAmount">) => {
+  // ==============================================================================
+  // SALES ACTIONS (Database Synchronized)
+  // ==============================================================================
+  const addSale = async (saleData: Omit<Sale, "id" | "totalAmount">) => {
     const totalAmount = saleData.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
     const saleId = `SAL-${Math.floor(1000 + Math.random() * 9000)}`;
     const newSale: Sale = {
@@ -307,36 +262,37 @@ export function DashboardStoreProvider({ children, catalogProducts }: ProviderPr
       totalAmount,
     };
 
+    // Optimistic UI update
     setSales((prev) => [newSale, ...prev]);
 
+    // Database Insert
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.from("sales").insert([{
+        id: saleId,
+        customer_name: saleData.customerName,
+        customer_email: saleData.customerEmail,
+        items: saleData.items,
+        total_amount: totalAmount,
+        status: saleData.status,
+        sale_date: saleData.date,
+      }]);
+    } catch (e) {
+      console.error("Error saving sale to database:", e);
+    }
+
     // Automatically deduct stock levels for this sale
-    setStockLevels((prevStock) => {
-      const updated = prevStock.map((s) => {
-        const itemInSale = saleData.items.find((i) => i.productId === s.productId);
-        if (itemInSale) {
-          // Add a stock log
-          const newLog: StockLog = {
-            id: `LOG-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-            productId: s.productId,
-            productTitle: itemInSale.productTitle,
-            type: "sale",
-            quantity: -itemInSale.quantity,
-            date: saleData.date,
-            note: `Sold in order ${saleId} to ${saleData.customerName}`,
-          };
-          setStockLogs((logs) => [newLog, ...logs]);
-          return {
-            ...s,
-            stockLevel: Math.max(0, s.stockLevel - itemInSale.quantity),
-          };
-        }
-        return s;
-      });
-      return updated;
-    });
+    for (const item of saleData.items) {
+      await adjustStockLevel(
+        item.productId, 
+        -item.quantity, 
+        `Sold in invoice ${saleId} to ${saleData.customerName}`,
+        "sale"
+      );
+    }
   };
 
-  const updateSale = (id: string, updatedFields: Partial<Sale>) => {
+  const updateSale = async (id: string, updatedFields: Partial<Sale>) => {
     setSales((prev) =>
       prev.map((sale) => {
         if (sale.id === id) {
@@ -344,7 +300,7 @@ export function DashboardStoreProvider({ children, catalogProducts }: ProviderPr
           if (updatedFields.items) {
             merged.totalAmount = updatedFields.items.reduce(
               (sum, item) => sum + item.quantity * item.price,
-              0,
+              0
             );
           }
           return merged;
@@ -352,162 +308,275 @@ export function DashboardStoreProvider({ children, catalogProducts }: ProviderPr
         return sale;
       })
     );
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const payload: Record<string, unknown> = {};
+      if (updatedFields.customerName !== undefined) payload.customer_name = updatedFields.customerName;
+      if (updatedFields.customerEmail !== undefined) payload.customer_email = updatedFields.customerEmail;
+      if (updatedFields.items !== undefined) {
+        payload.items = updatedFields.items;
+        payload.total_amount = updatedFields.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+      }
+      if (updatedFields.status !== undefined) payload.status = updatedFields.status;
+      if (updatedFields.date !== undefined) payload.sale_date = updatedFields.date;
+
+      await supabase.from("sales").update(payload).eq("id", id);
+    } catch (e) {
+      console.error("Error updating sale in database:", e);
+    }
   };
 
-  const deleteSale = (id: string) => {
-    // Find sale first to restore stock
+  const deleteSale = async (id: string) => {
     const saleToDelete = sales.find((s) => s.id === id);
     if (!saleToDelete) return;
 
     setSales((prev) => prev.filter((s) => s.id !== id));
 
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.from("sales").delete().eq("id", id);
+    } catch (e) {
+      console.error("Error deleting sale in database:", e);
+    }
+
     // Restore stock levels
-    setStockLevels((prevStock) =>
-      prevStock.map((s) => {
-        const itemInSale = saleToDelete.items.find((i) => i.productId === s.productId);
-        if (itemInSale) {
-          const newLog: StockLog = {
-            id: `LOG-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-            productId: s.productId,
-            productTitle: itemInSale.productTitle,
-            type: "adjustment",
-            quantity: itemInSale.quantity,
-            date: new Date().toISOString().split("T")[0],
-            note: `Restored stock from deleted order ${id}`,
-          };
-          setStockLogs((logs) => [newLog, ...logs]);
-          return {
-            ...s,
-            stockLevel: s.stockLevel + itemInSale.quantity,
-          };
-        }
-        return s;
-      })
-    );
+    for (const item of saleToDelete.items) {
+      await adjustStockLevel(
+        item.productId,
+        item.quantity,
+        `Restored stock from cancelled order ${id}`,
+        "adjustment"
+      );
+    }
   };
 
 
-  // EXPENSES CRUD
-  const addExpense = (expenseData: Omit<Expense, "id">) => {
+  // ==============================================================================
+  // EXPENSES ACTIONS (Database Synchronized)
+  // ==============================================================================
+  const addExpense = async (expenseData: Omit<Expense, "id">) => {
     const expenseId = `EXP-${Math.floor(100 + Math.random() * 900)}`;
     const newExpense: Expense = {
       ...expenseData,
       id: expenseId,
     };
     setExpenses((prev) => [newExpense, ...prev]);
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.from("expenses").insert([{
+        id: expenseId,
+        title: expenseData.title,
+        amount: expenseData.amount,
+        category: expenseData.category,
+        status: expenseData.status,
+        expense_date: expenseData.date,
+      }]);
+    } catch (e) {
+      console.error("Error saving expense to database:", e);
+    }
   };
 
-  const updateExpense = (id: string, updatedFields: Partial<Expense>) => {
+  const updateExpense = async (id: string, updatedFields: Partial<Expense>) => {
     setExpenses((prev) =>
       prev.map((exp) => (exp.id === id ? { ...exp, ...updatedFields } : exp))
     );
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const payload: Record<string, unknown> = {};
+      if (updatedFields.title !== undefined) payload.title = updatedFields.title;
+      if (updatedFields.amount !== undefined) payload.amount = updatedFields.amount;
+      if (updatedFields.category !== undefined) payload.category = updatedFields.category;
+      if (updatedFields.status !== undefined) payload.status = updatedFields.status;
+      if (updatedFields.date !== undefined) payload.expense_date = updatedFields.date;
+
+      await supabase.from("expenses").update(payload).eq("id", id);
+    } catch (e) {
+      console.error("Error updating expense in database:", e);
+    }
   };
 
-  const deleteExpense = (id: string) => {
+  const deleteExpense = async (id: string) => {
     setExpenses((prev) => prev.filter((exp) => exp.id !== id));
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.from("expenses").delete().eq("id", id);
+    } catch (e) {
+      console.error("Error deleting expense in database:", e);
+    }
   };
 
 
-  // STOCK ACTIONS
-  const updateStockProfile = (
+  // ==============================================================================
+  // STOCK ACTIONS (Database Synchronized)
+  // ==============================================================================
+  const updateStockProfile = async (
     productId: string,
     stockLevel: number,
     safetyThreshold: number,
     unitCost: number,
     logNote = "Manual inventory settings profile update"
   ) => {
+    const existing = stockLevels.find((s) => s.productId === productId);
+    const diff = existing ? stockLevel - existing.stockLevel : stockLevel;
+
     setStockLevels((prev) =>
-      prev.map((s) => {
-        if (s.productId === productId) {
-          const diff = stockLevel - s.stockLevel;
-          if (diff !== 0) {
-            const prod = catalogProducts.find((p) => p.id === productId);
-            const newLog: StockLog = {
-              id: `LOG-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-              productId,
-              productTitle: prod?.title || productId,
-              type: "adjustment",
-              quantity: diff,
-              date: new Date().toISOString().split("T")[0],
-              note: logNote,
-            };
-            setStockLogs((logs) => [newLog, ...logs]);
-          }
-          return { productId, stockLevel, safetyThreshold, unitCost };
-        }
-        return s;
-      })
+      prev.map((s) => (s.productId === productId ? { productId, stockLevel, safetyThreshold, unitCost } : s))
     );
+
+    if (diff !== 0) {
+      const prod = catalogProducts.find((p) => p.id === productId);
+      const logId = `LOG-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+      const newLog: StockLog = {
+        id: logId,
+        productId,
+        productTitle: prod?.title || productId,
+        type: "adjustment",
+        quantity: diff,
+        date: new Date().toISOString().split("T")[0],
+        note: logNote,
+      };
+      setStockLogs((logs) => [newLog, ...logs]);
+
+      try {
+        const supabase = createSupabaseBrowserClient();
+        await supabase.from("stock_logs").insert([{
+          id: logId,
+          product_id: productId,
+          product_title: prod?.title || productId,
+          type: "adjustment",
+          quantity: diff,
+          log_date: new Date().toISOString().split("T")[0],
+          note: logNote,
+        }]);
+      } catch (e) {
+        console.error("Error saving stock log to database:", e);
+      }
+    }
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.from("stock_levels").upsert({
+        product_id: productId,
+        stock_level: stockLevel,
+        safety_threshold: safetyThreshold,
+        unit_cost: unitCost,
+      });
+    } catch (e) {
+      console.error("Error updating stock profile in database:", e);
+    }
   };
 
-  const adjustStockLevel = (productId: string, delta: number, note = "Inline manual count adjustment") => {
+  const adjustStockLevel = async (
+    productId: string, 
+    delta: number, 
+    note = "Manual count adjustment",
+    type: "restock" | "sale" | "adjustment" = "adjustment"
+  ) => {
+    let finalLevel = 0;
+
     setStockLevels((prev) =>
       prev.map((s) => {
         if (s.productId === productId) {
-          const prod = catalogProducts.find((p) => p.id === productId);
-          const newLevel = Math.max(0, s.stockLevel + delta);
-          const actualChange = newLevel - s.stockLevel;
-          
-          if (actualChange !== 0) {
-            const newLog: StockLog = {
-              id: `LOG-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-              productId,
-              productTitle: prod?.title || productId,
-              type: "adjustment",
-              quantity: actualChange,
-              date: new Date().toISOString().split("T")[0],
-              note,
-            };
-            setStockLogs((logs) => [newLog, ...logs]);
-          }
-
-          return { ...s, stockLevel: newLevel };
+          finalLevel = Math.max(0, s.stockLevel + delta);
+          return { ...s, stockLevel: finalLevel };
         }
         return s;
       })
     );
+
+    const prod = catalogProducts.find((p) => p.id === productId);
+    const logId = `LOG-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+    const newLog: StockLog = {
+      id: logId,
+      productId,
+      productTitle: prod?.title || productId,
+      type,
+      quantity: delta,
+      date: new Date().toISOString().split("T")[0],
+      note,
+    };
+    setStockLogs((logs) => [newLog, ...logs]);
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.from("stock_logs").insert([{
+        id: logId,
+        product_id: productId,
+        product_title: prod?.title || productId,
+        type,
+        quantity: delta,
+        log_date: new Date().toISOString().split("T")[0],
+        note,
+      }]);
+
+      await supabase.from("stock_levels").upsert({
+        product_id: productId,
+        stock_level: finalLevel,
+      });
+    } catch (e) {
+      console.error("Error updating adjusted stock in database:", e);
+    }
   };
 
-  const logRestock = (productId: string, quantity: number, unitCost: number, note = "Restock shipment received") => {
+  const logRestock = async (productId: string, quantity: number, unitCost: number, note = "Restock shipment received") => {
+    const prod = catalogProducts.find((p) => p.id === productId);
+    const existing = stockLevels.find((s) => s.productId === productId);
+    const prevQty = existing?.stockLevel || 0;
+    const prevCost = existing?.unitCost || unitCost;
+
+    const totalCost = (prevQty * prevCost) + (quantity * unitCost);
+    const totalQty = prevQty + quantity;
+    const averageCost = totalQty > 0 ? Math.round(totalCost / totalQty) : unitCost;
+
     setStockLevels((prev) =>
-      prev.map((s) => {
-        if (s.productId === productId) {
-          const prod = catalogProducts.find((p) => p.id === productId);
-          
-          const newLog: StockLog = {
-            id: `LOG-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-            productId,
-            productTitle: prod?.title || productId,
-            type: "restock",
-            quantity,
-            date: new Date().toISOString().split("T")[0],
-            note,
-          };
-          setStockLogs((logs) => [newLog, ...logs]);
-
-          // Calculate weighted cost average if cost changed
-          const totalCost = (s.stockLevel * s.unitCost) + (quantity * unitCost);
-          const totalQty = s.stockLevel + quantity;
-          const averageCost = totalQty > 0 ? Math.round(totalCost / totalQty) : unitCost;
-
-          // Automatically record cost as an expense
-          addExpense({
-            title: `Restock Material: ${prod?.title || productId} (x${quantity})`,
-            amount: quantity * unitCost,
-            category: "materials",
-            date: new Date().toISOString().split("T")[0],
-            status: "paid",
-          });
-
-          return {
-            ...s,
-            stockLevel: totalQty,
-            unitCost: averageCost,
-          };
-        }
-        return s;
-      })
+      prev.map((s) => (s.productId === productId ? { ...s, stockLevel: totalQty, unitCost: averageCost } : s))
     );
+
+    const logId = `LOG-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+    const newLog: StockLog = {
+      id: logId,
+      productId,
+      productTitle: prod?.title || productId,
+      type: "restock",
+      quantity,
+      date: new Date().toISOString().split("T")[0],
+      note,
+    };
+    setStockLogs((logs) => [newLog, ...logs]);
+
+    // Automatically record cost as an expense in database
+    await addExpense({
+      title: `Restock Material: ${prod?.title || productId} (x${quantity})`,
+      amount: quantity * unitCost,
+      category: "materials",
+      date: new Date().toISOString().split("T")[0],
+      status: "paid",
+    });
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.from("stock_logs").insert([{
+        id: logId,
+        product_id: productId,
+        product_title: prod?.title || productId,
+        type: "restock",
+        quantity,
+        log_date: new Date().toISOString().split("T")[0],
+        note,
+      }]);
+
+      await supabase.from("stock_levels").upsert({
+        product_id: productId,
+        stock_level: totalQty,
+        unit_cost: averageCost,
+      });
+    } catch (e) {
+      console.error("Error logging restock in database:", e);
+    }
   };
 
   return (
@@ -517,6 +586,7 @@ export function DashboardStoreProvider({ children, catalogProducts }: ProviderPr
         expenses,
         stockLevels,
         stockLogs,
+        isLoading,
         addSale,
         updateSale,
         deleteSale,
@@ -526,6 +596,7 @@ export function DashboardStoreProvider({ children, catalogProducts }: ProviderPr
         updateStockProfile,
         adjustStockLevel,
         logRestock,
+        refreshData: fetchAllData,
       }}
     >
       {children}

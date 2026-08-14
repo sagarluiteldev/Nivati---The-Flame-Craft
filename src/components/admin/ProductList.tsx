@@ -1,6 +1,14 @@
 "use client";
 
-import { PencilIcon as Edit3, ArchiveBoxIcon as Package2, MagnifyingGlassIcon as Search, TrashIcon as Trash2 } from "@heroicons/react/24/outline";
+import { useState, useMemo } from "react";
+import { 
+  PencilIcon as Edit3, 
+  ArchiveBoxIcon as Package2, 
+  MagnifyingGlassIcon as Search, 
+  TrashIcon as Trash2,
+  CheckCircleIcon,
+  EyeSlashIcon
+} from "@heroicons/react/24/outline";
 import type { AdminCatalogProduct } from "@/lib/catalog";
 
 interface Props {
@@ -20,124 +28,185 @@ export default function ProductList({
   searchQuery,
   onSearchChange,
 }: Props) {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  // Extract all categories from products
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => {
+      if (Array.isArray(p.categories)) {
+        p.categories.forEach((c) => set.add(c));
+      } else if (p.category) {
+        if (Array.isArray(p.category)) p.category.forEach((c) => set.add(c));
+        else set.add(p.category);
+      }
+    });
+    return ["All", ...Array.from(set)];
+  }, [products]);
+
+  // Filter by category and search
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => {
+      const matchesCategory =
+        selectedCategory === "All" ||
+        (Array.isArray(p.categories) && p.categories.includes(selectedCategory)) ||
+        (Array.isArray(p.category) ? p.category.includes(selectedCategory) : p.category === selectedCategory);
+
+      return matchesCategory;
+    });
+  }, [products, selectedCategory]);
+
   return (
-    <aside className="flex flex-col gap-6 rounded-2xl border border-olive/10 bg-creme/40 p-6 shadow-sm backdrop-blur-md">
-      <div className="flex items-center justify-between px-1">
+    <aside className="flex flex-col gap-5 rounded-[26px] sm:rounded-[28px] bg-white p-5 sm:p-6 border border-[#e3e8e2] shadow-sm">
+      
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-serif text-olive tracking-tight">Catalog</h2>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-olive/30 mt-0.5">
-            {products.length} Products Available
+          <h2 className="text-xl font-serif font-bold text-[#222a1d]">Catalog List</h2>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[#222a1d]/40 mt-0.5">
+            {filteredProducts.length} of {products.length} Products
           </p>
         </div>
-        <div className="h-8 w-8 rounded-full bg-olive/5 flex items-center justify-center">
-          <Package2 className="h-4 w-4 text-olive/40" />
+        <div className="h-9 w-9 rounded-full bg-[#f1f4f1] flex items-center justify-center text-[#283322]">
+          <Package2 className="h-4 w-4" />
         </div>
       </div>
 
+      {/* Search Input */}
       <div className="relative group">
-        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-olive/30 transition-colors group-focus-within:text-olive/60" />
+        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#222a1d]/35 transition-colors group-focus-within:text-[#283322]" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search catalog..."
-          className="w-full rounded-xl border border-olive/10 bg-creme/50 px-11 py-3 text-sm text-olive placeholder:text-olive/20 outline-none transition-all focus:border-olive/30 focus:bg-creme focus:ring-4 focus:ring-olive/5"
+          placeholder="Search by title, scent, or slug..."
+          className="w-full rounded-full border border-[#e3e8e2] bg-[#f8faf8] pl-10 pr-4 py-2.5 text-xs text-[#222a1d] placeholder:text-[#222a1d]/35 outline-none transition-all focus:border-[#283322]/40 focus:bg-white"
         />
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto overflow-x-hidden pr-2 max-h-[600px] scrollbar-hide">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className={`group relative flex items-center gap-4 rounded-xl border p-3.5 transition-all duration-300 overflow-hidden ${
-              selectedId === product.id
-                ? "border-olive bg-olive text-creme shadow-lg shadow-olive/20"
-                : "border-olive/5 bg-creme/40 hover:border-olive/20 hover:bg-creme/60 hover:shadow-md"
+      {/* Category Filter Pills (Scrollable) */}
+      <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1 -mx-1 px-1">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              selectedCategory === cat
+                ? "bg-[#283322] text-white shadow-sm"
+                : "bg-[#f1f4f1] text-[#222a1d]/60 hover:bg-[#e8ede7] hover:text-[#222a1d]"
             }`}
           >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Products Scrollable List */}
+      <div className="space-y-2.5 overflow-y-auto pr-1 max-h-[580px] scrollbar-hide">
+        {filteredProducts.map((product) => {
+          const isSelected = selectedId === product.id;
+
+          return (
             <div
-              className="flex flex-1 items-center gap-4 cursor-pointer min-w-0"
+              key={product.id}
               onClick={() => onSelect(product)}
+              className={`group relative flex items-center gap-3.5 rounded-2xl border p-3 transition-all duration-200 cursor-pointer ${
+                isSelected
+                  ? "border-[#283322] bg-[#283322] text-white shadow-md shadow-[#283322]/15"
+                  : "border-[#eef2ee] bg-[#fcfdfc] hover:border-[#283322]/20 hover:bg-white hover:shadow-sm"
+              }`}
             >
-              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-olive/5 shadow-inner">
+              {/* Product Thumbnail */}
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-[#f1f4f1] border border-black/5 shadow-inner">
                 {product.img ? (
                   <img
                     src={product.img}
                     alt={product.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-olive/10">
-                    <Package2 className="h-6 w-6" />
+                  <div className="flex h-full w-full items-center justify-center text-[#283322]/20 text-xs font-serif">
+                    🕯️
                   </div>
                 )}
                 {!product.isActive && (
-                  <div className="absolute inset-0 bg-olive/40 backdrop-blur-[1px] flex items-center justify-center">
-                    <span className="text-[8px] font-bold uppercase tracking-tighter text-creme">Hidden</span>
+                  <div className="absolute inset-0 bg-[#283322]/60 backdrop-blur-[1px] flex items-center justify-center">
+                    <EyeSlashIcon className="h-4 w-4 text-white" />
                   </div>
                 )}
               </div>
 
+              {/* Product Details */}
               <div className="min-w-0 flex-1">
-                <h3 className={`truncate font-serif text-[15px] leading-tight ${
-                  selectedId === product.id ? "text-creme" : "text-olive"
-                }`}>
-                  {product.title}
-                </h3>
-                <div className="mt-1.5 flex items-center gap-3">
-                  <span className={`text-xs font-medium ${
-                    selectedId === product.id ? "text-creme/70" : "text-olive/50"
+                <div className="flex items-center gap-1.5">
+                  <h3 className={`truncate font-bold text-xs ${
+                    isSelected ? "text-white" : "text-[#222a1d]"
                   }`}>
-                    Rs {product.price.toLocaleString()}
+                    {product.title}
+                  </h3>
+                  {product.isActive ? (
+                    <span className={`inline-block h-1.5 w-1.5 rounded-full ${isSelected ? "bg-[#86efac]" : "bg-emerald-500"}`} title="Active in Store" />
+                  ) : (
+                    <span className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded ${isSelected ? "bg-white/20 text-white" : "bg-red-100 text-red-700"}`}>Hidden</span>
+                  )}
+                </div>
+
+                <div className="mt-1 flex items-center gap-2 flex-wrap">
+                  <span className={`font-mono text-xs font-bold ${
+                    isSelected ? "text-white" : "text-[#283322]"
+                  }`}>
+                    Rs {Number(product.price).toLocaleString()}
                   </span>
                   {product.tag && (
-                    <span className={`text-[8px] font-black uppercase tracking-[0.15em] ${
-                      selectedId === product.id ? "text-creme/60" : "text-terracotta/60"
+                    <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
+                      isSelected ? "bg-white/20 text-white" : "bg-[#f1f4f1] text-[#222a1d]/60"
                     }`}>
-                      • {product.tag}
+                      {product.tag}
                     </span>
                   )}
                 </div>
               </div>
-            </div>
 
-            <div className={`flex items-center gap-1 transition-all duration-300 ${
-              selectedId === product.id ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-            }`}>
-              <button
-                onClick={(e) => { e.stopPropagation(); onSelect(product); }}
-                className={`p-2 rounded-lg transition-colors ${
-                  selectedId === product.id ? "hover:bg-creme/20" : "hover:bg-olive/5"
-                }`}
-                title="Edit Product"
-              >
-                <Edit3 className="h-4 w-4" />
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); onDelete(product.id); }}
-                className={`p-2 rounded-lg transition-colors ${
-                  selectedId === product.id ? "hover:bg-creme/20 text-creme" : "hover:bg-terracotta/10 text-terracotta"
-                }`}
-                title="Delete Product"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelect(product);
+                  }}
+                  className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                    isSelected ? "hover:bg-white/20 text-white" : "hover:bg-[#f1f4f1] text-[#222a1d]/60"
+                  }`}
+                  title="Edit Product"
+                >
+                  <Edit3 className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(product.id);
+                  }}
+                  className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                    isSelected ? "hover:bg-red-500/30 text-white" : "hover:bg-red-50 text-red-600"
+                  }`}
+                  title="Delete Product"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
-        {products.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="h-16 w-16 rounded-2xl bg-olive/5 flex items-center justify-center mb-4">
-              <Search className="h-8 w-8 text-olive/10" />
-            </div>
-            <h4 className="text-olive font-serif">No products found</h4>
-            <p className="mt-1 text-sm text-olive/40 px-6">
-              Try adjusting your search terms or filters to find what you&apos;re looking for.
-            </p>
+        {filteredProducts.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-12 text-center text-[#222a1d]/40">
+            <Package2 className="h-8 w-8 mb-2 text-[#222a1d]/20" />
+            <p className="text-xs font-bold">No products match filters</p>
+            <p className="text-[10px] mt-0.5">Try searching for a different keyword</p>
           </div>
         )}
       </div>
+
     </aside>
   );
 }

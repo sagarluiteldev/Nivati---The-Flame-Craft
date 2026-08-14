@@ -75,7 +75,7 @@ export default function CartDrawer() {
                                 {item.metadata.fragrance && <span>Scent: {item.metadata.fragrance}</span>}
                               </div>
                               {item.metadata.message && (
-                                <p className="text-xs text-olive/60 font-light italic truncate max-w-[200px]">
+                                <p className="text-xs text-olive/60 font-light italic truncate max-w-50">
                                   &quot;{item.metadata.message}&quot;
                                 </p>
                               )}

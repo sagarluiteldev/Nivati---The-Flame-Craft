@@ -200,7 +200,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
             {/* Add to Cart Area */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 md:gap-6">
-              <div className="flex items-center justify-between border border-olive/20 rounded-full bg-transparent p-1 min-w-[140px]">
+              <div className="flex items-center justify-between border border-olive/20 rounded-full bg-transparent p-1 min-w-35">
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-olive hover:bg-olive/10 rounded-full transition-colors"

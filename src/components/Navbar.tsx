@@ -110,7 +110,7 @@ export default function Navbar() {
               </Link>
               
               {/* Mega Menu Dropdown */}
-              <div className="absolute top-full -left-12 w-[800px] bg-creme  shadow-2xl rounded-2xl p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 grid grid-cols-4 gap-6 translate-y-4 group-hover:translate-y-0 border border-olive/10  z-50">
+              <div className="absolute top-full -left-12 w-200 bg-creme  shadow-2xl rounded-2xl p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 grid grid-cols-4 gap-6 translate-y-4 group-hover:translate-y-0 border border-olive/10  z-50">
                 <Link href="/shop?category=Signature+Candles" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
                      <img src="/images/IMG_4142.jpg" alt="Signature Candles" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />

@@ -13,7 +13,7 @@ export default function Workshops() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
           <motion.div 
-            className="relative h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl"
+            className="relative h-125 w-full rounded-2xl overflow-hidden shadow-2xl"
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}

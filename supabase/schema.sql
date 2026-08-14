@@ -107,6 +107,122 @@ for delete
 to authenticated
 using (public.is_admin_user(auth.uid()));
 
+-- ==============================================================================
+-- SALES TABLE (Sales Ledger & Invoices)
+-- ==============================================================================
+create table if not exists public.sales (
+  id text primary key,
+  customer_name text not null,
+  customer_email text not null default '',
+  items jsonb not null default '[]'::jsonb,
+  total_amount numeric(10, 2) not null check (total_amount >= 0),
+  status text not null default 'completed' check (status in ('pending', 'completed', 'cancelled')),
+  sale_date text not null,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
+);
+
+drop trigger if exists handle_sales_updated_at on public.sales;
+create trigger handle_sales_updated_at
+before update on public.sales
+for each row
+execute procedure public.set_updated_at();
+
+alter table public.sales enable row level security;
+
+drop policy if exists "Admins can manage sales" on public.sales;
+create policy "Admins can manage sales"
+on public.sales
+for all
+to authenticated
+using (public.is_admin_user(auth.uid()))
+with check (public.is_admin_user(auth.uid()));
+
+-- ==============================================================================
+-- EXPENSES TABLE (Operating Expenses)
+-- ==============================================================================
+create table if not exists public.expenses (
+  id text primary key,
+  title text not null,
+  amount numeric(10, 2) not null check (amount >= 0),
+  category text not null check (category in ('materials', 'packaging', 'shipping', 'marketing', 'rent-utilities', 'other')),
+  status text not null default 'paid' check (status in ('paid', 'pending')),
+  expense_date text not null,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
+);
+
+drop trigger if exists handle_expenses_updated_at on public.expenses;
+create trigger handle_expenses_updated_at
+before update on public.expenses
+for each row
+execute procedure public.set_updated_at();
+
+alter table public.expenses enable row level security;
+
+drop policy if exists "Admins can manage expenses" on public.expenses;
+create policy "Admins can manage expenses"
+on public.expenses
+for all
+to authenticated
+using (public.is_admin_user(auth.uid()))
+with check (public.is_admin_user(auth.uid()));
+
+-- ==============================================================================
+-- STOCK LEVELS TABLE (Warehouse Inventory)
+-- ==============================================================================
+create table if not exists public.stock_levels (
+  product_id text primary key references public.products (id) on delete cascade,
+  stock_level integer not null default 0 check (stock_level >= 0),
+  safety_threshold integer not null default 5 check (safety_threshold >= 0),
+  unit_cost numeric(10, 2) not null default 0 check (unit_cost >= 0),
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
+);
+
+drop trigger if exists handle_stock_levels_updated_at on public.stock_levels;
+create trigger handle_stock_levels_updated_at
+before update on public.stock_levels
+for each row
+execute procedure public.set_updated_at();
+
+alter table public.stock_levels enable row level security;
+
+drop policy if exists "Admins can manage stock_levels" on public.stock_levels;
+create policy "Admins can manage stock_levels"
+on public.stock_levels
+for all
+to authenticated
+using (public.is_admin_user(auth.uid()))
+with check (public.is_admin_user(auth.uid()));
+
+-- ==============================================================================
+-- STOCK LOGS TABLE (Audit Trail)
+-- ==============================================================================
+create table if not exists public.stock_logs (
+  id text primary key,
+  product_id text not null,
+  product_title text not null,
+  type text not null check (type in ('restock', 'sale', 'adjustment')),
+  quantity integer not null,
+  log_date text not null,
+  note text not null default '',
+  created_at timestamptz not null default timezone('utc', now())
+);
+
+alter table public.stock_logs enable row level security;
+
+drop policy if exists "Admins can manage stock_logs" on public.stock_logs;
+create policy "Admins can manage stock_logs"
+on public.stock_logs
+for all
+to authenticated
+using (public.is_admin_user(auth.uid()))
+with check (public.is_admin_user(auth.uid()));
+
+-- ==============================================================================
+-- STORAGE BUCKETS (Product Images)
+-- ==============================================================================
 insert into storage.buckets (id, name, public)
 values ('product-images', 'product-images', true)
 on conflict (id) do update
@@ -151,9 +267,3 @@ using (
   bucket_id = 'product-images'
   and public.is_admin_user(auth.uid())
 );
-
--- Create a Supabase Auth user first, then promote that user into admin_users:
--- insert into public.admin_users (user_id, email)
--- select id, email
--- from auth.users
--- where email = 'admin@example.com';

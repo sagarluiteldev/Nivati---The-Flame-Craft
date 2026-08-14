@@ -1,5 +1,15 @@
+"use client";
+
 import { useState } from "react";
-import { ArrowPathIcon as LoaderCircle, CheckCircleIcon as Save, XMarkIcon as X, CheckIcon as Check } from "@heroicons/react/24/outline";
+import { 
+  ArrowPathIcon as LoaderCircle, 
+  CheckCircleIcon as Save, 
+  XMarkIcon as X, 
+  CheckIcon as Check,
+  SparklesIcon,
+  EyeIcon,
+  EyeSlashIcon
+} from "@heroicons/react/24/outline";
 import { type AdminCatalogProduct, type ProductRecordInput, KNOWN_CATEGORY_ORDER } from "@/lib/catalog";
 import MediaManager from "@/components/admin/MediaManager";
 
@@ -77,30 +87,39 @@ export default function ProductEditor({ product, onSave, onCancel, isSaving }: P
   };
 
   return (
-    <div className="flex flex-col gap-8 rounded-xl border border-olive/10 bg-creme/90 p-6 shadow-xl backdrop-blur-xl md:p-8">
-      <div className="flex items-center justify-between border-b border-olive/5 pb-6">
+    <div className="flex flex-col gap-6 sm:gap-8 rounded-[26px] sm:rounded-[28px] bg-white p-5 sm:p-7 md:p-8 border border-[#e3e8e2] shadow-sm">
+      
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-[#eef2ee] pb-5">
         <div>
-          <h2 className="text-2xl font-serif text-olive">
-            {product ? "Edit Product" : "New Product"}
+          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#283322]/10 text-[#283322]">
+            {product ? "Edit Mode" : "New Creation"}
+          </span>
+          <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#222a1d] mt-1.5">
+            {product ? product.title : "Create New Product"}
           </h2>
-          <p className="mt-1 text-sm text-olive/40">
-            {product ? `Managing ${product.id}` : "Creating a fresh catalog entry"}
+          <p className="text-xs text-[#222a1d]/45">
+            {product ? `Managing record ${product.id}` : "Configure product details and publish directly to Supabase catalog"}
           </p>
         </div>
         <button
           onClick={onCancel}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-olive/10 bg-creme text-olive/40 transition-colors hover:text-olive"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e3e8e2] bg-[#f8faf8] text-[#222a1d]/50 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4" />
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-10">
-        <div className="grid gap-8 lg:grid-cols-2">
-          <div className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
+        
+        {/* Basic Info Grid */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          
+          {/* Left Inputs */}
+          <div className="space-y-4">
             <label className="block">
-              <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-olive/40">
-                Product Title
+              <span className="mb-1.5 block text-xs font-bold text-[#222a1d]/70 uppercase tracking-wider text-[10px]">
+                Product Title *
               </span>
               <input
                 type="text"
@@ -108,16 +127,18 @@ export default function ProductEditor({ product, onSave, onCancel, isSaving }: P
                 value={formData.title}
                 onChange={(e) => {
                   updateField("title", e.target.value);
-                  if (!product) updateField("id", e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""));
+                  if (!product) {
+                    updateField("id", e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""));
+                  }
                 }}
-                className="w-full rounded-lg border border-olive/10 bg-creme px-5 py-3 text-olive outline-none transition-all focus:border-olive/30 focus:ring-1 focus:ring-olive/10"
-                placeholder="e.g. Signature Lavender Candle"
+                className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none transition-all focus:border-[#283322]/40 focus:bg-white"
+                placeholder="e.g. Amber Moss Concrete Candle"
               />
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-olive/40">
-                Product ID (Slug)
+              <span className="mb-1.5 block text-xs font-bold text-[#222a1d]/70 uppercase tracking-wider text-[10px]">
+                Product ID / Slug *
               </span>
               <input
                 type="text"
@@ -125,171 +146,206 @@ export default function ProductEditor({ product, onSave, onCancel, isSaving }: P
                 disabled={!!product}
                 value={formData.id}
                 onChange={(e) => updateField("id", e.target.value)}
-                className="w-full rounded-lg border border-olive/10 bg-creme px-5 py-3 text-olive outline-none transition-all focus:border-olive/30 disabled:opacity-50 font-mono text-xs"
-                placeholder="e.g. signature-lavender"
+                className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none transition-all focus:border-[#283322]/40 focus:bg-white disabled:opacity-50"
+                placeholder="e.g. amber-moss-concrete"
               />
             </label>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-4">
               <label className="block">
-                <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-olive/40">
-                  Price (Rs)
+                <span className="mb-1.5 block text-xs font-bold text-[#222a1d]/70 uppercase tracking-wider text-[10px]">
+                  Price (Rs) *
                 </span>
                 <input
                   type="number"
                   required
+                  min={0}
                   value={formData.price}
                   onChange={(e) => updateField("price", Number(e.target.value))}
-                  className="w-full rounded-lg border border-olive/10 bg-creme px-5 py-3 text-olive outline-none transition-all focus:border-olive/30"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono font-bold text-[#222a1d] outline-none transition-all focus:border-[#283322]/40 focus:bg-white"
                 />
               </label>
 
               <label className="block">
-                <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-olive/40">
-                  Tag (Badge)
+                <span className="mb-1.5 block text-xs font-bold text-[#222a1d]/70 uppercase tracking-wider text-[10px]">
+                  Badge / Tag
                 </span>
                 <input
                   type="text"
-                  value={formData.tag}
+                  value={formData.tag || ""}
                   onChange={(e) => updateField("tag", e.target.value)}
-                  className="w-full rounded-lg border border-olive/10 bg-creme px-5 py-3 text-olive outline-none transition-all focus:border-olive/30"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none transition-all focus:border-[#283322]/40 focus:bg-white"
                   placeholder="e.g. Best Seller"
                 />
               </label>
             </div>
 
+            {/* Category Select Chips */}
             <div>
-              <span className="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-olive/40">
-                Categories
+              <span className="mb-2 block text-xs font-bold text-[#222a1d]/70 uppercase tracking-wider text-[10px]">
+                Categories (Select all that apply) *
               </span>
-              <div className="flex flex-wrap gap-2">
-                {KNOWN_CATEGORY_ORDER.map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    onClick={() => toggleCategory(category)}
-                    className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium transition-all ${
-                      formData.categories?.includes(category)
-                        ? "bg-olive text-creme shadow-sm"
-                        : "border border-olive/10 bg-creme text-olive/60 hover:bg-olive/5"
-                    }`}
-                  >
-                    {formData.categories?.includes(category) && <Check className="h-3 w-3" />}
-                    {category}
-                  </button>
-                ))}
+              <div className="flex flex-wrap gap-1.5">
+                {KNOWN_CATEGORY_ORDER.map((category) => {
+                  const isChecked = formData.categories?.includes(category);
+                  return (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => toggleCategory(category)}
+                      className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold transition-all cursor-pointer ${
+                        isChecked
+                          ? "bg-[#283322] text-white shadow-sm"
+                          : "border border-[#e3e8e2] bg-[#f8faf8] text-[#222a1d]/60 hover:bg-[#e8ede7]"
+                      }`}
+                    >
+                      {isChecked && <Check className="h-3 w-3" />}
+                      <span>{category}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
 
-          <div className="space-y-6">
+          {/* Right Inputs */}
+          <div className="space-y-4">
             <label className="block">
-              <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-olive/40">
-                Description
+              <span className="mb-1.5 block text-xs font-bold text-[#222a1d]/70 uppercase tracking-wider text-[10px]">
+                Product Story & Description
               </span>
               <textarea
-                rows={5}
-                value={formData.description}
+                rows={4}
+                value={formData.description || ""}
                 onChange={(e) => updateField("description", e.target.value)}
-                className="w-full rounded-lg border border-olive/10 bg-creme px-5 py-3 text-olive outline-none transition-all focus:border-olive/30"
-                placeholder="Tell the story of this product..."
+                className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none transition-all focus:border-[#283322]/40 focus:bg-white"
+                placeholder="Describe olfactory profile, vessel crafting, and burn time..."
               />
             </label>
 
-            <div className="flex flex-col gap-4 p-4 rounded-lg bg-olive/5 border border-olive/10">
-              <label className="flex items-center gap-3 cursor-pointer select-none">
+            <div className="rounded-2xl bg-[#f8faf8] p-4 border border-[#e8ede7] space-y-3">
+              {/* Storefront Active Toggle */}
+              <label className="flex items-center justify-between cursor-pointer">
+                <div className="flex items-center gap-2">
+                  {formData.is_active ? (
+                    <EyeIcon className="h-4 w-4 text-emerald-600" />
+                  ) : (
+                    <EyeSlashIcon className="h-4 w-4 text-red-500" />
+                  )}
+                  <span className="text-xs font-bold text-[#222a1d]">
+                    Visible on Storefront
+                  </span>
+                </div>
                 <input
                   type="checkbox"
                   checked={formData.is_active}
                   onChange={(e) => updateField("is_active", e.target.checked)}
-                  className="h-4 w-4 rounded border-olive/20 text-olive focus:ring-olive"
+                  className="h-4 w-4 rounded border-[#d4ded3] text-[#283322] focus:ring-[#283322] cursor-pointer"
                 />
-                <span className="text-sm font-medium text-olive/70">
-                  Active & Visible in Storefront
-                </span>
               </label>
-              
-              <label className="block">
-                <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-olive/40">
-                  Sort Order
+
+              {/* Sort Order */}
+              <div className="flex items-center justify-between pt-2 border-t border-[#e8ede7]">
+                <span className="text-[11px] font-medium text-[#222a1d]/60">
+                  Storefront Display Priority (Sort Order)
                 </span>
                 <input
                   type="number"
-                  value={formData.sort_order}
+                  value={formData.sort_order || 0}
                   onChange={(e) => updateField("sort_order", Number(e.target.value))}
-                  className="w-full rounded-lg border border-olive/10 bg-creme px-4 py-2 text-sm text-olive outline-none transition-all focus:border-olive/30"
+                  className="w-20 rounded-xl border border-[#e3e8e2] bg-white px-2.5 py-1 text-xs text-center font-mono font-bold text-[#222a1d] outline-none"
                 />
-              </label>
+              </div>
             </div>
           </div>
         </div>
 
-        <MediaManager
-          primaryImage={formData.primary_image || ""}
-          gallery={formData.gallery || []}
-          onChange={(data) => {
-            updateField("primary_image", data.primaryImage);
-            updateField("gallery", data.gallery);
-          }}
-        />
-
-        <div className="grid gap-6 lg:grid-cols-3">
-          <label className="block">
-            <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-olive/40">
-              Top Notes
-            </span>
-            <input
-              type="text"
-              value={formData.scent_top}
-              onChange={(e) => updateField("scent_top", e.target.value)}
-              className="w-full rounded-lg border border-olive/10 bg-creme px-5 py-3 text-sm text-olive outline-none transition-all focus:border-olive/30"
-            />
-          </label>
-          <label className="block">
-            <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-olive/40">
-              Middle Notes
-            </span>
-            <input
-              type="text"
-              value={formData.scent_mid}
-              onChange={(e) => updateField("scent_mid", e.target.value)}
-              className="w-full rounded-lg border border-olive/10 bg-creme px-5 py-3 text-sm text-olive outline-none transition-all focus:border-olive/30"
-            />
-          </label>
-          <label className="block">
-            <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-olive/40">
-              Base Notes
-            </span>
-            <input
-              type="text"
-              value={formData.scent_base}
-              onChange={(e) => updateField("scent_base", e.target.value)}
-              className="w-full rounded-lg border border-olive/10 bg-creme px-5 py-3 text-sm text-olive outline-none transition-all focus:border-olive/30"
-            />
-          </label>
+        {/* Media Manager Component */}
+        <div className="border-t border-[#eef2ee] pt-6">
+          <MediaManager
+            primaryImage={formData.primary_image || ""}
+            gallery={formData.gallery || []}
+            onChange={(data) => {
+              updateField("primary_image", data.primaryImage);
+              updateField("gallery", data.gallery);
+            }}
+          />
         </div>
 
-        <div className="flex items-center justify-end gap-4 border-t border-olive/5 pt-8">
+        {/* Scent Pyramid Section */}
+        <div className="border-t border-[#eef2ee] pt-6 space-y-3">
+          <div className="flex items-center gap-2">
+            <SparklesIcon className="h-4 w-4 text-[#283322]" />
+            <h3 className="text-sm font-serif font-bold text-[#222a1d]">
+              Olfactory Scent Pyramid
+            </h3>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            <label className="block">
+              <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/50">
+                Top Notes
+              </span>
+              <input
+                type="text"
+                value={formData.scent_top || ""}
+                onChange={(e) => updateField("scent_top", e.target.value)}
+                className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                placeholder="e.g. Bergamot, French Lavender"
+              />
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/50">
+                Middle Notes
+              </span>
+              <input
+                type="text"
+                value={formData.scent_mid || ""}
+                onChange={(e) => updateField("scent_mid", e.target.value)}
+                className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                placeholder="e.g. Sage, Clary blossom"
+              />
+            </label>
+
+            <label className="block">
+              <span className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/50">
+                Base Notes
+              </span>
+              <input
+                type="text"
+                value={formData.scent_base || ""}
+                onChange={(e) => updateField("scent_base", e.target.value)}
+                className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                placeholder="e.g. Cedarwood, Amber, Vanilla"
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Form Action Buttons */}
+        <div className="flex items-center justify-end gap-3 border-t border-[#eef2ee] pt-6">
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-lg px-8 py-3 text-xs font-bold uppercase tracking-widest text-olive/40 transition-colors hover:text-olive hover:bg-olive/5"
+            className="rounded-full px-6 py-2.5 text-xs font-semibold text-[#222a1d]/60 hover:bg-[#f1f4f1] hover:text-[#222a1d] transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSaving}
-            className="flex items-center gap-2 rounded-lg bg-olive px-10 py-4 text-xs font-bold uppercase tracking-widest text-creme transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+            className="flex items-center gap-2 rounded-full bg-[#283322] px-8 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all disabled:opacity-50 cursor-pointer active:scale-95"
           >
             {isSaving ? (
               <LoaderCircle className="h-4 w-4 animate-spin" />
             ) : (
               <Save className="h-4 w-4" />
             )}
-            {product ? "Update Product" : "Create Product"}
+            <span>{product ? "Update Database" : "Publish Product"}</span>
           </button>
         </div>
+
       </form>
     </div>
   );

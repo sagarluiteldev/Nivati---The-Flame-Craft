@@ -6,7 +6,9 @@ import {
   TrashIcon, 
   PencilIcon, 
   XMarkIcon, 
-  MagnifyingGlassIcon 
+  MagnifyingGlassIcon,
+  BanknotesIcon,
+  ReceiptPercentIcon
 } from "@heroicons/react/24/outline";
 import { useDashboardStore, type Expense, type ExpenseCategory } from "@/lib/dashboard-store";
 
@@ -51,7 +53,7 @@ export default function ExpensesTab() {
     let total = 0;
     let materials = 0;
     let marketing = 0;
-    let logistics = 0; // shipping + packaging
+    let logistics = 0;
 
     filteredExpenses.forEach((e) => {
       total += e.amount;
@@ -86,7 +88,7 @@ export default function ExpensesTab() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || amount <= 0) {
-      alert("Title is required and amount must be positive.");
+      alert("Title is required and amount must be greater than zero.");
       return;
     }
 
@@ -106,45 +108,80 @@ export default function ExpensesTab() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Metrics Summary Card */}
+    <div className="space-y-6 sm:space-y-8">
+      
+      {/* 1. EXPENSE SUMMARY CARDS */}
       <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-        <div className="rounded-xl border border-olive/5 bg-creme/50 p-4 shadow-inner">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-olive/40">Total Ledgered</span>
-          <h4 className="mt-1 text-lg font-sans font-bold text-olive">Rs {summaryMetrics.total.toLocaleString()}</h4>
+        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
+            Total Operational Costs
+          </span>
+          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#222a1d]">
+            Rs {summaryMetrics.total.toLocaleString()}
+          </h4>
+          <span className="text-[10px] text-[#222a1d]/40 font-medium mt-1 block">
+            Across {filteredExpenses.length} entries
+          </span>
         </div>
-        <div className="rounded-xl border border-olive/5 bg-creme/50 p-4 shadow-inner">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-olive/40">Wax & Ingredients</span>
-          <h4 className="mt-1 text-lg font-sans font-bold text-olive">Rs {summaryMetrics.materials.toLocaleString()}</h4>
+
+        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
+            Wax & Fragrance
+          </span>
+          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#283322]">
+            Rs {summaryMetrics.materials.toLocaleString()}
+          </h4>
+          <span className="text-[10px] text-emerald-600 font-semibold mt-1 block">
+            Core Raw Materials
+          </span>
         </div>
-        <div className="rounded-xl border border-olive/5 bg-creme/50 p-4 shadow-inner">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-olive/40">Marketing & Ads</span>
-          <h4 className="mt-1 text-lg font-sans font-bold text-olive">Rs {summaryMetrics.marketing.toLocaleString()}</h4>
+
+        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
+            Marketing & Ads
+          </span>
+          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#2563eb]">
+            Rs {summaryMetrics.marketing.toLocaleString()}
+          </h4>
+          <span className="text-[10px] text-blue-600 font-semibold mt-1 block">
+            Growth & Outreach
+          </span>
         </div>
-        <div className="rounded-xl border border-olive/5 bg-creme/50 p-4 shadow-inner">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-olive/40">Logistics & Freight</span>
-          <h4 className="mt-1 text-lg font-sans font-bold text-olive">Rs {summaryMetrics.logistics.toLocaleString()}</h4>
+
+        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
+            Packaging & Freight
+          </span>
+          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#d97706]">
+            Rs {summaryMetrics.logistics.toLocaleString()}
+          </h4>
+          <span className="text-[10px] text-amber-600 font-semibold mt-1 block">
+            Jars, boxes & shipping
+          </span>
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative group max-w-md flex-1">
-            <MagnifyingGlassIcon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-olive/30 transition-colors group-focus-within:text-olive/60" />
+      {/* 2. FILTER AND ACTION BAR */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-[24px] sm:rounded-[28px] border border-[#e3e8e2] shadow-sm">
+        
+        <div className="flex flex-1 flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+          {/* Search Input */}
+          <div className="relative group flex-1 max-w-md">
+            <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#222a1d]/35 transition-colors group-focus-within:text-[#283322]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search expenses..."
-              className="w-full rounded-xl border border-olive/10 bg-creme/50 px-11 py-2.5 text-sm text-olive placeholder:text-olive/20 outline-none transition-all focus:border-olive/30 focus:bg-creme"
+              placeholder="Search expenses by title or ID..."
+              className="w-full rounded-full border border-[#e3e8e2] bg-[#f8faf8] pl-10 pr-4 py-2.5 text-xs text-[#222a1d] placeholder:text-[#222a1d]/35 outline-none transition-all focus:border-[#283322]/40 focus:bg-white"
             />
           </div>
 
+          {/* Category Dropdown */}
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="rounded-xl border border-olive/10 bg-creme/50 px-4 py-2.5 text-sm text-olive/80 outline-none focus:border-olive/30 focus:bg-creme cursor-pointer"
+            className="rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
           >
             <option value="all">All Categories</option>
             {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
@@ -152,76 +189,84 @@ export default function ExpensesTab() {
             ))}
           </select>
 
+          {/* Status Dropdown */}
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-xl border border-olive/10 bg-creme/50 px-4 py-2.5 text-sm text-olive/80 outline-none focus:border-olive/30 focus:bg-creme cursor-pointer"
+            className="rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
           >
-            <option value="all">All Statuses</option>
-            <option value="paid">Paid</option>
-            <option value="pending">Pending</option>
+            <option value="all">All Payment Statuses</option>
+            <option value="paid">Paid & Cleared</option>
+            <option value="pending">Pending Payment</option>
           </select>
         </div>
 
+        {/* Log Expense Primary Button */}
         <button
           onClick={handleOpenNewForm}
-          className="flex items-center justify-center gap-2 rounded-lg bg-olive px-6 py-3 text-xs font-bold uppercase tracking-widest text-creme transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          className="flex items-center justify-center gap-2 rounded-full bg-[#283322] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer w-full sm:w-auto active:scale-95"
         >
           <PlusIcon className="h-4 w-4" />
-          Log Expense
+          <span>Log Expense</span>
         </button>
       </div>
 
-      {/* Expenses Grid / Table */}
-      <div className="overflow-hidden rounded-2xl border border-olive/10 bg-creme/40 shadow-sm backdrop-blur-md">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      {/* 3. EXPENSES TABLE */}
+      <div className="rounded-[24px] sm:rounded-[28px] bg-white p-5 sm:p-7 border border-[#e3e8e2] shadow-sm">
+        <div className="overflow-x-auto scrollbar-hide -mx-5 sm:-mx-7 px-5 sm:px-7">
+          <table className="w-full text-left border-collapse min-w-[680px]">
             <thead>
-              <tr className="border-b border-olive/10 bg-olive/[0.02] text-[10px] font-bold uppercase tracking-[0.15em] text-olive/40">
-                <th className="p-4 pl-6">ID</th>
-                <th className="p-4">Expense Title</th>
-                <th className="p-4">Category</th>
-                <th className="p-4">Date logged</th>
-                <th className="p-4 text-right">Amount</th>
-                <th className="p-4 text-center">Status</th>
-                <th className="p-4 pr-6 text-right">Actions</th>
+              <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
+                <th className="pb-3 pl-2">ID</th>
+                <th className="pb-3">Expense Title</th>
+                <th className="pb-3">Category</th>
+                <th className="pb-3">Date Logged</th>
+                <th className="pb-3 text-right">Amount</th>
+                <th className="pb-3 text-center">Status</th>
+                <th className="pb-3 pr-2 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-olive/5 text-sm text-olive">
+            <tbody className="divide-y divide-[#f2f6f1] text-xs text-[#222a1d]">
               {filteredExpenses.map((exp) => (
-                <tr key={exp.id} className="hover:bg-olive/[0.01] transition-colors group">
-                  <td className="p-4 pl-6 font-mono text-xs text-olive/50">{exp.id}</td>
-                  <td className="p-4 font-bold">{exp.title}</td>
-                  <td className="p-4 text-xs font-semibold text-olive/70">
-                    <span className="rounded-md border border-olive/10 bg-creme/50 px-2.5 py-1">
+                <tr key={exp.id} className="hover:bg-[#f8faf8] transition-colors group">
+                  <td className="py-4 pl-2 font-mono font-bold text-xs text-[#283322]">
+                    {exp.id}
+                  </td>
+                  <td className="py-4 font-bold text-[#222a1d]">
+                    {exp.title}
+                  </td>
+                  <td className="py-4">
+                    <span className="inline-block rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70">
                       {CATEGORY_LABELS[exp.category]}
                     </span>
                   </td>
-                  <td className="p-4 font-mono text-xs">{exp.date}</td>
-                  <td className="p-4 text-right font-mono font-bold text-terracotta">
+                  <td className="py-4 font-mono text-[11px] text-[#222a1d]/60">
+                    {exp.date}
+                  </td>
+                  <td className="py-4 text-right font-mono font-bold text-sm text-[#222a1d]">
                     Rs {exp.amount.toLocaleString()}
                   </td>
-                  <td className="p-4 text-center">
-                    <span className={`inline-block text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                  <td className="py-4 text-center">
+                    <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${
                       exp.status === "paid"
-                        ? "bg-olive/10 text-olive"
-                        : "bg-amber-100 text-amber-800"
+                        ? "bg-[#dcfce7] text-[#15803d]"
+                        : "bg-[#fef3c7] text-[#b45309]"
                     }`}>
                       {exp.status}
                     </span>
                   </td>
-                  <td className="p-4 pr-6 text-right">
-                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <td className="py-4 pr-2 text-right">
+                    <div className="flex items-center justify-end gap-1 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => handleOpenEditForm(exp)}
-                        className="p-2 rounded-lg hover:bg-olive/5 text-olive/60 hover:text-olive"
+                        className="p-1.5 rounded-lg hover:bg-[#f1f4f1] text-[#222a1d]/60 hover:text-[#222a1d] transition-colors cursor-pointer"
                         title="Edit Expense"
                       >
                         <PencilIcon className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteExpense(exp.id)}
-                        className="p-2 rounded-lg hover:bg-terracotta/10 text-terracotta"
+                        className="p-1.5 rounded-lg hover:bg-red-50 text-red-600 transition-colors cursor-pointer"
                         title="Delete Record"
                       >
                         <TrashIcon className="h-4 w-4" />
@@ -233,8 +278,8 @@ export default function ExpensesTab() {
 
               {filteredExpenses.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="p-16 text-center text-olive/40 font-serif">
-                    No expense items logged.
+                  <td colSpan={7} className="py-16 text-center text-[#222a1d]/40 font-serif">
+                    No operating expenses match current filters.
                   </td>
                 </tr>
               )}
@@ -243,66 +288,68 @@ export default function ExpensesTab() {
         </div>
       </div>
 
-      {/* CREATE / EDIT EXPENSE FORM MODAL */}
+      {/* 4. CREATE / EDIT EXPENSE MODAL */}
       {isEditorOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-olive/30 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-2xl bg-creme p-6 shadow-2xl border border-olive/10">
-            <div className="flex items-center justify-between border-b border-olive/5 pb-4">
-              <h3 className="text-xl font-serif text-olive">
-                {editingExpense ? `Edit Expense ${editingExpense.id}` : "Log Expense Details"}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-[28px] bg-white p-6 sm:p-7 shadow-2xl border border-[#e3e8e2]">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
+              <h3 className="text-xl font-serif font-bold text-[#222a1d]">
+                {editingExpense ? `Edit Expense ${editingExpense.id}` : "Log Operating Expense"}
               </h3>
               <button 
                 onClick={() => setIsEditorOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-olive/5 text-olive/40 hover:text-olive"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f8faf8] text-[#222a1d]/50 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
               >
                 <XMarkIcon className="h-4 w-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-5 space-y-4">
               <label className="block">
-                <span className="mb-1.5 block text-[9px] font-bold uppercase tracking-wider text-olive/40">Expense Title</span>
+                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Expense Title *</span>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full rounded-lg border border-olive/10 bg-creme px-4 py-2.5 text-sm text-olive outline-none focus:border-olive/30"
-                  placeholder="e.g. Amber jars batch buy"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  placeholder="e.g. 50kg Organic Soy Wax Pellets"
                 />
               </label>
 
               <div className="grid gap-4 grid-cols-2">
                 <label className="block">
-                  <span className="mb-1.5 block text-[9px] font-bold uppercase tracking-wider text-olive/40">Amount (Rs)</span>
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Amount (Rs) *</span>
                   <input
                     type="number"
                     required
                     min={1}
                     value={amount || ""}
                     onChange={(e) => setAmount(Number(e.target.value))}
-                    className="w-full rounded-lg border border-olive/10 bg-creme px-4 py-2.5 text-sm text-olive outline-none focus:border-olive/30 font-mono"
-                    placeholder="e.g. 5000"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    placeholder="e.g. 12500"
                   />
                 </label>
                 <label className="block">
-                  <span className="mb-1.5 block text-[9px] font-bold uppercase tracking-wider text-olive/40">Date Logged</span>
+                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Date Logged *</span>
                   <input
                     type="date"
                     required
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full rounded-lg border border-olive/10 bg-creme px-4 py-2.5 text-sm text-olive outline-none focus:border-olive/30 font-mono"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
               </div>
 
               <label className="block">
-                <span className="mb-1.5 block text-[9px] font-bold uppercase tracking-wider text-olive/40">Category</span>
+                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Expense Category</span>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
-                  className="w-full rounded-lg border border-olive/10 bg-creme px-4 py-2.5 text-sm text-olive outline-none focus:border-olive/30 cursor-pointer"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
                 >
                   {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
                     <option key={key} value={key}>{label}</option>
@@ -311,36 +358,39 @@ export default function ExpensesTab() {
               </label>
 
               <label className="block">
-                <span className="mb-1.5 block text-[9px] font-bold uppercase tracking-wider text-olive/40">Payment Status</span>
+                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Payment Status</span>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as "paid" | "pending")}
-                  className="w-full rounded-lg border border-olive/10 bg-creme px-4 py-2.5 text-sm text-olive outline-none focus:border-olive/30 cursor-pointer"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
                 >
                   <option value="paid">Paid & Cleared</option>
                   <option value="pending">Pending Payment</option>
                 </select>
               </label>
 
-              <div className="flex items-center justify-end gap-3 border-t border-olive/5 pt-4">
+              {/* Modal Buttons */}
+              <div className="flex items-center justify-end gap-3 border-t border-[#eef2ee] pt-4">
                 <button
                   type="button"
                   onClick={() => setIsEditorOpen(false)}
-                  className="rounded-lg px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-olive/40 hover:text-olive hover:bg-olive/5"
+                  className="rounded-full px-5 py-2 text-xs font-semibold text-[#222a1d]/50 hover:bg-[#f1f4f1] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-olive px-8 py-3 text-xs font-bold uppercase tracking-widest text-creme transition-transform hover:scale-[1.01] active:scale-[0.99]"
+                  className="rounded-full bg-[#283322] px-7 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer active:scale-95"
                 >
-                  {editingExpense ? "Update Expense" : "Save Record"}
+                  {editingExpense ? "Update Expense" : "Save to Ledger"}
                 </button>
               </div>
+
             </form>
           </div>
         </div>
       )}
+
     </div>
   );
 }

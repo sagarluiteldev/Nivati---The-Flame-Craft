@@ -22,7 +22,7 @@ export default function AdminHeader({ email, onSignOut }: Props) {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3 rounded-lg border border-olive/10 bg-creme/50 px-4 py-2 text-sm text-olive/80">
           <UserCircle className="h-4 w-4" />
-          <span className="max-w-[150px] truncate">{email}</span>
+          <span className="max-w-37.5 truncate">{email}</span>
         </div>
         
         <button

@@ -121,7 +121,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-[900px] bg-creme/95 rounded-[32px] shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[85vh] backdrop-blur-md"
+            className="relative w-full max-w-225 bg-creme/95 rounded-4xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[85vh] backdrop-blur-md"
           >
             <button
               onClick={onClose}
@@ -131,7 +131,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
             </button>
 
             {/* Image Section */}
-            <div className="shrink-0 md:w-1/2 relative min-h-[300px] md:h-auto bg-olive/5 overflow-hidden">
+            <div className="shrink-0 md:w-1/2 relative min-h-75 md:h-auto bg-olive/5 overflow-hidden">
               <motion.img
                 initial={{ scale: 1.1, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -235,7 +235,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
               )}
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4 mt-auto">
-                <div className="flex items-center justify-between border border-olive/20 rounded-full bg-transparent p-1 min-w-[120px]">
+                <div className="flex items-center justify-between border border-olive/20 rounded-full bg-transparent p-1 min-w-30">
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="w-10 h-10 flex items-center justify-center text-olive hover:bg-olive/10 rounded-full transition-colors"

@@ -99,7 +99,7 @@ export default function Journals() {
           </button>
 
           {/* Cards Display Area */}
-          <div className="overflow-hidden min-h-[260px] md:min-h-[280px] px-1 py-1">
+          <div className="overflow-hidden min-h-65 md:min-h-70 px-1 py-1">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={index + (isMobile ? "-m" : "-d")}

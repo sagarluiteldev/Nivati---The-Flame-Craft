@@ -348,15 +348,15 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           data-lenis-prevent
-          className="fixed inset-0 z-60 bg-creme/98 backdrop-blur-2xl flex flex-col text-olive overflow-hidden h-[100dvh]"
+          className="fixed inset-0 z-60 bg-creme/98 backdrop-blur-2xl flex flex-col text-olive overflow-hidden h-dvh"
         >
           {/* Morphing Ambient Background Glows */}
           <div 
-            className="absolute top-[10%] left-[10%] w-[350px] h-[350px] rounded-full blur-[130px] -z-10 transition-all duration-1000" 
+            className="absolute top-[10%] left-[10%] w-87.5 h-87.5 rounded-full blur-[130px] -z-10 transition-all duration-1000" 
             style={{ backgroundColor: ambient.bg1 }} 
           />
           <div 
-            className="absolute bottom-[20%] right-[10%] w-[300px] h-[300px] rounded-full blur-[130px] -z-10 transition-all duration-1000" 
+            className="absolute bottom-[20%] right-[10%] w-75 h-75 rounded-full blur-[130px] -z-10 transition-all duration-1000" 
             style={{ backgroundColor: ambient.bg2 }} 
           />
 

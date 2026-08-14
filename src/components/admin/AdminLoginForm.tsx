@@ -69,7 +69,7 @@ export default function AdminLoginForm({
   };
 
   return (
-    <section className="w-full max-w-md rounded-[32px] border border-olive/10 bg-creme/92 p-8 shadow-2xl shadow-olive/10 backdrop-blur-xl">
+    <section className="w-full max-w-md rounded-4xl border border-olive/10 bg-creme/92 p-8 shadow-2xl shadow-olive/10 backdrop-blur-xl">
       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-olive text-creme">
         <LockKeyhole className="h-6 w-6" />
       </div>

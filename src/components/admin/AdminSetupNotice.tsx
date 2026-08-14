@@ -10,7 +10,7 @@ export default function AdminSetupNotice({
   details,
 }: Props) {
   return (
-    <section className="w-full max-w-3xl rounded-[32px] border border-olive/10 bg-creme/90 p-8 shadow-xl shadow-olive/5 md:p-12">
+    <section className="w-full max-w-3xl rounded-4xl border border-olive/10 bg-creme/90 p-8 shadow-xl shadow-olive/5 md:p-12">
       <div className="mb-8 flex items-center gap-4">
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-olive text-creme">
           <ShieldAlert className="h-6 w-6" />
