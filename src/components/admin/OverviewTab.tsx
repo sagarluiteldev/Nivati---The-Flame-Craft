@@ -12,7 +12,8 @@ import {
   UserGroupIcon,
   ReceiptPercentIcon,
   DocumentTextIcon,
-  PlusIcon
+  PlusIcon,
+  ChevronDownIcon
 } from "@heroicons/react/24/outline";
 import { useDashboardStore } from "@/lib/dashboard-store";
 import type { AdminCatalogProduct } from "@/lib/catalog";
@@ -63,6 +64,7 @@ export default function OverviewTab({
   const [isPerfFilterOpen, setIsPerfFilterOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
   const handleTimeRangeSelect = (newRange: string) => {
     if (setTimeRange) {
@@ -889,83 +891,129 @@ export default function OverviewTab({
             </div>
           </div>
 
-          {/* MOBILE CARD VIEW (< 768px): Flat 16:9 Widescreen Horizontal Cards */}
-          <div className="block md:hidden space-y-3 pt-3">
-            {recentOrders.map((order) => (
-              <div 
-                key={order.id}
-                onClick={() => setActiveTab("sales")}
-                className="rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2.5 shadow-2xs cursor-pointer hover:border-[#283322]/30 transition-all"
-              >
-                {/* Row 1: ID, Category, Customer, Date, Status */}
-                <div className="flex items-center justify-between gap-2 border-b border-[#eef2ee] pb-2">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="font-mono font-bold text-xs text-[#283322]">{order.id}</span>
-                    <span className="rounded-full bg-white border border-[#e8ede7] px-1.5 py-0.2 text-[8px] font-semibold text-[#222a1d]/70">
-                      {order.category}
-                    </span>
-                    <span className="text-xs font-bold text-[#222a1d] truncate max-w-28 sm:max-w-36">
-                      • {order.customerName}
-                    </span>
+          {/* MOBILE CARD VIEW (< 768px): Click to Expand (1:1 details) / Click to Minimize (Flat 16:9) */}
+          <div className="block md:hidden space-y-2.5 pt-3">
+            {recentOrders.map((order) => {
+              const isExpanded = expandedOrderId === order.id;
+
+              return (
+                <div 
+                  key={order.id}
+                  onClick={() => setExpandedOrderId(isExpanded ? null : order.id)}
+                  className={`rounded-2xl border transition-all duration-200 cursor-pointer overflow-hidden ${
+                    isExpanded 
+                      ? "border-[#283322]/40 bg-white p-4.5 space-y-4 shadow-md ring-1 ring-[#283322]/10" 
+                      : "border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2 shadow-2xs hover:border-[#283322]/30"
+                  }`}
+                >
+                  {/* 1. TOP SUMMARY BAR (Always visible, minimal flat view) */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                      <span className="font-mono font-bold text-xs text-[#283322]">{order.id}</span>
+                      <span className="rounded-full bg-white border border-[#e8ede7] px-1.5 py-0.2 text-[8px] font-semibold text-[#222a1d]/70">
+                        {order.category}
+                      </span>
+                      <span className="text-xs font-bold text-[#222a1d] truncate max-w-28 sm:max-w-36">
+                        • {order.customerName}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="font-mono font-bold text-xs sm:text-sm text-[#283322]">
+                        Rs {order.totalAmount.toLocaleString()}
+                      </span>
+                      <span className={`inline-block text-[8px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider ${
+                        order.status === "completed"
+                          ? "bg-[#dcfce7] text-[#15803d]"
+                          : order.status === "pending"
+                          ? "bg-[#fef3c7] text-[#b45309]"
+                          : "bg-[#fee2e2] text-[#b91c1c]"
+                      }`}>
+                        {order.status}
+                      </span>
+                      <div className="h-6 w-6 rounded-full bg-white border border-[#e8ede7] flex items-center justify-center text-[#222a1d]/40">
+                        <ChevronDownIcon className={`h-3.5 w-3.5 transition-transform duration-200 ${isExpanded ? "rotate-180 text-[#283322]" : ""}`} />
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="font-mono text-[9px] text-[#222a1d]/45">{order.date}</span>
-                    <span className={`inline-block text-[8px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider ${
-                      order.status === "completed"
-                        ? "bg-[#dcfce7] text-[#15803d]"
-                        : order.status === "pending"
-                        ? "bg-[#fef3c7] text-[#b45309]"
-                        : "bg-[#fee2e2] text-[#b91c1c]"
-                    }`}>
-                      {order.status}
-                    </span>
-                  </div>
-                </div>
+                  {/* 2. EXPANDED VIEW (~1:1 Full Detailed Mode) */}
+                  {isExpanded && (
+                    <div className="space-y-4 pt-3 border-t border-[#eef2ee] animate-fadeIn" onClick={(e) => e.stopPropagation()}>
+                      
+                      {/* Customer & Timestamp */}
+                      <div className="flex items-center justify-between gap-2 bg-[#f8faf8] p-3 rounded-xl border border-[#e8ede7]">
+                        <div>
+                          <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Customer</span>
+                          <h4 className="font-bold text-xs sm:text-sm text-[#222a1d]">{order.customerName}</h4>
+                          <p className="text-[10px] text-[#222a1d]/50">{order.customerEmail || "Walk-in Customer"}</p>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Order Date</span>
+                          <p className="font-mono text-xs text-[#222a1d] font-semibold">{order.date}</p>
+                        </div>
+                      </div>
 
-                {/* Row 2: Products Breakdown + Total */}
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <div className="flex -space-x-1.5 shrink-0">
-                      {order.items.slice(0, 3).map((item, idx) => {
-                        const prod = catalogProducts.find((p) => p.id === item.productId);
-                        const img = prod?.img || "";
-                        return (
-                          <div key={idx} className="h-7 w-7 rounded-lg bg-white border border-[#e8ede7] overflow-hidden">
-                            {img ? (
-                              <img 
-                                src={img} 
-                                alt={item.productTitle} 
-                                className="h-full w-full object-cover" 
-                              />
-                            ) : (
-                              <div className="h-full w-full flex items-center justify-center text-[9px]">
-                                🕯️
+                      {/* Items Ordered List */}
+                      <div className="bg-[#f8faf8] rounded-xl p-3 border border-[#e8ede7] space-y-2">
+                        <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">
+                          Items Breakdown ({order.itemCount} units)
+                        </span>
+                        <div className="space-y-2 divide-y divide-[#eef2ee]">
+                          {order.items.map((item, idx) => {
+                            const prod = catalogProducts.find((p) => p.id === item.productId);
+                            const img = prod?.img || "";
+                            const title = item.productTitle || prod?.title || item.productId;
+
+                            return (
+                              <div key={idx} className="flex items-center justify-between pt-2 first:pt-0">
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                  <div className="h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-white border border-[#e8ede7]">
+                                    {img ? (
+                                      <img 
+                                        src={img} 
+                                        alt={title} 
+                                        className="h-full w-full object-cover" 
+                                      />
+                                    ) : (
+                                      <div className="h-full w-full flex items-center justify-center text-xs">
+                                        🕯️
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <p className="font-semibold text-xs text-[#222a1d] truncate max-w-40">
+                                      {title}
+                                    </p>
+                                    <p className="text-[10px] font-mono text-[#222a1d]/50">
+                                      {item.quantity} × Rs {item.price.toLocaleString()}
+                                    </p>
+                                  </div>
+                                </div>
+                                <span className="font-mono font-bold text-xs text-[#222a1d] shrink-0">
+                                  Rs {(item.quantity * item.price).toLocaleString()}
+                                </span>
                               </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[11px] font-semibold text-[#222a1d] truncate">
-                        {order.items.map((i) => `${i.productTitle} (${i.quantity})`).join(", ")}
-                      </p>
-                      <p className="text-[9px] text-[#222a1d]/45 font-mono">
-                        {order.itemCount} {order.itemCount === 1 ? "unit" : "units"}
-                      </p>
-                    </div>
-                  </div>
+                            );
+                          })}
+                        </div>
+                      </div>
 
-                  <div className="text-right shrink-0">
-                    <span className="text-[9px] text-[#222a1d]/40 uppercase font-semibold block">Total</span>
-                    <span className="font-mono font-bold text-xs sm:text-sm text-[#283322]">
-                      Rs {order.totalAmount.toLocaleString()}
-                    </span>
-                  </div>
+                      {/* Action to Jump to Sales Ledger */}
+                      <div className="pt-1">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setActiveTab("sales"); }}
+                          className="w-full flex items-center justify-center gap-1.5 rounded-full bg-[#283322] py-2.5 text-xs font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer shadow-xs"
+                        >
+                          <DocumentTextIcon className="h-3.5 w-3.5" />
+                          <span>View Full Transaction in Sales Ledger</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {recentOrders.length === 0 && (
               <div className="py-12 text-center text-[#222a1d]/40 font-serif">

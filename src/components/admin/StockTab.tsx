@@ -13,7 +13,8 @@ import {
   XCircleIcon,
   PencilSquareIcon,
   TrashIcon,
-  ArrowPathIcon
+  ArrowPathIcon,
+  ChevronDownIcon
 } from "@heroicons/react/24/outline";
 import { 
   useDashboardStore, 
@@ -46,6 +47,7 @@ export default function StockTab() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [expandedStockId, setExpandedStockId] = useState<string | null>(null);
   
   // Modals state
   const [isRestockOpen, setIsRestockOpen] = useState(false);
@@ -352,103 +354,153 @@ export default function StockTab() {
       {/* 3. STOCK MATRIX: MOBILE SPACIOUS CARDS & DESKTOP TABLE */}
       <div className="rounded-3xl sm:rounded-[28px] bg-white p-4.5 sm:p-7 border border-[#e3e8e2] shadow-sm">
         
-        {/* MOBILE CARD VIEW (< 768px): Flat 16:9 Widescreen Horizontal Cards */}
-        <div className="block md:hidden space-y-3">
-          {filteredStock.map((item) => (
-            <div 
-              key={item.id} 
-              className="rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2.5 shadow-2xs hover:border-[#283322]/30 transition-all"
-            >
-              {/* Top Row: Thumbnail + Title/Details + Status & Valuation */}
-              <div className="flex items-center justify-between gap-2.5">
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-white border border-[#e8ede7]">
-                    {item.img ? (
-                      <img src={item.img} alt={item.name} className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-[#283322]/40 text-sm">
-                        📦
+        {/* MOBILE CARD VIEW (< 768px): Click to Expand (1:1 details) / Click to Minimize (Flat 16:9) */}
+        <div className="block md:hidden space-y-2.5">
+          {filteredStock.map((item) => {
+            const isExpanded = expandedStockId === item.id;
+
+            return (
+              <div 
+                key={item.id} 
+                onClick={() => setExpandedStockId(isExpanded ? null : item.id)}
+                className={`rounded-2xl border transition-all duration-200 cursor-pointer overflow-hidden ${
+                  isExpanded 
+                    ? "border-[#283322]/40 bg-white p-4.5 space-y-4 shadow-md ring-1 ring-[#283322]/10" 
+                    : "border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2 shadow-2xs hover:border-[#283322]/30"
+                }`}
+              >
+                {/* 1. TOP SUMMARY BAR (Always visible, minimal flat view) */}
+                <div className="flex items-center justify-between gap-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white border border-[#e8ede7]">
+                      {item.img ? (
+                        <img src={item.img} alt={item.name} className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-[#283322]/40 text-sm">
+                          📦
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <h4 className="font-bold text-xs sm:text-sm text-[#222a1d] truncate max-w-32 sm:max-w-40">{item.name}</h4>
+                        <span className="rounded-full bg-white border border-[#e8ede7] px-2 py-0.2 text-[8px] font-semibold text-[#222a1d]/60 uppercase tracking-wider">
+                          {item.category}
+                        </span>
                       </div>
-                    )}
+                      <p className="text-[10px] text-[#222a1d]/50 font-mono mt-0.5">
+                        Stock: <span className="font-bold text-[#222a1d]">{item.stockLevel} {item.unit}</span>
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <h4 className="font-bold text-xs sm:text-sm text-[#222a1d] truncate max-w-32 sm:max-w-40">{item.name}</h4>
-                      <span className="rounded-full bg-white border border-[#e8ede7] px-2 py-0.2 text-[8px] font-semibold text-[#222a1d]/60 uppercase tracking-wider">
-                        {item.category}
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className="text-right">
+                      <span className={`inline-block text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider text-white shadow-2xs ${
+                        item.status === "in-stock"
+                          ? "bg-[#15803d]"
+                          : item.status === "low-stock"
+                          ? "bg-[#d97706]"
+                          : "bg-[#dc2626]"
+                      }`}>
+                        {item.status === "in-stock" ? "Healthy" : item.status === "low-stock" ? "Low" : "Out"}
                       </span>
+                      <p className="font-mono font-bold text-xs text-[#283322] mt-0.5">
+                        Rs {item.assetValue.toLocaleString()}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-2 mt-0.5 text-[10px] text-[#222a1d]/50 font-mono">
-                      <span>Rs {item.unitCost}/{item.unit}</span>
-                      <span>•</span>
-                      <span className="text-[#222a1d]/40">&lt; {item.safetyThreshold} {item.unit}</span>
+
+                    <div className="h-6 w-6 rounded-full bg-white border border-[#e8ede7] flex items-center justify-center text-[#222a1d]/40">
+                      <ChevronDownIcon className={`h-3.5 w-3.5 transition-transform duration-200 ${isExpanded ? "rotate-180 text-[#283322]" : ""}`} />
                     </div>
                   </div>
                 </div>
 
-                <div className="text-right shrink-0">
-                  <span className={`inline-block text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider text-white shadow-2xs ${
-                    item.status === "in-stock"
-                      ? "bg-[#15803d]"
-                      : item.status === "low-stock"
-                      ? "bg-[#d97706]"
-                      : "bg-[#dc2626]"
-                  }`}>
-                    {item.status === "in-stock" ? "Healthy" : item.status === "low-stock" ? "Low" : "Out"}
-                  </span>
-                  <p className="font-mono font-bold text-xs text-[#283322] mt-1">
-                    Rs {item.assetValue.toLocaleString()}
-                  </p>
-                </div>
-              </div>
+                {/* 2. EXPANDED VIEW (~1:1 Full Detailed Mode) */}
+                {isExpanded && (
+                  <div className="space-y-4 pt-3 border-t border-[#eef2ee] animate-fadeIn" onClick={(e) => e.stopPropagation()}>
+                    
+                    {/* Stepper + Quantity Detail */}
+                    <div className="flex items-center justify-between gap-3 bg-[#f8faf8] p-3 rounded-xl border border-[#e8ede7]">
+                      <div>
+                        <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Quantity In Stock</span>
+                        <div className="flex items-center gap-2 mt-1">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); adjustMaterialStock(item.id, -1, "Manual deduction"); }}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#e3e8e2] bg-white text-[#222a1d] hover:bg-[#283322] hover:text-white transition-colors cursor-pointer active:scale-95"
+                          >
+                            <MinusIcon className="h-4 w-4" />
+                          </button>
+                          <span className="font-mono font-bold text-sm text-[#222a1d] min-w-16 text-center">
+                            {item.stockLevel} <span className="text-[10px] font-normal text-[#222a1d]/50">{item.unit}</span>
+                          </span>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); adjustMaterialStock(item.id, 1, "Manual addition"); }}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#e3e8e2] bg-white text-[#222a1d] hover:bg-[#283322] hover:text-white transition-colors cursor-pointer active:scale-95"
+                          >
+                            <PlusIcon className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
 
-              {/* Bottom Row: Stepper & Action Buttons in 1 Clean Line */}
-              <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#eef2ee]">
-                {/* Stepper */}
-                <div className="flex items-center gap-1 bg-white px-2 py-1 rounded-xl border border-[#e8ede7]">
-                  <button 
-                    onClick={() => adjustMaterialStock(item.id, -1, "Manual deduction")}
-                    className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#f8faf8] text-[#222a1d] hover:bg-[#283322] hover:text-white transition-colors cursor-pointer active:scale-90"
-                  >
-                    <MinusIcon className="h-3 w-3" />
-                  </button>
-                  <span className="font-mono font-bold text-xs text-[#222a1d] min-w-14 text-center">
-                    {item.stockLevel} <span className="text-[9px] font-normal text-[#222a1d]/50">{item.unit}</span>
-                  </span>
-                  <button 
-                    onClick={() => adjustMaterialStock(item.id, 1, "Manual addition")}
-                    className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#f8faf8] text-[#222a1d] hover:bg-[#283322] hover:text-white transition-colors cursor-pointer active:scale-90"
-                  >
-                    <PlusIcon className="h-3 w-3" />
-                  </button>
-                </div>
+                      <div className="text-right">
+                        <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block mb-1">Item ID</span>
+                        <span className="font-mono text-xs font-semibold text-[#283322] bg-white px-2 py-1 rounded-lg border border-[#e8ede7]">
+                          {item.id}
+                        </span>
+                      </div>
+                    </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => handleOpenRestock(item)}
-                    className="rounded-full bg-[#283322] px-3 py-1.5 text-[10px] font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer shadow-xs"
-                  >
-                    Restock
-                  </button>
-                  <button
-                    onClick={() => handleOpenProfile(item)}
-                    className="flex h-7 w-7 items-center justify-center rounded-full border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-colors cursor-pointer"
-                    title="Edit Profile"
-                  >
-                    <PencilSquareIcon className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteMaterial(item.id, item.name)}
-                    className="flex h-7 w-7 items-center justify-center rounded-full border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-                    title="Delete Material"
-                  >
-                    <TrashIcon className="h-3.5 w-3.5" />
-                  </button>
-                </div>
+                    {/* Metrics Grid */}
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                      <div className="rounded-xl bg-[#f8faf8] p-2.5 border border-[#e8ede7]">
+                        <span className="text-[9px] text-[#222a1d]/40 uppercase font-semibold block">Unit Cost</span>
+                        <span className="font-mono font-bold text-[#222a1d] mt-0.5 block text-xs truncate">
+                          Rs {item.unitCost}/{item.unit}
+                        </span>
+                      </div>
+                      <div className="rounded-xl bg-[#f8faf8] p-2.5 border border-[#e8ede7]">
+                        <span className="text-[9px] text-[#222a1d]/40 uppercase font-semibold block">Safety Alert</span>
+                        <span className="font-mono font-bold text-[#222a1d] mt-0.5 block text-xs truncate">
+                          &lt; {item.safetyThreshold} {item.unit}
+                        </span>
+                      </div>
+                      <div className="rounded-xl bg-[#f8faf8] p-2.5 border border-[#e8ede7]">
+                        <span className="text-[9px] text-[#222a1d]/40 uppercase font-semibold block">Valuation</span>
+                        <span className="font-mono font-bold text-[#283322] mt-0.5 block text-xs truncate">
+                          Rs {item.assetValue.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Full Action Buttons */}
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleOpenRestock(item); }}
+                        className="flex-1 rounded-full bg-[#283322] py-2.5 text-xs font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer shadow-xs text-center"
+                      >
+                        Restock Material
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleOpenProfile(item); }}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-colors cursor-pointer shrink-0"
+                        title="Edit Material Profile"
+                      >
+                        <PencilSquareIcon className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDeleteMaterial(item.id, item.name); }}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer shrink-0"
+                        title="Delete Material"
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {filteredStock.length === 0 && (
             <div className="py-12 text-center text-[#222a1d]/40 font-serif">

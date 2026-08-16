@@ -8,7 +8,8 @@ import {
   XMarkIcon, 
   MagnifyingGlassIcon,
   BanknotesIcon,
-  ReceiptPercentIcon
+  ReceiptPercentIcon,
+  ChevronDownIcon
 } from "@heroicons/react/24/outline";
 import { useDashboardStore, type Expense, type ExpenseCategory } from "@/lib/dashboard-store";
 
@@ -26,6 +27,7 @@ export default function ExpensesTab() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [expandedExpenseId, setExpandedExpenseId] = useState<string | null>(null);
 
   // Modal State
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -214,70 +216,106 @@ export default function ExpensesTab() {
       {/* 3. EXPENSES: MOBILE SPACIOUS FLAT CARDS & DESKTOP TABLE */}
       <div className="rounded-3xl sm:rounded-[28px] bg-white p-4.5 sm:p-7 border border-[#e3e8e2] shadow-sm">
         
-        {/* MOBILE CARD VIEW (< 768px): Flat 16:9 Widescreen Horizontal Cards */}
-        <div className="block md:hidden space-y-3">
-          {filteredExpenses.map((exp) => (
-            <div 
-              key={exp.id}
-              className="rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2.5 shadow-2xs hover:border-[#283322]/30 transition-all"
-            >
-              {/* Row 1: ID, Category Badge, Date, Status */}
-              <div className="flex items-center justify-between gap-2 border-b border-[#eef2ee] pb-2">
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="font-mono font-bold text-xs text-[#283322]">{exp.id}</span>
-                  <span className="rounded-full bg-white border border-[#e8ede7] px-2 py-0.2 text-[8px] font-semibold text-[#222a1d]/70 uppercase tracking-wider">
-                    {CATEGORY_LABELS[exp.category]}
-                  </span>
+        {/* MOBILE CARD VIEW (< 768px): Click to Expand (1:1 details) / Click to Minimize (Flat 16:9) */}
+        <div className="block md:hidden space-y-2.5">
+          {filteredExpenses.map((exp) => {
+            const isExpanded = expandedExpenseId === exp.id;
+
+            return (
+              <div 
+                key={exp.id}
+                onClick={() => setExpandedExpenseId(isExpanded ? null : exp.id)}
+                className={`rounded-2xl border transition-all duration-200 cursor-pointer overflow-hidden ${
+                  isExpanded 
+                    ? "border-[#283322]/40 bg-white p-4.5 space-y-4 shadow-md ring-1 ring-[#283322]/10" 
+                    : "border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2 shadow-2xs hover:border-[#283322]/30"
+                }`}
+              >
+                {/* 1. TOP SUMMARY BAR (Always visible, minimal flat view) */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="h-8 w-8 shrink-0 overflow-hidden rounded-xl bg-white border border-[#e8ede7] flex items-center justify-center text-xs">
+                      {exp.category === "materials" ? "🕯️" : exp.category === "packaging" ? "📦" : exp.category === "shipping" ? "🚚" : exp.category === "marketing" ? "📣" : exp.category === "rent-utilities" ? "⚡" : "🧾"}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-mono font-bold text-xs text-[#283322]">{exp.id}</span>
+                        <h4 className="font-bold text-xs sm:text-sm text-[#222a1d] truncate max-w-32 sm:max-w-40">{exp.title}</h4>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="font-mono font-bold text-xs sm:text-sm text-[#222a1d]">
+                      Rs {exp.amount.toLocaleString()}
+                    </span>
+                    <span className={`inline-block text-[8px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider ${
+                      exp.status === "paid"
+                        ? "bg-[#dcfce7] text-[#15803d]"
+                        : "bg-[#fef3c7] text-[#b45309]"
+                    }`}>
+                      {exp.status}
+                    </span>
+                    <div className="h-6 w-6 rounded-full bg-white border border-[#e8ede7] flex items-center justify-center text-[#222a1d]/40">
+                      <ChevronDownIcon className={`h-3.5 w-3.5 transition-transform duration-200 ${isExpanded ? "rotate-180 text-[#283322]" : ""}`} />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="font-mono text-[9px] text-[#222a1d]/45">{exp.date}</span>
-                  <span className={`inline-block text-[8px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider ${
-                    exp.status === "paid"
-                      ? "bg-[#dcfce7] text-[#15803d]"
-                      : "bg-[#fef3c7] text-[#b45309]"
-                  }`}>
-                    {exp.status}
-                  </span>
-                </div>
+                {/* 2. EXPANDED VIEW (~1:1 Full Detailed Mode) */}
+                {isExpanded && (
+                  <div className="space-y-4 pt-3 border-t border-[#eef2ee] animate-fadeIn" onClick={(e) => e.stopPropagation()}>
+                    
+                    {/* Expense Header Grid */}
+                    <div className="grid grid-cols-2 gap-2 bg-[#f8faf8] p-3 rounded-xl border border-[#e8ede7]">
+                      <div>
+                        <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Category</span>
+                        <span className="inline-block rounded-full bg-white border border-[#e8ede7] px-2.5 py-0.5 text-[9px] font-semibold text-[#222a1d]/80 mt-1">
+                          {CATEGORY_LABELS[exp.category]}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Logged Date</span>
+                        <span className="font-mono text-xs font-semibold text-[#222a1d] mt-1 block">
+                          {exp.date}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Expense Title & Big Amount Display */}
+                    <div className="bg-[#f8faf8] p-3.5 rounded-xl border border-[#e8ede7] flex items-center justify-between">
+                      <div>
+                        <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Operational Title</span>
+                        <p className="font-bold text-sm text-[#222a1d] mt-0.5">{exp.title}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Total Cost</span>
+                        <p className="font-mono font-bold text-base text-[#222a1d] mt-0.5">Rs {exp.amount.toLocaleString()}</p>
+                      </div>
+                    </div>
+
+                    {/* Action Bar */}
+                    <div className="flex items-center justify-end gap-2 pt-1">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleOpenEditForm(exp); }}
+                        className="flex-1 flex items-center justify-center gap-1.5 rounded-full bg-[#283322] py-2.5 text-xs font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer shadow-xs"
+                      >
+                        <PencilIcon className="h-3.5 w-3.5" />
+                        <span>Edit Expense</span>
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDeleteExpense(exp.id); }}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer shrink-0"
+                        title="Delete Record"
+                      >
+                        <TrashIcon className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-
-              {/* Row 2: Expense Title & Amount + Actions */}
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="h-8 w-8 shrink-0 overflow-hidden rounded-xl bg-white border border-[#e8ede7] flex items-center justify-center text-xs">
-                    {exp.category === "materials" ? "🕯️" : exp.category === "packaging" ? "📦" : exp.category === "shipping" ? "🚚" : exp.category === "marketing" ? "📣" : exp.category === "rent-utilities" ? "⚡" : "🧾"}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="font-bold text-xs sm:text-sm text-[#222a1d] truncate">{exp.title}</h4>
-                    <p className="text-[9px] text-[#222a1d]/45 font-mono">Operating expense</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="font-mono font-bold text-xs sm:text-sm text-[#222a1d]">
-                    Rs {exp.amount.toLocaleString()}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => handleOpenEditForm(exp)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-colors cursor-pointer"
-                      title="Edit Expense"
-                    >
-                      <PencilIcon className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteExpense(exp.id)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-                      title="Delete Record"
-                    >
-                      <TrashIcon className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
 
           {filteredExpenses.length === 0 && (
             <div className="py-12 text-center text-[#222a1d]/40 font-serif">

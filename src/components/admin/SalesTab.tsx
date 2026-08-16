@@ -12,7 +12,8 @@ import {
   ShoppingBagIcon,
   CheckCircleIcon,
   ClockIcon,
-  ChevronUpDownIcon
+  ChevronUpDownIcon,
+  ChevronDownIcon
 } from "@heroicons/react/24/outline";
 import { useDashboardStore, type Sale, type SaleItem } from "@/lib/dashboard-store";
 import type { AdminCatalogProduct } from "@/lib/catalog";
@@ -33,6 +34,7 @@ export default function SalesTab({ catalogProducts }: Props) {
   const { sales, addSale, updateSale, deleteSale } = useDashboardStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [expandedSaleId, setExpandedSaleId] = useState<string | null>(null);
   
   // Modals / Drawer state
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
@@ -347,24 +349,27 @@ export default function SalesTab({ catalogProducts }: Props) {
       {/* 4. SALES LEDGER: MOBILE SPACIOUS CARDS & DESKTOP TABLE */}
       <div className="rounded-3xl sm:rounded-[28px] bg-white p-4.5 sm:p-7 border border-[#e3e8e2] shadow-sm">
         
-        {/* MOBILE CARD VIEW (< 768px): Flat 16:9 Widescreen Horizontal Cards */}
-        <div className="block md:hidden space-y-3">
+        {/* MOBILE CARD VIEW (< 768px): Click to Expand (1:1 details) / Click to Minimize (Flat 16:9) */}
+        <div className="block md:hidden space-y-2.5">
           {filteredSales.map((sale) => {
             const channelInfo = CHANNEL_BADGES[sale.channel || "direct"] || CHANNEL_BADGES.direct;
             const totalUnits = sale.items.reduce((sum, item) => sum + item.quantity, 0);
+            const isExpanded = expandedSaleId === sale.id;
 
             return (
               <div 
                 key={sale.id}
-                className="rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2.5 shadow-2xs hover:border-[#283322]/30 transition-all"
+                onClick={() => setExpandedSaleId(isExpanded ? null : sale.id)}
+                className={`rounded-2xl border transition-all duration-200 cursor-pointer overflow-hidden ${
+                  isExpanded 
+                    ? "border-[#283322]/40 bg-white p-4.5 space-y-4 shadow-md ring-1 ring-[#283322]/10" 
+                    : "border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2 shadow-2xs hover:border-[#283322]/30"
+                }`}
               >
-                {/* Row 1: Header (ID, Channel, Customer Name, Date, Status) */}
-                <div className="flex items-center justify-between gap-2 border-b border-[#eef2ee] pb-2">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span 
-                      onClick={() => { setSelectedSale(sale); setIsInvoiceOpen(true); }}
-                      className="font-mono font-bold text-xs text-[#283322] cursor-pointer hover:underline"
-                    >
+                {/* 1. TOP SUMMARY BAR (Always visible, minimal flat view) */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                    <span className="font-mono font-bold text-xs text-[#283322]">
                       {sale.id}
                     </span>
                     <span className={`inline-block rounded-full px-1.5 py-0.2 text-[8px] font-bold ${channelInfo.bg} ${channelInfo.text}`}>
@@ -375,8 +380,10 @@ export default function SalesTab({ catalogProducts }: Props) {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <span className="font-mono text-[9px] text-[#222a1d]/45">{sale.date}</span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="font-mono font-bold text-xs sm:text-sm text-[#283322]">
+                      Rs {sale.totalAmount.toLocaleString()}
+                    </span>
                     <span className={`inline-block text-[8px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider ${
                       sale.status === "completed"
                         ? "bg-[#dcfce7] text-[#15803d]"
@@ -386,68 +393,95 @@ export default function SalesTab({ catalogProducts }: Props) {
                     }`}>
                       {sale.status}
                     </span>
+                    <div className="h-6 w-6 rounded-full bg-white border border-[#e8ede7] flex items-center justify-center text-[#222a1d]/40">
+                      <ChevronDownIcon className={`h-3.5 w-3.5 transition-transform duration-200 ${isExpanded ? "rotate-180 text-[#283322]" : ""}`} />
+                    </div>
                   </div>
                 </div>
 
-                {/* Row 2: Product Breakdown + Total & Actions */}
-                <div className="flex items-center justify-between gap-2">
-                  {/* Products Mini Preview */}
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <div className="flex -space-x-1.5 shrink-0">
-                      {sale.items.slice(0, 3).map((item, idx) => {
-                        const catalogProd = catalogProducts.find((p) => p.id === item.productId);
-                        const img = catalogProd?.img || "";
-                        return (
-                          <div key={idx} className="h-7 w-7 rounded-lg bg-white border border-[#e8ede7] overflow-hidden">
-                            {img ? (
-                              <img src={img} alt={item.productTitle} className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="h-full w-full flex items-center justify-center text-[9px]">🕯️</div>
-                            )}
-                          </div>
-                        );
-                      })}
+                {/* 2. EXPANDED VIEW (~1:1 Full Detailed Mode) */}
+                {isExpanded && (
+                  <div className="space-y-4 pt-3 border-t border-[#eef2ee] animate-fadeIn" onClick={(e) => e.stopPropagation()}>
+                    
+                    {/* Customer & Timestamp Info */}
+                    <div className="flex items-center justify-between gap-2 bg-[#f8faf8] p-3 rounded-xl border border-[#e8ede7]">
+                      <div>
+                        <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Customer</span>
+                        <h4 className="font-bold text-xs sm:text-sm text-[#222a1d]">{sale.customerName}</h4>
+                        <p className="text-[10px] text-[#222a1d]/50">{sale.customerEmail || "Walk-in / In-store"}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Date</span>
+                        <p className="font-mono text-xs text-[#222a1d] font-semibold">{sale.date}</p>
+                        <span className={`inline-block rounded-full px-2 py-0.2 text-[8px] font-bold mt-0.5 ${channelInfo.bg} ${channelInfo.text}`}>
+                          Via {channelInfo.label}
+                        </span>
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[11px] font-semibold text-[#222a1d] truncate">
-                        {sale.items.map((i) => `${i.productTitle} (${i.quantity})`).join(", ")}
-                      </p>
-                      <p className="text-[9px] text-[#222a1d]/45 font-mono">
-                        {totalUnits} {totalUnits === 1 ? "unit" : "units"}
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* Right: Total + Compact Action Buttons */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="font-mono font-bold text-xs sm:text-sm text-[#283322]">
-                      Rs {sale.totalAmount.toLocaleString()}
-                    </span>
-                    <div className="flex items-center gap-1">
+                    {/* Itemized Products List */}
+                    <div className="bg-[#f8faf8] rounded-xl p-3 border border-[#e8ede7] space-y-2">
+                      <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">
+                        Ordered Items ({totalUnits} total)
+                      </span>
+                      <div className="space-y-2 divide-y divide-[#eef2ee]">
+                        {sale.items.map((item, idx) => {
+                          const catalogProd = catalogProducts.find((p) => p.id === item.productId);
+                          const title = item.productTitle || catalogProd?.title || item.productId;
+                          const img = catalogProd?.img || "";
+
+                          return (
+                            <div key={idx} className="flex items-center justify-between pt-2 first:pt-0">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-white border border-[#e8ede7]">
+                                  {img ? (
+                                    <img src={img} alt={title} className="h-full w-full object-cover" />
+                                  ) : (
+                                    <div className="h-full w-full flex items-center justify-center text-xs">🕯️</div>
+                                  )}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="font-semibold text-xs text-[#222a1d] truncate max-w-40">{title}</p>
+                                  <p className="text-[10px] font-mono text-[#222a1d]/50">
+                                    {item.quantity} × Rs {item.price.toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                              <span className="font-mono font-bold text-xs text-[#222a1d] shrink-0">
+                                Rs {(item.quantity * item.price).toLocaleString()}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Action Bar */}
+                    <div className="flex items-center justify-between gap-2 pt-1">
                       <button
-                        onClick={() => { setSelectedSale(sale); setIsInvoiceOpen(true); }}
-                        className="flex h-7 w-7 items-center justify-center rounded-full border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-colors cursor-pointer"
-                        title="View Invoice"
+                        onClick={(e) => { e.stopPropagation(); setSelectedSale(sale); setIsInvoiceOpen(true); }}
+                        className="flex-1 flex items-center justify-center gap-1.5 rounded-full bg-[#283322] py-2.5 text-xs font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer shadow-xs"
                       >
                         <DocumentTextIcon className="h-3.5 w-3.5" />
+                        <span>View / Print Invoice</span>
                       </button>
                       <button
-                        onClick={() => handleOpenEditForm(sale)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-colors cursor-pointer"
+                        onClick={(e) => { e.stopPropagation(); handleOpenEditForm(sale); }}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-colors cursor-pointer shrink-0"
                         title="Edit Order"
                       >
                         <PencilIcon className="h-3.5 w-3.5" />
                       </button>
                       <button
-                        onClick={() => handleDeleteSale(sale.id)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
+                        onClick={(e) => { e.stopPropagation(); handleDeleteSale(sale.id); }}
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer shrink-0"
                         title="Move to Recycle Bin"
                       >
                         <TrashIcon className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             );
           })}
