@@ -889,24 +889,29 @@ export default function OverviewTab({
             </div>
           </div>
 
-          {/* MOBILE CARD VIEW (< 768px): Spacious, touch-friendly, no overlap */}
-          <div className="block md:hidden space-y-4.5 pt-5">
+          {/* MOBILE CARD VIEW (< 768px): Flat 16:9 Widescreen Horizontal Cards */}
+          <div className="block md:hidden space-y-3 pt-3">
             {recentOrders.map((order) => (
               <div 
                 key={order.id}
                 onClick={() => setActiveTab("sales")}
-                className="rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] p-4.5 space-y-3.5 shadow-2xs cursor-pointer hover:border-[#283322]/30 transition-all"
+                className="rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2.5 shadow-2xs cursor-pointer hover:border-[#283322]/30 transition-all"
               >
-                <div className="flex items-center justify-between border-b border-[#eef2ee] pb-2.5">
-                  <div className="flex items-center gap-2">
+                {/* Row 1: ID, Category, Customer, Date, Status */}
+                <div className="flex items-center justify-between gap-2 border-b border-[#eef2ee] pb-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
                     <span className="font-mono font-bold text-xs text-[#283322]">{order.id}</span>
-                    <span className="rounded-full bg-white border border-[#e8ede7] px-2.5 py-0.5 text-[9px] font-semibold text-[#222a1d]/70">
+                    <span className="rounded-full bg-white border border-[#e8ede7] px-1.5 py-0.2 text-[8px] font-semibold text-[#222a1d]/70">
                       {order.category}
                     </span>
+                    <span className="text-xs font-bold text-[#222a1d] truncate max-w-28 sm:max-w-36">
+                      • {order.customerName}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] text-[#222a1d]/50">{order.date}</span>
-                    <span className={`inline-block text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="font-mono text-[9px] text-[#222a1d]/45">{order.date}</span>
+                    <span className={`inline-block text-[8px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider ${
                       order.status === "completed"
                         ? "bg-[#dcfce7] text-[#15803d]"
                         : order.status === "pending"
@@ -918,60 +923,46 @@ export default function OverviewTab({
                   </div>
                 </div>
 
-                <div>
-                  <h4 className="font-bold text-sm text-[#222a1d]">{order.customerName}</h4>
-                  <p className="text-[11px] text-[#222a1d]/50">{order.customerEmail || "Walk-in Customer"}</p>
-                </div>
-
-                <div className="bg-white rounded-xl p-3.5 border border-[#e8ede7] space-y-2.5">
-                  <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">
-                    Items Ordered ({order.itemCount} units)
-                  </span>
-                  <div className="space-y-2.5 divide-y divide-[#f2f6f1]">
-                    {order.items.map((item, idx) => {
-                      const prod = catalogProducts.find((p) => p.id === item.productId);
-                      const img = prod?.img || "";
-                      const title = item.productTitle || prod?.title || item.productId;
-
-                      return (
-                        <div key={idx} className="flex items-center justify-between pt-2.5 first:pt-0">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[#f1f4f1] border border-[#e8ede7]">
-                              {img ? (
-                                <img 
-                                  src={img} 
-                                  alt={title} 
-                                  className="h-full w-full object-cover" 
-                                />
-                              ) : (
-                                <div className="h-full w-full flex items-center justify-center text-[10px]">
-                                  🕯️
-                                </div>
-                              )}
-                            </div>
-                            <div className="min-w-0">
-                              <p className="font-semibold text-xs text-[#222a1d] truncate max-w-40">
-                                {title}
-                              </p>
-                              <p className="text-[10px] font-mono text-[#222a1d]/50">
-                                {item.quantity} × Rs {item.price.toLocaleString()}
-                              </p>
-                            </div>
+                {/* Row 2: Products Breakdown + Total */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="flex -space-x-1.5 shrink-0">
+                      {order.items.slice(0, 3).map((item, idx) => {
+                        const prod = catalogProducts.find((p) => p.id === item.productId);
+                        const img = prod?.img || "";
+                        return (
+                          <div key={idx} className="h-7 w-7 rounded-lg bg-white border border-[#e8ede7] overflow-hidden">
+                            {img ? (
+                              <img 
+                                src={img} 
+                                alt={item.productTitle} 
+                                className="h-full w-full object-cover" 
+                              />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center text-[9px]">
+                                🕯️
+                              </div>
+                            )}
                           </div>
-                          <span className="font-mono font-bold text-xs text-[#222a1d] shrink-0">
-                            Rs {(item.quantity * item.price).toLocaleString()}
-                          </span>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] font-semibold text-[#222a1d] truncate">
+                        {order.items.map((i) => `${i.productTitle} (${i.quantity})`).join(", ")}
+                      </p>
+                      <p className="text-[9px] text-[#222a1d]/45 font-mono">
+                        {order.itemCount} {order.itemCount === 1 ? "unit" : "units"}
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between pt-1 border-t border-[#eef2ee]">
-                  <span className="text-xs text-[#222a1d]/60 font-medium">Order Total</span>
-                  <span className="font-mono font-bold text-base text-[#283322]">
-                    Rs {order.totalAmount.toLocaleString()}
-                  </span>
+                  <div className="text-right shrink-0">
+                    <span className="text-[9px] text-[#222a1d]/40 uppercase font-semibold block">Total</span>
+                    <span className="font-mono font-bold text-xs sm:text-sm text-[#283322]">
+                      Rs {order.totalAmount.toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}

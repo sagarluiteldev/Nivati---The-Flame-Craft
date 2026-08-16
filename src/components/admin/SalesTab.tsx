@@ -347,33 +347,37 @@ export default function SalesTab({ catalogProducts }: Props) {
       {/* 4. SALES LEDGER: MOBILE SPACIOUS CARDS & DESKTOP TABLE */}
       <div className="rounded-3xl sm:rounded-[28px] bg-white p-4.5 sm:p-7 border border-[#e3e8e2] shadow-sm">
         
-        {/* MOBILE CARD VIEW (< 768px): Spacious, clear separation, no overlap */}
-        <div className="block md:hidden space-y-4.5">
+        {/* MOBILE CARD VIEW (< 768px): Flat 16:9 Widescreen Horizontal Cards */}
+        <div className="block md:hidden space-y-3">
           {filteredSales.map((sale) => {
             const channelInfo = CHANNEL_BADGES[sale.channel || "direct"] || CHANNEL_BADGES.direct;
+            const totalUnits = sale.items.reduce((sum, item) => sum + item.quantity, 0);
 
             return (
               <div 
                 key={sale.id}
-                className="rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] p-4.5 space-y-4 shadow-2xs"
+                className="rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2.5 shadow-2xs hover:border-[#283322]/30 transition-all"
               >
-                {/* Header: ID, Channel, Date & Status */}
-                <div className="flex items-center justify-between gap-2 border-b border-[#eef2ee] pb-3">
-                  <div className="flex items-center gap-2">
+                {/* Row 1: Header (ID, Channel, Customer Name, Date, Status) */}
+                <div className="flex items-center justify-between gap-2 border-b border-[#eef2ee] pb-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
                     <span 
                       onClick={() => { setSelectedSale(sale); setIsInvoiceOpen(true); }}
                       className="font-mono font-bold text-xs text-[#283322] cursor-pointer hover:underline"
                     >
                       {sale.id}
                     </span>
-                    <span className={`inline-block rounded-full px-2 py-0.5 text-[9px] font-bold ${channelInfo.bg} ${channelInfo.text}`}>
+                    <span className={`inline-block rounded-full px-1.5 py-0.2 text-[8px] font-bold ${channelInfo.bg} ${channelInfo.text}`}>
                       {channelInfo.label}
+                    </span>
+                    <span className="text-xs font-bold text-[#222a1d] truncate max-w-28 sm:max-w-36">
+                      • {sale.customerName}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] text-[#222a1d]/50">{sale.date}</span>
-                    <span className={`inline-block text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="font-mono text-[9px] text-[#222a1d]/45">{sale.date}</span>
+                    <span className={`inline-block text-[8px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider ${
                       sale.status === "completed"
                         ? "bg-[#dcfce7] text-[#15803d]"
                         : sale.status === "pending"
@@ -385,78 +389,63 @@ export default function SalesTab({ catalogProducts }: Props) {
                   </div>
                 </div>
 
-                {/* Customer Details */}
-                <div>
-                  <h4 className="font-bold text-sm text-[#222a1d]">{sale.customerName}</h4>
-                  <p className="text-[11px] text-[#222a1d]/50">{sale.customerEmail || "Walk-in / Direct Order"}</p>
-                </div>
-
-                {/* Products Ordered Breakdown */}
-                <div className="bg-white rounded-xl p-3.5 border border-[#e8ede7] space-y-2.5">
-                  <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">
-                    Products ({sale.items.reduce((sum, item) => sum + item.quantity, 0)} units)
-                  </span>
-                  <div className="space-y-2.5 divide-y divide-[#f2f6f1]">
-                    {sale.items.map((item, idx) => {
-                      const catalogProd = catalogProducts.find((p) => p.id === item.productId);
-                      const title = item.productTitle || catalogProd?.title || item.productId;
-                      const img = catalogProd?.img || "";
-
-                      return (
-                        <div key={idx} className="flex items-center justify-between pt-2.5 first:pt-0">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[#f1f4f1] border border-[#e8ede7]">
-                              {img ? (
-                                <img src={img} alt={title} className="h-full w-full object-cover" />
-                              ) : (
-                                <div className="h-full w-full flex items-center justify-center text-[10px]">🕯️</div>
-                              )}
-                            </div>
-                            <div className="min-w-0">
-                              <p className="font-semibold text-xs text-[#222a1d] truncate max-w-40">{title}</p>
-                              <p className="text-[10px] font-mono text-[#222a1d]/50">{item.quantity} × Rs {item.price.toLocaleString()}</p>
-                            </div>
+                {/* Row 2: Product Breakdown + Total & Actions */}
+                <div className="flex items-center justify-between gap-2">
+                  {/* Products Mini Preview */}
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="flex -space-x-1.5 shrink-0">
+                      {sale.items.slice(0, 3).map((item, idx) => {
+                        const catalogProd = catalogProducts.find((p) => p.id === item.productId);
+                        const img = catalogProd?.img || "";
+                        return (
+                          <div key={idx} className="h-7 w-7 rounded-lg bg-white border border-[#e8ede7] overflow-hidden">
+                            {img ? (
+                              <img src={img} alt={item.productTitle} className="h-full w-full object-cover" />
+                            ) : (
+                              <div className="h-full w-full flex items-center justify-center text-[9px]">🕯️</div>
+                            )}
                           </div>
-                          <span className="font-mono font-bold text-xs text-[#222a1d] shrink-0">
-                            Rs {(item.quantity * item.price).toLocaleString()}
-                          </span>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] font-semibold text-[#222a1d] truncate">
+                        {sale.items.map((i) => `${i.productTitle} (${i.quantity})`).join(", ")}
+                      </p>
+                      <p className="text-[9px] text-[#222a1d]/45 font-mono">
+                        {totalUnits} {totalUnits === 1 ? "unit" : "units"}
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                {/* Footer: Grand Total & Actions */}
-                <div className="flex items-center justify-between gap-3 pt-1 border-t border-[#eef2ee]">
-                  <div>
-                    <span className="text-[10px] text-[#222a1d]/40 uppercase font-semibold block">Total Revenue</span>
-                    <span className="font-mono font-bold text-base text-[#283322]">
+                  {/* Right: Total + Compact Action Buttons */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="font-mono font-bold text-xs sm:text-sm text-[#283322]">
                       Rs {sale.totalAmount.toLocaleString()}
                     </span>
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => { setSelectedSale(sale); setIsInvoiceOpen(true); }}
-                      className="flex items-center gap-1 rounded-full border border-[#e3e8e2] bg-white px-3 py-1.5 text-xs font-semibold text-[#222a1d] hover:bg-[#f1f4f1] transition-colors cursor-pointer"
-                    >
-                      <DocumentTextIcon className="h-3.5 w-3.5" />
-                      <span>Invoice</span>
-                    </button>
-                    <button
-                      onClick={() => handleOpenEditForm(sale)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-colors cursor-pointer"
-                      title="Edit Order"
-                    >
-                      <PencilIcon className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteSale(sale.id)}
-                      className="flex h-8 w-8 items-center justify-center rounded-full border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-                      title="Move to Recycle Bin"
-                    >
-                      <TrashIcon className="h-3.5 w-3.5" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => { setSelectedSale(sale); setIsInvoiceOpen(true); }}
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-colors cursor-pointer"
+                        title="View Invoice"
+                      >
+                        <DocumentTextIcon className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleOpenEditForm(sale)}
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-colors cursor-pointer"
+                        title="Edit Order"
+                      >
+                        <PencilIcon className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteSale(sale.id)}
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
+                        title="Move to Recycle Bin"
+                      >
+                        <TrashIcon className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
