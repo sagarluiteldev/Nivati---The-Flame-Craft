@@ -226,6 +226,31 @@ using (public.is_admin_user(auth.uid()))
 with check (public.is_admin_user(auth.uid()));
 
 -- ==============================================================================
+-- RECYCLE BIN TABLE (30-Day Trash & Recovery)
+-- ==============================================================================
+create table if not exists public.recycle_bin (
+  id text primary key,
+  entity_id text not null,
+  entity_type text not null check (entity_type in ('product', 'sale', 'expense', 'material')),
+  title text not null,
+  subtitle text not null default '',
+  deleted_at timestamptz not null default timezone('utc', now()),
+  expires_at timestamptz not null default (timezone('utc', now()) + interval '30 days'),
+  payload jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default timezone('utc', now())
+);
+
+alter table public.recycle_bin enable row level security;
+
+drop policy if exists "Admins can manage recycle_bin" on public.recycle_bin;
+create policy "Admins can manage recycle_bin"
+on public.recycle_bin
+for all
+to authenticated
+using (public.is_admin_user(auth.uid()))
+with check (public.is_admin_user(auth.uid()));
+
+-- ==============================================================================
 -- STORAGE BUCKETS (Product Images)
 -- ==============================================================================
 insert into storage.buckets (id, name, public)

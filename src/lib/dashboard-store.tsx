@@ -56,6 +56,19 @@ export interface StockLog {
   note: string;
 }
 
+export type TrashEntityType = "product" | "sale" | "expense" | "material";
+
+export interface TrashItem<T = any> {
+  id: string;
+  entityId: string;
+  entityType: TrashEntityType;
+  title: string;
+  subtitle: string;
+  deletedAt: string;
+  expiresAt: string;
+  data: T;
+}
+
 export const DEFAULT_RAW_MATERIALS: RawMaterialStock[] = [
   {
     id: "soy-wax-flakes",
@@ -98,104 +111,144 @@ export const DEFAULT_RAW_MATERIALS: RawMaterialStock[] = [
     img: "/images/IMG_4521.PNG",
   },
   {
-    id: "wick-standard",
-    name: "Cotton Candle Wicks",
+    id: "cotton-wicks",
+    name: "Cotton Candle Wicks (Pre-Waxed)",
     category: "wicks",
     unit: "pcs",
-    stockLevel: 250,
-    safetyThreshold: 50,
-    unitCost: 5,
-    img: "/images/IMG_4376.JPG",
+    stockLevel: 120,
+    safetyThreshold: 30,
+    unitCost: 8,
+    img: "/images/IMG_4522.PNG",
   },
   {
-    id: "wick-sticker",
-    name: "Wick Stickers (Double-Sided)",
+    id: "wick-stickers",
+    name: "Wick Glue Stickers (Double-Sided)",
     category: "wicks",
     unit: "packs",
     stockLevel: 12,
     safetyThreshold: 4,
-    unitCost: 45,
-    img: "/images/IMG_4380.JPG",
+    unitCost: 150,
+    img: "/images/IMG_4523.JPG",
   },
   {
-    id: "wick-holder",
-    name: "Wick Centering Holders",
-    category: "tools",
+    id: "wick-holders",
+    name: "Metal Wick Centering Holders",
+    category: "wicks",
     unit: "pcs",
-    stockLevel: 45,
-    safetyThreshold: 15,
-    unitCost: 8,
-    img: "/images/IMG_4379.JPG",
+    stockLevel: 35,
+    safetyThreshold: 10,
+    unitCost: 45,
+    img: "/images/IMG_4524.PNG",
   },
   {
     id: "wax-thread",
-    name: "Wax Thread (Braided Spool)",
+    name: "Braided Wax Thread (Spool)",
     category: "wicks",
     unit: "rolls",
     stockLevel: 8,
     safetyThreshold: 2,
-    unitCost: 400,
-    img: "/images/IMG_4377.JPG",
+    unitCost: 350,
+    img: "/images/IMG_4525.JPG",
   },
   {
-    id: "fragrance-oil",
-    name: "Fragrance Oils (Premium Essence)",
+    id: "fragrance-lavender",
+    name: "Fragrance Oil - French Lavender",
     category: "fragrance",
     unit: "bottles",
-    stockLevel: 18,
-    safetyThreshold: 6,
-    unitCost: 380,
-    img: "/images/IMG_4636.jpg",
+    stockLevel: 6,
+    safetyThreshold: 2,
+    unitCost: 650,
+    img: "/images/IMG_4526.JPG",
   },
   {
-    id: "wax-color",
+    id: "fragrance-vanilla",
+    name: "Fragrance Oil - Warm Vanilla Bean",
+    category: "fragrance",
+    unit: "bottles",
+    stockLevel: 8,
+    safetyThreshold: 2,
+    unitCost: 650,
+    img: "/images/IMG_4526.JPG",
+  },
+  {
+    id: "fragrance-sandalwood",
+    name: "Fragrance Oil - Amber Sandalwood",
+    category: "fragrance",
+    unit: "bottles",
+    stockLevel: 5,
+    safetyThreshold: 2,
+    unitCost: 750,
+    img: "/images/IMG_4526.JPG",
+  },
+  {
+    id: "candle-color-dyes",
     name: "Candle Color Dyes & Pigments",
     category: "wax",
     unit: "packs",
-    stockLevel: 30,
-    safetyThreshold: 10,
-    unitCost: 60,
-    img: "/images/IMG_4537.jpg",
+    stockLevel: 18,
+    safetyThreshold: 5,
+    unitCost: 220,
+    img: "/images/IMG_4527.PNG",
   },
   {
-    id: "warning-sticker-materials",
-    name: "Safety Warning Labels",
+    id: "warning-stickers",
+    name: "Safety Warning Labels (Bottom)",
     category: "packaging",
     unit: "sheets",
-    stockLevel: 15,
-    safetyThreshold: 5,
-    unitCost: 450,
-    img: "/images/IMG_4548.PNG",
+    stockLevel: 25,
+    safetyThreshold: 8,
+    unitCost: 120,
+    img: "/images/IMG_4528.JPG",
   },
   {
     id: "thank-you-stickers",
     name: "Thank You Finishing Stickers",
     category: "packaging",
     unit: "sheets",
-    stockLevel: 20,
-    safetyThreshold: 5,
-    unitCost: 250,
-    img: "/images/IMG_4529.jpg",
+    stockLevel: 30,
+    safetyThreshold: 10,
+    unitCost: 120,
+    img: "/images/IMG_4529.JPG",
   },
   {
-    id: "silicone-moulds",
-    name: "Silicone Moulds (Rose, Tulip, Bubble)",
+    id: "silicone-mould-rose",
+    name: "Silicone Mould - Blooming Rose",
     category: "moulding",
     unit: "moulds",
-    stockLevel: 14,
-    safetyThreshold: 4,
-    unitCost: 250,
-    img: "/images/IMG_4175.JPG",
+    stockLevel: 4,
+    safetyThreshold: 1,
+    unitCost: 450,
+    img: "/images/IMG_4181.jpg",
   },
   {
-    id: "lid-jar",
-    name: "Glass Jars & Replacement Lids",
+    id: "silicone-mould-tulip",
+    name: "Silicone Mould - Spring Tulip",
+    category: "moulding",
+    unit: "moulds",
+    stockLevel: 3,
+    safetyThreshold: 1,
+    unitCost: 450,
+    img: "/images/IMG_4181.jpg",
+  },
+  {
+    id: "silicone-mould-bubble",
+    name: "Silicone Mould - Geometric Bubble Cube",
+    category: "moulding",
+    unit: "moulds",
+    stockLevel: 6,
+    safetyThreshold: 2,
+    unitCost: 550,
+    img: "/images/IMG_4181.jpg",
+  },
+  {
+    id: "glass-jars-200ml",
+    name: "Frosted Amber Glass Jars (200ml)",
     category: "vessels",
     unit: "units",
-    stockLevel: 60,
-    safetyThreshold: 20,
-    unitCost: 35,
-    img: "/images/IMG_4163.jpg",
+    stockLevel: 45,
+    safetyThreshold: 15,
+    unitCost: 110,
+    img: "/images/IMG_4177.jpg",
   },
   {
     id: "regular-melting-pot",
@@ -234,6 +287,7 @@ interface DashboardContextType {
   expenses: Expense[];
   rawMaterials: RawMaterialStock[];
   stockLogs: StockLog[];
+  trashItems: TrashItem[];
   isLoading: boolean;
   
   // Sales CRUD
@@ -253,6 +307,18 @@ interface DashboardContextType {
   adjustMaterialStock: (id: string, delta: number, note?: string) => Promise<void>;
   restockMaterial: (id: string, quantity: number, unitCost: number, note?: string) => Promise<void>;
   
+  // Recycle Bin (30-Day Trash & Recovery)
+  moveToTrash: (
+    entityType: TrashEntityType, 
+    entityId: string, 
+    title: string, 
+    data: any, 
+    subtitle?: string
+  ) => Promise<string>;
+  restoreFromTrash: (trashId: string) => Promise<TrashItem | null>;
+  permanentlyDelete: (trashId: string) => Promise<void>;
+  emptyTrash: () => Promise<void>;
+
   // Reload
   refreshData: () => Promise<void>;
 }
@@ -277,6 +343,7 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [rawMaterials, setRawMaterials] = useState<RawMaterialStock[]>([]);
   const [stockLogs, setStockLogs] = useState<StockLog[]>([]);
+  const [trashItems, setTrashItems] = useState<TrashItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch all live records from Supabase on mount
@@ -348,12 +415,12 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
 
         // Add any custom added materials in DB
         stockData.forEach((row) => {
-          if (!DEFAULT_RAW_MATERIALS.some((d) => d.id === row.product_id)) {
+          if (!DEFAULT_RAW_MATERIALS.some((m) => m.id === row.product_id)) {
             merged.push({
               id: row.product_id,
               name: row.product_name || row.product_id,
-              category: (row.category as MaterialCategory) || "other",
-              unit: row.unit || "units",
+              category: (row.category as MaterialCategory) || "wax",
+              unit: row.unit || "kg",
               stockLevel: Number(row.stock_level),
               safetyThreshold: Number(row.safety_threshold),
               unitCost: Number(row.unit_cost),
@@ -394,8 +461,54 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         if (saved) setStockLogs(JSON.parse(saved));
       }
 
-    } catch (err) {
-      console.warn("Using persistent local store fallback:", err);
+      // 5. Fetch Recycle Bin Items
+      const { data: trashData, error: trashErr } = await supabase
+        .from("recycle_bin")
+        .select("*")
+        .order("deleted_at", { ascending: false });
+
+      const now = Date.now();
+
+      if (!trashErr && trashData) {
+        // Auto-purge any items that have passed 30 days
+        const activeTrash: TrashItem[] = [];
+        const expiredIds: string[] = [];
+
+        trashData.forEach((row) => {
+          const expiresTime = new Date(row.expires_at).getTime();
+          if (expiresTime > now) {
+            activeTrash.push({
+              id: row.id,
+              entityId: row.entity_id,
+              entityType: row.entity_type as TrashEntityType,
+              title: row.title,
+              subtitle: row.subtitle || "",
+              deletedAt: row.deleted_at,
+              expiresAt: row.expires_at,
+              data: row.payload,
+            });
+          } else {
+            expiredIds.push(row.id);
+          }
+        });
+
+        setTrashItems(activeTrash);
+
+        // Delete expired records from DB in background
+        if (expiredIds.length > 0) {
+          await supabase.from("recycle_bin").delete().in("id", expiredIds);
+        }
+      } else {
+        const saved = localStorage.getItem("nivati_recycle_bin");
+        if (saved) {
+          const parsed: TrashItem[] = JSON.parse(saved);
+          const valid = parsed.filter((item) => new Date(item.expiresAt).getTime() > now);
+          setTrashItems(valid);
+        }
+      }
+
+    } catch (e) {
+      console.error("Failed to load dashboard store data:", e);
     } finally {
       setIsLoading(false);
     }
@@ -429,6 +542,143 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       localStorage.setItem("nivati_raw_materials_logs", JSON.stringify(stockLogs));
     }
   }, [stockLogs, isLoading]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      localStorage.setItem("nivati_recycle_bin", JSON.stringify(trashItems));
+    }
+  }, [trashItems, isLoading]);
+
+
+  // ==============================================================================
+  // RECYCLE BIN ACTIONS (30-Day Trash & Recovery)
+  // ==============================================================================
+  const moveToTrash = async (
+    entityType: TrashEntityType, 
+    entityId: string, 
+    title: string, 
+    data: any, 
+    subtitle = ""
+  ): Promise<string> => {
+    const trashId = `TRASH-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const deletedAt = new Date().toISOString();
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    const newTrashItem: TrashItem = {
+      id: trashId,
+      entityId,
+      entityType,
+      title,
+      subtitle,
+      deletedAt,
+      expiresAt,
+      data,
+    };
+
+    setTrashItems((prev) => [newTrashItem, ...prev]);
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.from("recycle_bin").insert([{
+        id: trashId,
+        entity_id: entityId,
+        entity_type: entityType,
+        title,
+        subtitle,
+        deleted_at: deletedAt,
+        expires_at: expiresAt,
+        payload: data,
+      }]);
+    } catch (e) {
+      console.error("Error writing trash item to database:", e);
+    }
+
+    return trashId;
+  };
+
+  const restoreFromTrash = async (trashId: string): Promise<TrashItem | null> => {
+    const item = trashItems.find((t) => t.id === trashId);
+    if (!item) return null;
+
+    setTrashItems((prev) => prev.filter((t) => t.id !== trashId));
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.from("recycle_bin").delete().eq("id", trashId);
+
+      // Re-insert into respective active store
+      if (item.entityType === "sale") {
+        const sale: Sale = item.data;
+        setSales((prev) => [sale, ...prev]);
+        await supabase.from("sales").insert([{
+          id: sale.id,
+          customer_name: sale.customerName,
+          customer_email: sale.customerEmail,
+          items: sale.items,
+          total_amount: sale.totalAmount,
+          status: sale.status,
+          sale_date: sale.date,
+        }]);
+      } else if (item.entityType === "expense") {
+        const expense: Expense = item.data;
+        setExpenses((prev) => [expense, ...prev]);
+        await supabase.from("expenses").insert([{
+          id: expense.id,
+          title: expense.title,
+          amount: expense.amount,
+          category: expense.category,
+          status: expense.status,
+          expense_date: expense.date,
+        }]);
+      } else if (item.entityType === "material") {
+        const material: RawMaterialStock = item.data;
+        setRawMaterials((prev) => [material, ...prev]);
+        await supabase.from("stock_levels").insert([{
+          product_id: material.id,
+          product_name: material.name,
+          category: material.category,
+          unit: material.unit,
+          stock_level: material.stockLevel,
+          safety_threshold: material.safetyThreshold,
+          unit_cost: material.unitCost,
+          img: material.img,
+        }]);
+      } else if (item.entityType === "product") {
+        const productPayload = item.data;
+        await supabase.from("products").insert([productPayload]);
+      }
+
+    } catch (e) {
+      console.error("Error restoring trash item from database:", e);
+    }
+
+    return item;
+  };
+
+  const permanentlyDelete = async (trashId: string) => {
+    setTrashItems((prev) => prev.filter((t) => t.id !== trashId));
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.from("recycle_bin").delete().eq("id", trashId);
+    } catch (e) {
+      console.error("Error permanently deleting trash item:", e);
+    }
+  };
+
+  const emptyTrash = async () => {
+    const ids = trashItems.map((t) => t.id);
+    setTrashItems([]);
+
+    try {
+      const supabase = createSupabaseBrowserClient();
+      if (ids.length > 0) {
+        await supabase.from("recycle_bin").delete().in("id", ids);
+      }
+    } catch (e) {
+      console.error("Error emptying recycle bin:", e);
+    }
+  };
 
 
   // ==============================================================================
@@ -497,7 +747,19 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
   };
 
   const deleteSale = async (id: string) => {
+    const saleToDelete = sales.find((s) => s.id === id);
+    if (!saleToDelete) return;
+
     setSales((prev) => prev.filter((s) => s.id !== id));
+
+    // Move to 30-Day Recycle Bin
+    await moveToTrash(
+      "sale",
+      id,
+      `Sale ${saleToDelete.id} (${saleToDelete.customerName})`,
+      saleToDelete,
+      `Rs ${saleToDelete.totalAmount.toLocaleString()} • ${saleToDelete.items.length} items`
+    );
 
     try {
       const supabase = createSupabaseBrowserClient();
@@ -555,7 +817,19 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
   };
 
   const deleteExpense = async (id: string) => {
+    const expToDelete = expenses.find((e) => e.id === id);
+    if (!expToDelete) return;
+
     setExpenses((prev) => prev.filter((exp) => exp.id !== id));
+
+    // Move to 30-Day Recycle Bin
+    await moveToTrash(
+      "expense",
+      id,
+      expToDelete.title,
+      expToDelete,
+      `Rs ${expToDelete.amount.toLocaleString()} • ${expToDelete.category}`
+    );
 
     try {
       const supabase = createSupabaseBrowserClient();
@@ -622,7 +896,19 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
   };
 
   const deleteRawMaterial = async (id: string) => {
+    const matToDelete = rawMaterials.find((m) => m.id === id);
+    if (!matToDelete) return;
+
     setRawMaterials((prev) => prev.filter((m) => m.id !== id));
+
+    // Move to 30-Day Recycle Bin
+    await moveToTrash(
+      "material",
+      id,
+      matToDelete.name,
+      matToDelete,
+      `${matToDelete.stockLevel} ${matToDelete.unit} • Rs ${matToDelete.unitCost}/${matToDelete.unit}`
+    );
 
     try {
       const supabase = createSupabaseBrowserClient();
@@ -760,6 +1046,7 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         expenses,
         rawMaterials,
         stockLogs,
+        trashItems,
         isLoading,
         addSale,
         updateSale,
@@ -772,6 +1059,10 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         deleteRawMaterial,
         adjustMaterialStock,
         restockMaterial,
+        moveToTrash,
+        restoreFromTrash,
+        permanentlyDelete,
+        emptyTrash,
         refreshData: fetchAllData,
       }}
     >

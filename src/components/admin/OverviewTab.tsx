@@ -21,75 +21,134 @@ interface Props {
   catalogProducts: AdminCatalogProduct[];
   setActiveTab: (tab: string) => void;
   timeRange?: string;
+  setTimeRange?: (range: string) => void;
 }
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// 21-step precision chromatic spectrum (exact 9-degree symmetry across 180° arc)
+// 21-step mathematically continuous chromatic power spectrum (0° Red -> 142° Lush Emerald Green)
 const GAUGE_POWER_COLORS = [
-  "#ef4444", // 0: Pure Red (Loss / Critical)
-  "#f43f5e", // 1: Crimson Red
-  "#f97316", // 2: Coral Red-Orange
-  "#fb923c", // 3: Warm Orange
-  "#f59e0b", // 4: Amber
-  "#fbbf24", // 5: Warm Amber
-  "#facc15", // 6: Golden Yellow
-  "#eab308", // 7: Deep Yellow
-  "#d9f99d", // 8: Soft Lime
-  "#a3e635", // 9: Vivid Lime
-  "#84cc16", // 10: Spring Lime (Exact 270° Apex)
-  "#4ade80", // 11: Mint Green
-  "#22c55e", // 12: Vibrant Green
-  "#16a34a", // 13: Emerald Green
-  "#15803d", // 14: Deep Emerald
-  "#166534", // 15: Forest Green
-  "#1e3d23", // 16: Pine Green
-  "#24301e", // 17: Nivati Pine
-  "#283322", // 18: Signature Nivati Green
-  "#1c2418", // 19: Deep Pine Nivati
-  "#141a11", // 20: Darkest Pine
+  "hsl(0, 88%, 50%)",    // 0: Pure Crimson Red (0.0°)
+  "hsl(7.1, 87%, 50%)",  // 1: Rose Crimson (7.1°)
+  "hsl(14.2, 86%, 50%)", // 2: Coral Red (14.2°)
+  "hsl(21.3, 85%, 50%)", // 3: Deep Orange-Red (21.3°)
+  "hsl(28.4, 84%, 50%)", // 4: Vibrant Orange (28.4°)
+  "hsl(35.5, 83%, 50%)", // 5: Warm Tangerine (35.5°)
+  "hsl(42.6, 82%, 49%)", // 6: Deep Honey Amber (42.6°)
+  "hsl(49.7, 81%, 48%)", // 7: Golden Amber (49.7°)
+  "hsl(56.8, 80%, 47%)", // 8: Warm Sunflower Yellow (56.8°)
+  "hsl(63.9, 79%, 46%)", // 9: Golden Lemon Yellow (63.9°)
+  "hsl(71.0, 78%, 45%)", // 10: Chartreuse Apex (71.0°)
+  "hsl(78.1, 77%, 45%)", // 11: Electric Lime (78.1°)
+  "hsl(85.2, 76%, 45%)", // 12: Bright Leaf Lime (85.2°)
+  "hsl(92.3, 75%, 45%)", // 13: Spring Lime (92.3°)
+  "hsl(99.4, 74%, 44%)", // 14: Fresh Meadow Green (99.4°)
+  "hsl(106.5, 73%, 43%)",// 15: Vibrant Spring Green (106.5°)
+  "hsl(113.6, 72%, 42%)",// 16: Bright Leaf Green (113.6°)
+  "hsl(120.7, 72%, 41%)",// 17: Vibrant Emerald (120.7°)
+  "hsl(127.8, 71%, 40%)",// 18: Rich Emerald (127.8°)
+  "hsl(134.9, 71%, 39%)",// 19: Deep Emerald Green (134.9°)
+  "hsl(142.0, 72%, 38%)",// 20: Lush Forest Emerald (142.0°)
 ];
 
-export default function OverviewTab({ catalogProducts, setActiveTab, timeRange = "This Month" }: Props) {
+export default function OverviewTab({ 
+  catalogProducts, 
+  setActiveTab, 
+  timeRange = "This Month",
+  setTimeRange 
+}: Props) {
   const { sales, expenses, rawMaterials } = useDashboardStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"date" | "amount" | "customer">("date");
-  const [selectedMonthIdx, setSelectedMonthIdx] = useState<number>(() => {
-    const currentMonthNum = new Date().getMonth() + 1;
-    const currentKey = currentMonthNum < 10 ? `0${currentMonthNum}` : `${currentMonthNum}`;
-    const trackingMonthKeys = ["05", "06", "07", "08", "09", "10", "11", "12"];
-    const idx = trackingMonthKeys.indexOf(currentKey);
-    return idx !== -1 ? idx : 3; // Defaults to August (idx 3)
-  });
-  const [performanceFilter, setPerformanceFilter] = useState("This Year");
   const [isPerfFilterOpen, setIsPerfFilterOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
 
-  // 1. Calculate Real KPI Metrics from Database
+  const handleTimeRangeSelect = (newRange: string) => {
+    if (setTimeRange) {
+      setTimeRange(newRange);
+    }
+    setIsPerfFilterOpen(false);
+  };
+
+  // 1. Calculate Real KPI Metrics dynamically filtered by active timeRange
   const metrics = useMemo(() => {
-    const completedSales = sales.filter((s) => s.status === "completed");
-    
-    // Gross Revenue (completed sales)
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth(); // 0 to 11
+
+    // Filter sales and expenses by timeRange
+    const timeFilteredSales = sales.filter((s) => {
+      if (!s.date) return true;
+      const [sYear, sMonth, sDay] = s.date.split("-").map(Number);
+      const sDate = new Date(s.date);
+
+      if (timeRange === "This Week") {
+        const dayOfWeek = today.getDay();
+        const diffToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        const mon = new Date(today);
+        mon.setDate(today.getDate() + diffToMon);
+        mon.setHours(0, 0, 0, 0);
+
+        const sun = new Date(mon);
+        sun.setDate(mon.getDate() + 6);
+        sun.setHours(23, 59, 59, 999);
+
+        return sDate >= mon && sDate <= sun;
+      }
+      if (timeRange === "This Month") {
+        return sYear === currentYear && sMonth === currentMonth + 1;
+      }
+      if (timeRange === "This Quarter") {
+        const quarterNum = Math.floor(currentMonth / 3) + 1;
+        const qStart = (quarterNum - 1) * 3 + 1;
+        const qEnd = qStart + 2;
+        return sYear === currentYear && sMonth >= qStart && sMonth <= qEnd;
+      }
+      return true; // All Time
+    });
+
+    const timeFilteredExpenses = expenses.filter((e) => {
+      if (!e.date) return true;
+      const [eYear, eMonth, eDay] = e.date.split("-").map(Number);
+      const eDate = new Date(e.date);
+
+      if (timeRange === "This Week") {
+        const dayOfWeek = today.getDay();
+        const diffToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        const mon = new Date(today);
+        mon.setDate(today.getDate() + diffToMon);
+        mon.setHours(0, 0, 0, 0);
+
+        const sun = new Date(mon);
+        sun.setDate(mon.getDate() + 6);
+        sun.setHours(23, 59, 59, 999);
+
+        return eDate >= mon && eDate <= sun;
+      }
+      if (timeRange === "This Month") {
+        return eYear === currentYear && eMonth === currentMonth + 1;
+      }
+      if (timeRange === "This Quarter") {
+        const quarterNum = Math.floor(currentMonth / 3) + 1;
+        const qStart = (quarterNum - 1) * 3 + 1;
+        const qEnd = qStart + 2;
+        return eYear === currentYear && eMonth >= qStart && eMonth <= qEnd;
+      }
+      return true; // All Time
+    });
+
+    const completedSales = timeFilteredSales.filter((s) => s.status === "completed");
     const totalRevenue = completedSales.reduce((sum, s) => sum + s.totalAmount, 0);
-
-    // Total Operating Expenses
-    const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
-
-    // Net Profit & Margin
+    const totalExpenses = timeFilteredExpenses.reduce((sum, e) => sum + e.amount, 0);
     const netProfit = totalRevenue - totalExpenses;
-    const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
-
-    // Total units sold across all completed orders
+    const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : (totalExpenses > 0 ? -100 : 0);
     const totalUnitsSold = completedSales.reduce(
       (sum, s) => sum + s.items.reduce((iSum, item) => iSum + item.quantity, 0),
       0
     );
+    const totalOrdersCount = timeFilteredSales.length;
 
-    // Total Orders count
-    const totalOrdersCount = sales.length;
-
-    // Raw Materials Valuation
     const rawMaterialsValuation = rawMaterials.reduce(
       (sum, m) => sum + (m.stockLevel * m.unitCost), 
       0
@@ -104,58 +163,176 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
       totalOrdersCount,
       rawMaterialsValuation,
     };
-  }, [sales, expenses, rawMaterials]);
+  }, [sales, expenses, rawMaterials, timeRange]);
 
-  // 2. Real Monthly Performance Calculation (May - Dec)
-  const currentMonthKey = useMemo(() => {
-    const currentMonthNum = new Date().getMonth() + 1;
-    return currentMonthNum < 10 ? `0${currentMonthNum}` : `${currentMonthNum}`;
-  }, []);
+  // 2. Dynamic Synchronized Performance Bar Chart (Week / Month / Quarter / All Time)
+  const { chartBars, yAxisLabels, chartSubtitle } = useMemo(() => {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth(); // 0 to 11
+    const todayDateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-  const { monthsData, yAxisLabels } = useMemo(() => {
-    // Generate 8 active tracking months (May to Dec)
-    const months = [
-      { key: "05", name: "May" },
-      { key: "06", name: "Jun" },
-      { key: "07", name: "Jul" },
-      { key: "08", name: "Aug" },
-      { key: "09", name: "Sep" },
-      { key: "10", name: "Oct" },
-      { key: "11", name: "Nov" },
-      { key: "12", name: "Dec" },
-    ];
+    let bars: Array<{
+      key: string;
+      label: string;
+      sublabel: string;
+      sales: number;
+      revenue: number;
+      isCurrent: boolean;
+      heightPct: number;
+    }> = [];
 
-    // Compute monthly actuals strictly from database sales
-    const monthlyStats = months.map((m) => {
-      const monthSales = sales.filter((s) => {
-        if (s.status !== "completed") return false;
-        const sMonth = s.date.split("-")[1];
-        return sMonth === m.key;
+    let subtitle = "Monthly revenue & shipment units trajectory";
+
+    if (timeRange === "This Week") {
+      subtitle = "Daily revenue & shipment units across the current week";
+      
+      const dayOfWeek = today.getDay(); // 0 (Sun) to 6 (Sat)
+      const diffToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      const monday = new Date(today);
+      monday.setDate(today.getDate() + diffToMon);
+
+      const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+      bars = dayNames.map((dName, idx) => {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + idx);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        const dateStr = `${y}-${m}-${day}`;
+
+        const daySales = sales.filter(s => s.status === "completed" && s.date === dateStr);
+        const revenue = daySales.reduce((sum, s) => sum + s.totalAmount, 0);
+        const units = daySales.reduce((sum, s) => sum + s.items.reduce((iSum, i) => iSum + i.quantity, 0), 0);
+
+        return {
+          key: dateStr,
+          label: dName,
+          sublabel: `${dName}, ${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`,
+          sales: units,
+          revenue,
+          isCurrent: dateStr === todayDateStr,
+          heightPct: 0,
+        };
       });
 
-      const revenue = monthSales.reduce((sum, s) => sum + s.totalAmount, 0);
-      const units = monthSales.reduce((sum, s) => sum + s.items.reduce((acc, i) => acc + i.quantity, 0), 0);
+    } else if (timeRange === "This Month") {
+      const monthName = MONTH_NAMES[currentMonth];
+      subtitle = `Weekly breakdown for ${monthName} ${currentYear}`;
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const currentDay = today.getDate();
 
-      return {
-        month: m.name,
-        key: m.key,
-        sales: units,
-        revenue,
-        isCurrent: m.key === currentMonthKey,
-      };
-    });
+      const weekIntervals = [
+        { label: "W1 (1-7)", start: 1, end: 7 },
+        { label: "W2 (8-14)", start: 8, end: 14 },
+        { label: "W3 (15-21)", start: 15, end: 21 },
+        { label: "W4 (22-28)", start: 22, end: 28 },
+      ];
+      if (daysInMonth > 28) {
+        weekIntervals.push({ label: `W5 (29-${daysInMonth})`, start: 29, end: daysInMonth });
+      }
 
-    const maxMonthlyRevenue = Math.max(...monthlyStats.map((m) => m.revenue), 0);
+      bars = weekIntervals.map((interval) => {
+        const intervalSales = sales.filter((s) => {
+          if (s.status !== "completed") return false;
+          const [sYear, sMonth, sDay] = s.date.split("-").map(Number);
+          return sYear === currentYear && sMonth === currentMonth + 1 && sDay >= interval.start && sDay <= interval.end;
+        });
 
-    // Compute clean dynamic ceiling for Y-Axis
-    let ceiling = 20000;
-    if (maxMonthlyRevenue > 0) {
-      if (maxMonthlyRevenue <= 5000) ceiling = 5000;
-      else if (maxMonthlyRevenue <= 10000) ceiling = 10000;
-      else if (maxMonthlyRevenue <= 25000) ceiling = 25000;
-      else if (maxMonthlyRevenue <= 50000) ceiling = 50000;
-      else if (maxMonthlyRevenue <= 100000) ceiling = 100000;
-      else ceiling = Math.ceil(maxMonthlyRevenue / 50000) * 50000;
+        const revenue = intervalSales.reduce((sum, s) => sum + s.totalAmount, 0);
+        const units = intervalSales.reduce((sum, s) => sum + s.items.reduce((iSum, i) => iSum + i.quantity, 0), 0);
+        const isCurrent = currentDay >= interval.start && currentDay <= interval.end;
+
+        return {
+          key: interval.label,
+          label: interval.label,
+          sublabel: `${monthName} ${interval.start} - ${interval.end}`,
+          sales: units,
+          revenue,
+          isCurrent,
+          heightPct: 0,
+        };
+      });
+
+    } else if (timeRange === "This Quarter") {
+      const quarterNum = Math.floor(currentMonth / 3) + 1;
+      const qStartMonth = (quarterNum - 1) * 3;
+      subtitle = `Quarter ${quarterNum} (${MONTH_NAMES[qStartMonth]} – ${MONTH_NAMES[qStartMonth + 2]} ${currentYear})`;
+
+      const periods = [
+        { label: `${MONTH_NAMES[qStartMonth]} 1-15`, month: qStartMonth + 1, start: 1, end: 15 },
+        { label: `${MONTH_NAMES[qStartMonth]} 16+`, month: qStartMonth + 1, start: 16, end: 31 },
+        { label: `${MONTH_NAMES[qStartMonth + 1]} 1-15`, month: qStartMonth + 2, start: 1, end: 15 },
+        { label: `${MONTH_NAMES[qStartMonth + 1]} 16+`, month: qStartMonth + 2, start: 16, end: 31 },
+        { label: `${MONTH_NAMES[qStartMonth + 2]} 1-15`, month: qStartMonth + 3, start: 1, end: 15 },
+        { label: `${MONTH_NAMES[qStartMonth + 2]} 16+`, month: qStartMonth + 3, start: 16, end: 31 },
+      ];
+
+      const curDay = today.getDate();
+
+      bars = periods.map((period) => {
+        const pSales = sales.filter((s) => {
+          if (s.status !== "completed") return false;
+          const [sYear, sMonth, sDay] = s.date.split("-").map(Number);
+          return sYear === currentYear && sMonth === period.month && sDay >= period.start && sDay <= period.end;
+        });
+
+        const revenue = pSales.reduce((sum, s) => sum + s.totalAmount, 0);
+        const units = pSales.reduce((sum, s) => sum + s.items.reduce((iSum, i) => iSum + i.quantity, 0), 0);
+        const isCurrent = (currentMonth + 1 === period.month) && (period.start === 1 ? curDay <= 15 : curDay >= 16);
+
+        return {
+          key: period.label,
+          label: period.label,
+          sublabel: `${period.label}, ${currentYear}`,
+          sales: units,
+          revenue,
+          isCurrent,
+          heightPct: 0,
+        };
+      });
+
+    } else {
+      // "All Time" / "This Year": 12 Full Months
+      subtitle = `12-Month full financial trajectory (${currentYear})`;
+
+      bars = MONTH_NAMES.map((name, idx) => {
+        const monthNum = idx + 1;
+        const key = String(monthNum).padStart(2, "0");
+
+        const mSales = sales.filter((s) => {
+          if (s.status !== "completed") return false;
+          const [sYear, sMonth] = s.date.split("-");
+          return Number(sMonth) === monthNum;
+        });
+
+        const revenue = mSales.reduce((sum, s) => sum + s.totalAmount, 0);
+        const units = mSales.reduce((sum, s) => sum + s.items.reduce((iSum, i) => iSum + i.quantity, 0), 0);
+
+        return {
+          key,
+          label: name,
+          sublabel: `${name} ${currentYear}`,
+          sales: units,
+          revenue,
+          isCurrent: idx === currentMonth,
+          heightPct: 0,
+        };
+      });
+    }
+
+    // Dynamic Y-axis scale calculation tailored to max value
+    const maxRev = Math.max(...bars.map(b => b.revenue), 0);
+    let ceiling = 5000;
+    if (maxRev > 0) {
+      if (maxRev <= 2000) ceiling = 2000;
+      else if (maxRev <= 5000) ceiling = 5000;
+      else if (maxRev <= 10000) ceiling = 10000;
+      else if (maxRev <= 25000) ceiling = 25000;
+      else if (maxRev <= 50000) ceiling = 50000;
+      else if (maxRev <= 100000) ceiling = 100000;
+      else ceiling = Math.ceil(maxRev / 50000) * 50000;
     }
 
     const formatK = (val: number) => (val >= 1000 ? `${Math.round(val / 1000)}k` : `${val}`);
@@ -167,24 +344,20 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
       "0",
     ];
 
-    const computedMonths = monthlyStats.map((item) => {
-      // Height is calculated strictly as a percentage of the revenue ceiling
-      let heightPct = 6; // Minimal clean baseline bar when revenue is 0
-      if (item.revenue > 0 && ceiling > 0) {
-        heightPct = Math.min(95, Math.max(10, Math.round((item.revenue / ceiling) * 90)));
+    const computedBars = bars.map(b => {
+      let heightPct = 6;
+      if (b.revenue > 0 && ceiling > 0) {
+        heightPct = Math.min(95, Math.max(10, Math.round((b.revenue / ceiling) * 90)));
       }
-
-      return {
-        ...item,
-        heightPct,
-      };
+      return { ...b, heightPct };
     });
 
     return {
-      monthsData: computedMonths,
+      chartBars: computedBars,
       yAxisLabels: labels,
+      chartSubtitle: subtitle,
     };
-  }, [sales, currentMonthKey]);
+  }, [sales, timeRange]);
 
   // 3. Filtered & Sorted Recent Orders List from Database
   const recentOrders = useMemo(() => {
@@ -250,19 +423,22 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
     }
   };
 
-  const selectedMonth = monthsData[selectedMonthIdx] || monthsData[3];
-
   return (
     <div className="space-y-6 sm:space-y-8">
       
       {/* SECTION HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#222a1d] tracking-tight">
-            Sales Overview
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#222a1d] tracking-tight">
+              Sales Overview
+            </h1>
+            <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#283322]/10 text-[#283322]">
+              {timeRange}
+            </span>
+          </div>
           <p className="text-xs sm:text-sm text-[#222a1d]/50 mt-0.5">
-            Live metrics aggregated directly from your Supabase database
+            Real-time analytics for {timeRange.toLowerCase()} aggregated directly from database
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -276,7 +452,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
         </div>
       </div>
 
-      {/* 1. KEY METRIC CARDS ROW (Live Database Driven) */}
+      {/* 1. KEY METRIC CARDS ROW (Synchronized with Time Range) */}
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         
         {/* Card 1: Primary Dark Green Highlight Card */}
@@ -326,7 +502,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
               </span>
             </div>
             <p className="mt-3 text-xs text-[#222a1d]/40 font-medium">
-              {sales.filter((s) => s.status === "completed").length} paid & completed
+              {metrics.totalOrdersCount} order transactions in {timeRange.toLowerCase()}
             </p>
           </div>
         </div>
@@ -349,7 +525,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
               </span>
             </div>
             <p className="mt-3 text-xs text-[#222a1d]/40 font-medium">
-              Across {expenses.length} ledgered entries
+              Expenses recorded for {timeRange.toLowerCase()}
             </p>
           </div>
         </div>
@@ -381,27 +557,32 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
       {/* 2. MIDDLE ROW: PERFORMANCE OVERVIEW + SALES OVERVIEW GAUGE */}
       <div className="grid gap-6 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px]">
         
-        {/* Left: Performance Overview Bar Chart */}
+        {/* Left: Dynamic Multi-View Performance Bar Chart */}
         <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 sm:p-7 border border-[#e3e8e2] shadow-sm flex flex-col justify-between">
           
-          {/* Chart Header */}
+          {/* Chart Header with Synchronized Dropdown */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d]">
-                Performance Overview
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d]">
+                  Performance Overview
+                </h2>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#f1f4f1] text-[#222a1d]/70">
+                  {timeRange}
+                </span>
+              </div>
               <p className="text-xs text-[#222a1d]/40 mt-0.5">
-                Monthly revenue & shipment units trajectory
+                {chartSubtitle}
               </p>
             </div>
 
-            {/* Time Filter Pill */}
+            {/* Time Filter Pill (2-Way Synchronized) */}
             <div className="relative">
               <button
                 onClick={() => setIsPerfFilterOpen(!isPerfFilterOpen)}
-                className="flex items-center gap-1.5 rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-1.5 text-xs font-semibold text-[#222a1d] hover:border-[#283322]/30 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-1.5 text-xs font-semibold text-[#222a1d] hover:border-[#283322]/30 transition-all cursor-pointer shadow-2xs"
               >
-                <span>{performanceFilter}</span>
+                <span>{timeRange}</span>
                 <ChevronUpDownIcon className="h-3.5 w-3.5 text-[#222a1d]/50" />
               </button>
 
@@ -411,16 +592,13 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                     className="fixed inset-0 z-20" 
                     onClick={() => setIsPerfFilterOpen(false)} 
                   />
-                  <div className="absolute right-0 mt-1.5 z-30 w-32 rounded-2xl bg-white p-1 shadow-xl border border-[#e3e8e2] text-xs">
-                    {["This Year", "All Time"].map((opt) => (
+                  <div className="absolute right-0 mt-1.5 z-30 w-36 rounded-2xl bg-white p-1 shadow-xl border border-[#e3e8e2] text-xs">
+                    {["This Week", "This Month", "This Quarter", "All Time"].map((opt) => (
                       <button
                         key={opt}
-                        onClick={() => {
-                          setPerformanceFilter(opt);
-                          setIsPerfFilterOpen(false);
-                        }}
+                        onClick={() => handleTimeRangeSelect(opt)}
                         className={`w-full text-left px-3 py-1.5 rounded-xl font-medium transition-colors cursor-pointer ${
-                          performanceFilter === opt
+                          timeRange === opt
                             ? "bg-[#283322] text-white"
                             : "text-[#222a1d]/70 hover:bg-[#f1f4f1] hover:text-[#222a1d]"
                         }`}
@@ -437,81 +615,79 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
           {/* Bar Chart Visualization Container */}
           <div className="relative w-full pt-4 pb-2">
             
-            {/* Horizontal Dashed Gridlines & Y-Axis Scale */}
+            {/* Horizontal Dashed Gridlines & Dynamic Y-Axis Scale */}
             <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8 pr-2">
               {yAxisLabels.map((label, i) => (
                 <div key={i} className="flex items-center w-full gap-3 text-[10px] text-[#222a1d]/30 font-medium">
-                  <span className="w-6 text-right shrink-0">{label}</span>
+                  <span className="w-6 text-right shrink-0 font-mono">{label}</span>
                   <div className="w-full border-b border-dashed border-[#e4eae3]" />
                 </div>
               ))}
             </div>
 
-            {/* Vertical Rounded Bars Container */}
-            <div className="relative z-10 grid grid-cols-8 gap-2 sm:gap-4 h-60 items-end pl-9 pr-2 pb-8">
-              {monthsData.map((item, idx) => {
-                const isSelected = selectedMonthIdx === idx;
-                const hasData = item.revenue > 0 || item.sales > 0;
-
-                return (
-                  <div 
-                    key={item.month} 
-                    className="relative flex flex-col items-center h-full justify-end group cursor-pointer"
-                  >
-                    {/* Compact Desktop-Only Hover Tooltip (Hidden on Mobile) */}
-                    <div className="hidden md:group-hover:flex flex-col gap-1 absolute bottom-[90%] z-30 mb-2 w-max min-w-32 rounded-xl bg-white px-3 py-2 shadow-xl border border-[#e3e8e2] text-left pointer-events-none transition-opacity duration-150 animate-fade-in -translate-x-1/2 left-1/2">
-                      <p className="text-[10px] font-extrabold text-[#222a1d] border-b border-[#f0f4ef] pb-1">
-                        {item.month} 2026
-                      </p>
-                      <div className="space-y-0.5 text-[10px]">
-                        <div className="flex items-center justify-between gap-3 text-[#222a1d]/60">
-                          <span>Units Sold:</span>
-                          <span className="font-bold text-[#222a1d]">{item.sales}</span>
-                        </div>
-                        <div className="flex items-center justify-between gap-3 text-[#222a1d]/60">
-                          <span>Revenue:</span>
-                          <span className="font-bold text-[#283322]">
-                            Rs {item.revenue.toLocaleString()}
-                          </span>
-                        </div>
+            {/* Dynamic Grid Rounded Bars Container */}
+            <div 
+              style={{ gridTemplateColumns: `repeat(${chartBars.length}, minmax(0, 1fr))` }}
+              className="relative z-10 grid gap-1.5 sm:gap-3 h-60 items-end pl-9 pr-2 pb-8"
+            >
+              {chartBars.map((item) => (
+                <div 
+                  key={item.key} 
+                  className="relative flex flex-col items-center h-full justify-end group cursor-pointer"
+                >
+                  {/* Compact Desktop-Only Hover Tooltip (Hidden on Mobile) */}
+                  <div className="hidden md:group-hover:flex flex-col gap-1 absolute bottom-[90%] z-30 mb-2 w-max min-w-32 rounded-xl bg-white px-3 py-2 shadow-xl border border-[#e3e8e2] text-left pointer-events-none transition-opacity duration-150 animate-fade-in -translate-x-1/2 left-1/2">
+                    <p className="text-[10px] font-extrabold text-[#222a1d] border-b border-[#f0f4ef] pb-1">
+                      {item.sublabel || item.label}
+                    </p>
+                    <div className="space-y-0.5 text-[10px]">
+                      <div className="flex items-center justify-between gap-3 text-[#222a1d]/60">
+                        <span>Units Sold:</span>
+                        <span className="font-bold text-[#222a1d]">{item.sales}</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-3 text-[#222a1d]/60">
+                        <span>Revenue:</span>
+                        <span className="font-bold text-[#283322]">
+                          Rs {item.revenue.toLocaleString()}
+                        </span>
                       </div>
                     </div>
-
-                    {/* Bar Pillar */}
-                    <div className="w-full flex justify-center items-end h-full">
-                      <div
-                        style={{ height: `${item.heightPct}%` }}
-                        className={`w-full max-w-12 rounded-xl sm:rounded-2xl transition-all duration-300 group-hover:scale-y-[1.03] ${
-                          item.isCurrent
-                            ? "bg-linear-to-t from-[#242c1e] to-[#45573b] shadow-lg shadow-[#283322]/20"
-                            : "bg-[#e8ede7] hover:bg-[#dbe2da]"
-                        }`}
-                      />
-                    </div>
-
-                    {/* X-Axis Month Label */}
-                    <span className={`absolute -bottom-6 text-xs font-semibold transition-colors ${
-                      item.isCurrent ? "text-[#283322] font-bold" : "text-[#222a1d]/40 group-hover:text-[#283322]"
-                    }`}>
-                      {item.month}
-                    </span>
                   </div>
-                );
-              })}
+
+                  {/* Bar Pillar */}
+                  <div className="w-full flex justify-center items-end h-full">
+                    <div
+                      style={{ height: `${item.heightPct}%` }}
+                      className={`w-full max-w-12 rounded-xl sm:rounded-2xl transition-all duration-300 group-hover:scale-y-[1.03] ${
+                        item.isCurrent
+                          ? "bg-linear-to-t from-[#242c1e] to-[#45573b] shadow-lg shadow-[#283322]/20 ring-2 ring-[#283322]/30"
+                          : "bg-[#e8ede7] hover:bg-[#dbe2da]"
+                      }`}
+                    />
+                  </div>
+
+                  {/* X-Axis Dynamic Label */}
+                  <span className={`absolute -bottom-6 text-[10px] sm:text-xs font-semibold transition-colors truncate max-w-full text-center ${
+                    item.isCurrent ? "text-[#283322] font-bold" : "text-[#222a1d]/40 group-hover:text-[#283322]"
+                  }`}>
+                    {item.label}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Chart Legend Footer */}
           <div className="flex items-center justify-between pt-4 border-t border-[#f0f4ef] text-xs text-[#222a1d]/50">
             <span className="font-medium hidden sm:inline">
-              Hover over any month to view performance
+              Hover over any period to view performance
             </span>
             <div className="flex items-center gap-4 ml-auto sm:ml-0">
               <span className="flex items-center gap-1.5 font-semibold text-[#283322]">
-                <span className="h-2 w-2 rounded-full bg-[#283322]" /> Current Month
+                <span className="h-2 w-2 rounded-full bg-[#283322]" /> Current
               </span>
               <span className="flex items-center gap-1.5 text-[#222a1d]/50">
-                <span className="h-2 w-2 rounded-full bg-[#e8ede7]" /> Other Months
+                <span className="h-2 w-2 rounded-full bg-[#e8ede7]" /> Other
               </span>
             </div>
           </div>
@@ -523,9 +699,14 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
           {/* Card Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d]">
-                Margin Health
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d]">
+                  Margin Health
+                </h2>
+                <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#f1f4f1] text-[#222a1d]/70">
+                  {timeRange}
+                </span>
+              </div>
               <p className="text-xs text-[#222a1d]/40 mt-0.5">
                 Profit margin & cost efficiency index
               </p>
@@ -618,57 +799,45 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
 
           {/* Bottom Split Sub-Metrics Cards */}
           <div className="grid grid-cols-2 gap-3 pt-2">
-            
-            {/* Number of Sales */}
-            <div className="rounded-2xl bg-[#f8faf8] p-3.5 border border-[#e8ede7]">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#222a1d]/45 block">
-                Total Orders
-              </span>
-              <div className="mt-1.5 flex items-center justify-between">
-                <span className="text-base sm:text-lg font-bold font-sans text-[#222a1d]">
-                  {metrics.totalOrdersCount}
-                </span>
-                <span className="inline-flex items-center rounded-full bg-[#d97706] px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
-                  Live
-                </span>
-              </div>
-            </div>
-
-            {/* Total Revenue */}
-            <div className="rounded-2xl bg-[#f8faf8] p-3.5 border border-[#e8ede7]">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#222a1d]/45 block">
+            <div className="rounded-2xl bg-[#f8faf8] p-3.5 border border-[#eef2ee]">
+              <span className="text-[10px] font-semibold text-[#222a1d]/50 block">
                 Gross Revenue
               </span>
-              <div className="mt-1.5 flex items-center justify-between">
-                <span className="text-base sm:text-lg font-bold font-sans text-[#222a1d] truncate">
-                  Rs {metrics.totalRevenue.toLocaleString()}
-                </span>
-              </div>
+              <span className="mt-1 block font-mono text-xs sm:text-sm font-bold text-[#222a1d]">
+                Rs {metrics.totalRevenue.toLocaleString()}
+              </span>
             </div>
-
+            <div className="rounded-2xl bg-[#f8faf8] p-3.5 border border-[#eef2ee]">
+              <span className="text-[10px] font-semibold text-[#222a1d]/50 block">
+                Total Expenses
+              </span>
+              <span className="mt-1 block font-mono text-xs sm:text-sm font-bold text-[#0284c7]">
+                Rs {metrics.totalExpenses.toLocaleString()}
+              </span>
+            </div>
           </div>
         </div>
 
       </div>
 
-      {/* 3. BOTTOM SECTION: RECENT ORDERS TABLE */}
+      {/* 3. RECENT ORDERS TABLE (Live Supabase Synchronized) */}
       <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 sm:p-7 border border-[#e3e8e2] shadow-sm">
         
-        {/* Table Top Controls Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6">
+        {/* Table Header & Controls */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#eef2ee]">
           <div>
-            <h2 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d]">
-              Recent Orders
-            </h2>
-            <p className="text-xs text-[#222a1d]/40 mt-0.5">
-              Live customer transactions and invoice records in database
+            <h3 className="text-lg font-serif font-bold text-[#222a1d]">
+              Recent Orders Ledger
+            </h3>
+            <p className="text-xs text-[#222a1d]/45 mt-0.5">
+              Live customer transactions recorded in database
             </p>
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2.5">
             {/* Search Input */}
-            <div className="relative flex-1 sm:w-64">
-              <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#222a1d]/40" />
+            <div className="relative">
+              <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#222a1d]/40" />
               <input
                 type="text"
                 value={searchQuery}
@@ -822,9 +991,9 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                       </span>
                     </td>
 
-                    {/* Status Pill Badge */}
+                    {/* Status */}
                     <td className="py-4 text-center">
-                      <span className={`inline-block text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider ${
+                      <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${
                         order.status === "completed"
                           ? "bg-[#dcfce7] text-[#15803d]"
                           : order.status === "pending"
@@ -835,13 +1004,13 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                       </span>
                     </td>
 
-                    {/* Items count */}
-                    <td className="py-4 text-center font-bold font-mono">
+                    {/* Items */}
+                    <td className="py-4 text-center font-bold text-xs">
                       {order.itemCount}
                     </td>
 
-                    {/* Total Amount */}
-                    <td className="py-4 text-right font-bold font-mono text-sm text-[#222a1d]">
+                    {/* Total */}
+                    <td className="py-4 text-right font-mono font-bold text-xs sm:text-sm text-[#283322]">
                       Rs {order.totalAmount.toLocaleString()}
                     </td>
                   </tr>
@@ -850,27 +1019,13 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
 
               {recentOrders.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="py-16 text-center text-[#222a1d]/40 font-serif">
-                    No orders entered yet. Create an invoice in the Sales Ledger to log your first order!
+                  <td colSpan={9} className="py-12 text-center text-[#222a1d]/40 font-serif">
+                    No transactions recorded in database.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
-        </div>
-
-        {/* Table Footer Action */}
-        <div className="flex items-center justify-between pt-6 border-t border-[#f0f4ef] text-xs">
-          <span className="text-[#222a1d]/50">
-            Showing {recentOrders.length} database entries
-          </span>
-          <button
-            onClick={() => setActiveTab("sales")}
-            className="font-bold text-[#283322] hover:underline flex items-center gap-1 cursor-pointer"
-          >
-            <span>Manage Sales Ledger</span>
-            <span>→</span>
-          </button>
         </div>
       </div>
 
