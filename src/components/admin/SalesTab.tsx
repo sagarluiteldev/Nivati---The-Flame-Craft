@@ -369,13 +369,13 @@ export default function SalesTab({ catalogProducts }: Props) {
                 {/* 1. TOP SUMMARY BAR (Always visible, minimal flat view) */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                    <span className="font-mono font-bold text-xs text-[#283322]">
+                    <span className="font-mono font-bold text-xs text-[#283322] shrink-0">
                       {sale.id}
                     </span>
-                    <span className={`inline-block rounded-full px-1.5 py-0.2 text-[8px] font-bold ${channelInfo.bg} ${channelInfo.text}`}>
+                    <span className={`inline-block rounded-full px-2 py-0.5 text-[8px] font-bold whitespace-nowrap shrink-0 ${channelInfo.bg} ${channelInfo.text}`}>
                       {channelInfo.label}
                     </span>
-                    <span className="text-xs font-bold text-[#222a1d] truncate max-w-28 sm:max-w-36">
+                    <span className="text-xs font-bold text-[#222a1d] truncate">
                       • {sale.customerName}
                     </span>
                   </div>
@@ -531,8 +531,8 @@ export default function SalesTab({ catalogProducts }: Props) {
                     </td>
 
                     {/* Channel Source Badge */}
-                    <td className="py-4.5 sm:py-5">
-                      <span className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold ${channelInfo.bg} ${channelInfo.text}`}>
+                    <td className="py-4.5 sm:py-5 whitespace-nowrap">
+                      <span className={`inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-[10px] font-bold ${channelInfo.bg} ${channelInfo.text}`}>
                         {channelInfo.label}
                       </span>
                     </td>

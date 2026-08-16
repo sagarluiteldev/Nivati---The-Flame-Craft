@@ -909,11 +909,11 @@ export default function OverviewTab({
                   {/* 1. TOP SUMMARY BAR (Always visible, minimal flat view) */}
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                      <span className="font-mono font-bold text-xs text-[#283322]">{order.id}</span>
-                      <span className="rounded-full bg-white border border-[#e8ede7] px-1.5 py-0.2 text-[8px] font-semibold text-[#222a1d]/70">
+                      <span className="font-mono font-bold text-xs text-[#283322] shrink-0">{order.id}</span>
+                      <span className="rounded-full bg-white border border-[#e8ede7] px-2 py-0.5 text-[8px] font-semibold text-[#222a1d]/70 whitespace-nowrap shrink-0">
                         {order.category}
                       </span>
-                      <span className="text-xs font-bold text-[#222a1d] truncate max-w-28 sm:max-w-36">
+                      <span className="text-xs font-bold text-[#222a1d] truncate">
                         • {order.customerName}
                       </span>
                     </div>
@@ -1117,8 +1117,8 @@ export default function OverviewTab({
                       </td>
 
                       {/* Category */}
-                      <td className="py-4.5 sm:py-5">
-                        <span className="inline-block rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70">
+                      <td className="py-4.5 sm:py-5 whitespace-nowrap">
+                        <span className="inline-block whitespace-nowrap rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70">
                           {order.category}
                         </span>
                       </td>

@@ -384,7 +384,7 @@ export default function StockTab() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <h4 className="font-bold text-xs sm:text-sm text-[#222a1d] truncate max-w-32 sm:max-w-40">{item.name}</h4>
-                        <span className="rounded-full bg-white border border-[#e8ede7] px-2 py-0.2 text-[8px] font-semibold text-[#222a1d]/60 uppercase tracking-wider">
+                        <span className="rounded-full bg-white border border-[#e8ede7] px-2 py-0.5 text-[8px] font-semibold text-[#222a1d]/60 uppercase tracking-wider whitespace-nowrap shrink-0">
                           {item.category}
                         </span>
                       </div>
@@ -548,8 +548,8 @@ export default function StockTab() {
                   </td>
 
                   {/* Category */}
-                  <td className="py-4.5 sm:py-5">
-                    <span className="inline-block rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70 uppercase tracking-wider">
+                  <td className="py-4.5 sm:py-5 whitespace-nowrap">
+                    <span className="inline-block whitespace-nowrap rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70 uppercase tracking-wider">
                       {item.category}
                     </span>
                   </td>

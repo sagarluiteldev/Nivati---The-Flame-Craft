@@ -347,8 +347,8 @@ export default function ExpensesTab() {
                   <td className="py-4 font-bold text-[#222a1d]">
                     {exp.title}
                   </td>
-                  <td className="py-4">
-                    <span className="inline-block rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70">
+                  <td className="py-4 whitespace-nowrap">
+                    <span className="inline-block whitespace-nowrap rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70">
                       {CATEGORY_LABELS[exp.category]}
                     </span>
                   </td>
