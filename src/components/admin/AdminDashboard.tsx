@@ -14,6 +14,8 @@ import {
   TrashIcon,
   ArrowPathIcon,
   ArrowRightOnRectangleIcon,
+  ExclamationTriangleIcon,
+  ShieldExclamationIcon,
 } from "@heroicons/react/24/outline";
 
 import ProductList from "@/components/admin/ProductList";
@@ -89,15 +91,25 @@ function mapProductToRecordInput(product: AdminCatalogProduct): ProductRecordInp
 
 function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) {
   const router = useRouter();
-  const { trashItems, moveToTrash } = useDashboardStore();
+  const { 
+    trashItems, 
+    moveToTrash, 
+    syncStatus, 
+    syncErrorMessage, 
+    lastSyncedAt, 
+    refreshData 
+  } = useDashboardStore();
+
   const [products, setProducts] = useState(initialProducts);
   const [selectedProduct, setSelectedProduct] = useState<AdminCatalogProduct | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isRecycleBinOpen, setIsRecycleBinOpen] = useState(false);
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(dataError ?? null);
   const [isPending, startTransition] = useTransition();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Time filter dropdown
   const [timeRange, setTimeRange] = useState("This Month");
@@ -132,12 +144,25 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
 
     if (error) {
       console.error("Error refreshing catalog:", error);
-      setErrorMessage("Failed to fetch products from Supabase database.");
+      setErrorMessage(`Supabase Catalog Error: ${error.message}`);
       return;
     }
 
     setProducts((data || []).map((row) => mapProductRowToAdminProduct(row as ProductRow)));
     showToast("Catalog successfully refreshed from database");
+  };
+
+  const handleSyncAll = async () => {
+    setIsRefreshing(true);
+    try {
+      await Promise.all([refreshCatalog(), refreshData()]);
+      showToast("All data successfully synchronized with Supabase");
+    } catch (e: any) {
+      console.error("Error synchronizing all data:", e);
+      setErrorMessage(e?.message || "Failed to synchronize with database.");
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const handleSave = async (formData: ProductRecordInput) => {
@@ -151,23 +176,23 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
             .from("products")
             .update(formData)
             .eq("id", selectedProduct.id);
-          if (error) throw error;
-          showToast(`Product "${formData.title}" updated successfully`);
+          if (error) throw new Error(error.message || "Failed to update product in Supabase database.");
+          showToast(`Product "${formData.title}" updated successfully in database`);
         } else {
           // Create
           const { error } = await supabase
             .from("products")
             .insert([formData]);
-          if (error) throw error;
-          showToast(`Product "${formData.title}" created successfully`);
+          if (error) throw new Error(error.message || "Failed to create product in Supabase database.");
+          showToast(`Product "${formData.title}" created successfully in database`);
         }
 
         await refreshCatalog();
         setIsEditorOpen(false);
         setSelectedProduct(null);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error saving product:", error);
-        alert("Failed to save product to database.");
+        alert(`Database Save Error: ${error?.message || "Failed to save product to database."}`);
       }
     });
   };
@@ -191,13 +216,13 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
 
         // 2. Remove from active catalog
         const { error } = await supabase.from("products").delete().eq("id", id);
-        if (error) throw error;
+        if (error) throw new Error(error.message || "Failed to delete product from database.");
         
         await refreshCatalog();
         showToast(`Moved "${productToDelete.title}" to Recycle Bin (Kept for 30 days)`);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error deleting product:", error);
-        alert("Failed to delete product from database.");
+        alert(`Database Delete Error: ${error?.message || "Failed to delete product from database."}`);
       }
     });
   };
@@ -211,14 +236,15 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
           .from("products")
           .update({ is_active: nextActive })
           .eq("id", product.id);
-        if (error) throw error;
+        if (error) throw new Error(error.message || "Failed to update product visibility in database.");
+        
         setProducts((prev) =>
           prev.map((p) => (p.id === product.id ? { ...p, isActive: nextActive } : p))
         );
         showToast(`Product "${product.title}" is now ${nextActive ? "visible in store" : "hidden from store"}`);
-      } catch (e) {
+      } catch (e: any) {
         console.error("Error toggling product status:", e);
-        alert("Failed to update status in database.");
+        alert(`Status Update Error: ${e?.message || "Failed to update status in database."}`);
       }
     });
   };
@@ -235,13 +261,13 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
         }));
 
         const { error } = await supabase.from("products").upsert(payload);
-        if (error) throw error;
+        if (error) throw new Error(error.message || "Failed to sync catalog with database.");
 
         await refreshCatalog();
         showToast(`Synced ${payload.length} products with Supabase database!`);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error syncing catalog:", error);
-        alert("Failed to sync catalog with database.");
+        alert(`Catalog Sync Error: ${error?.message || "Failed to sync catalog with database."}`);
       }
     });
   };
@@ -296,8 +322,26 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
               </div>
             </div>
 
-            {/* Mobile Quick Actions (Bin & Sign-Out) */}
+            {/* Mobile Quick Actions (Sync Status, Bin & Sign-Out) */}
             <div className="lg:hidden flex items-center gap-1.5">
+              {/* Sync Status Badge */}
+              <button
+                onClick={() => setIsSyncModalOpen(true)}
+                className={`flex h-8 items-center gap-1 px-2.5 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
+                  syncStatus === "synced"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    : syncStatus === "syncing"
+                    ? "bg-amber-50 text-amber-700 border border-amber-200"
+                    : "bg-red-50 text-red-700 border border-red-200"
+                }`}
+                title="Database Sync Status"
+              >
+                <span className={`h-2 w-2 rounded-full ${
+                  syncStatus === "synced" ? "bg-emerald-500" : syncStatus === "syncing" ? "bg-amber-500 animate-ping" : "bg-red-500"
+                }`} />
+                <span className="capitalize">{syncStatus}</span>
+              </button>
+
               <button
                 onClick={() => setIsRecycleBinOpen(true)}
                 className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[#dc2626] text-white shadow-sm hover:bg-[#b91c1c] transition-colors cursor-pointer"
@@ -343,10 +387,46 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
             })}
           </nav>
 
-          {/* Right: Actions (Recycle Bin, Date Selector, Export, Sync, Signout) */}
+          {/* Right: Actions (Cloud Sync Status, Recycle Bin, Date Selector, Sync, Signout) */}
           <div className="flex items-center justify-between lg:justify-end gap-2 sm:gap-2.5">
             
-            {/* Recycle Bin Button with dark red badge & white SVG */}
+            {/* Live Cloud Sync Status Pill (Desktop) */}
+            <button
+              onClick={() => setIsSyncModalOpen(true)}
+              className={`hidden sm:flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
+                syncStatus === "synced"
+                  ? "border-emerald-200 bg-emerald-50/80 text-emerald-800 hover:bg-emerald-100/80"
+                  : syncStatus === "syncing"
+                  ? "border-amber-200 bg-amber-50/80 text-amber-800 hover:bg-amber-100/80"
+                  : "border-red-300 bg-red-50 text-red-800 hover:bg-red-100"
+              }`}
+              title={syncErrorMessage || (lastSyncedAt ? `Last synced: ${lastSyncedAt.toLocaleTimeString()}` : "Database Status")}
+            >
+              <span className={`relative flex h-2 w-2`}>
+                {syncStatus === "syncing" && (
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                )}
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${
+                  syncStatus === "synced" ? "bg-emerald-500" : syncStatus === "syncing" ? "bg-amber-500" : "bg-red-500"
+                }`} />
+              </span>
+              <span className="text-[11px] font-medium tracking-wide">
+                {syncStatus === "synced" ? "Cloud Synced" : syncStatus === "syncing" ? "Syncing..." : "Sync Error"}
+              </span>
+            </button>
+
+            {/* Quick Refresh All */}
+            <button
+              onClick={handleSyncAll}
+              disabled={isRefreshing || isPending}
+              className="flex items-center gap-1.5 rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-3 py-1.5 sm:py-2 text-xs font-semibold text-[#222a1d] shadow-sm hover:border-[#283322]/30 hover:bg-[#f1f4f1] transition-all cursor-pointer disabled:opacity-50"
+              title="Refresh and sync data from Supabase"
+            >
+              <ArrowPathIcon className={`h-3.5 w-3.5 text-[#222a1d]/60 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span className="hidden md:inline">Sync</span>
+            </button>
+
+            {/* Recycle Bin Button */}
             <button
               onClick={() => setIsRecycleBinOpen(true)}
               className="relative hidden sm:flex items-center gap-2 rounded-full border border-[#e3e8e2] bg-[#f8faf8] pl-2 pr-3.5 py-1.5 sm:py-2 text-xs font-semibold text-[#222a1d] shadow-sm hover:border-[#283322]/30 hover:bg-[#f1f4f1] transition-all cursor-pointer"
@@ -437,19 +517,22 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
       <main className="flex-1 w-full max-w-full px-3 sm:px-6 md:px-8 lg:px-10 py-5 sm:py-8">
         
         {/* System Notices / Messages */}
-        {errorMessage && (
+        {(errorMessage || (syncStatus === "error" && syncErrorMessage)) && (
           <div className="mb-6 flex items-center justify-between rounded-2xl border border-red-200 bg-red-50 px-4 sm:px-5 py-3.5 text-xs text-red-900 shadow-sm">
             <div className="flex items-center gap-2">
               <span className="font-bold uppercase tracking-wider text-[10px] px-2 py-0.5 rounded bg-red-100 text-red-800">
-                Database Notice
+                Database Sync Alert
               </span>
-              <span>{errorMessage}</span>
+              <span className="font-medium">{errorMessage || syncErrorMessage}</span>
             </div>
             <button 
-              onClick={() => setErrorMessage(null)} 
-              className="text-red-600 hover:text-red-900 cursor-pointer"
+              onClick={() => {
+                setErrorMessage(null);
+                setIsSyncModalOpen(true);
+              }} 
+              className="font-bold text-red-700 underline hover:text-red-900 cursor-pointer ml-3 shrink-0"
             >
-              <XMarkIcon className="h-4 w-4" />
+              Troubleshoot
             </button>
           </div>
         )}
@@ -530,6 +613,76 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
           onClose={() => setIsRecycleBinOpen(false)}
           onProductRestored={refreshCatalog}
         />
+
+        {/* DATABASE SYNC DIAGNOSTICS MODAL */}
+        {isSyncModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
+            <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl border border-[#e3e8e2] text-left">
+              <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className={`flex h-8 w-8 items-center justify-center rounded-xl ${
+                    syncStatus === "synced" ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
+                  }`}>
+                    {syncStatus === "synced" ? <CheckCircleIcon className="h-5 w-5" /> : <ExclamationTriangleIcon className="h-5 w-5" />}
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-[#222a1d]">Supabase Database Sync</h3>
+                    <p className="text-[11px] text-[#222a1d]/60">Status: <span className="font-bold capitalize">{syncStatus}</span></p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsSyncModalOpen(false)}
+                  className="h-8 w-8 rounded-full flex items-center justify-center text-[#222a1d]/40 hover:bg-[#f1f4f1] hover:text-[#222a1d] cursor-pointer"
+                >
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="mt-4 space-y-3.5 text-xs text-[#222a1d]/80 leading-relaxed">
+                {syncStatus === "synced" ? (
+                  <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-emerald-900">
+                    <p className="font-semibold text-emerald-950">✅ Real-time Database Connected</p>
+                    <p className="mt-1">
+                      All your sales, expenses, inventory, and product edits are synchronized live with your Supabase database and available across all desktop & mobile logins.
+                    </p>
+                    {lastSyncedAt && (
+                      <p className="mt-2 text-[10px] text-emerald-700 font-mono">
+                        Last successful sync: {lastSyncedAt.toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="rounded-2xl bg-red-50 border border-red-200 p-4 text-red-900">
+                    <p className="font-semibold text-red-950">⚠️ Database Sync Error</p>
+                    <p className="mt-1 font-mono text-[11px] bg-white/70 p-2 rounded-lg border border-red-100">
+                      {syncErrorMessage || "Database query was rejected by Supabase or tables are missing."}
+                    </p>
+                    <div className="mt-3 space-y-1.5 text-[11px]">
+                      <p className="font-bold text-red-950">Common causes:</p>
+                      <ul className="list-disc pl-4 space-y-1">
+                        <li>The SQL schema in <code className="bg-red-100 px-1 rounded">supabase/schema.sql</code> has not been executed in Supabase SQL editor.</li>
+                        <li>Your admin user ID is not registered in the <code className="bg-red-100 px-1 rounded">admin_users</code> table in Supabase.</li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-2 flex items-center justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      handleSyncAll();
+                      setIsSyncModalOpen(false);
+                    }}
+                    className="flex items-center gap-1.5 rounded-full bg-[#283322] px-4 py-2 text-xs font-semibold text-white hover:bg-[#283322]/90 transition-all cursor-pointer"
+                  >
+                    <ArrowPathIcon className="h-3.5 w-3.5" />
+                    Force Sync Now
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
     </div>

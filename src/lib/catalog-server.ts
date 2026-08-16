@@ -69,6 +69,8 @@ export async function getPublicCatalogProducts(): Promise<Product[]> {
 export async function getAdminCatalogProducts(
   supabase: Pick<SupabaseClient, "from">,
 ): Promise<{ products: AdminCatalogProduct[]; errorMessage: string | null }> {
+  noStore();
+
   const { data, error } = await supabase
     .from("products")
     .select(PRODUCT_SELECT_FIELDS)

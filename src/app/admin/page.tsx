@@ -4,6 +4,9 @@ import { requireAdminSession } from "@/lib/admin-auth";
 import { getAdminCatalogProducts } from "@/lib/catalog-server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminPage() {
   if (!hasSupabaseEnv()) {
     return (

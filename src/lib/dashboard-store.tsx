@@ -70,6 +70,8 @@ export interface TrashItem<T = any> {
   data: T;
 }
 
+export type SyncStatus = "synced" | "syncing" | "error" | "offline";
+
 export const DEFAULT_RAW_MATERIALS: RawMaterialStock[] = [
   {
     id: "soy-wax-flakes",
@@ -290,6 +292,9 @@ interface DashboardContextType {
   stockLogs: StockLog[];
   trashItems: TrashItem[];
   isLoading: boolean;
+  syncStatus: SyncStatus;
+  syncErrorMessage: string | null;
+  lastSyncedAt: Date | null;
   
   // Sales CRUD
   addSale: (sale: Omit<Sale, "id" | "totalAmount">) => Promise<void>;
@@ -346,11 +351,16 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
   const [stockLogs, setStockLogs] = useState<StockLog[]>([]);
   const [trashItems, setTrashItems] = useState<TrashItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>("syncing");
+  const [syncErrorMessage, setSyncErrorMessage] = useState<string | null>(null);
+  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
 
   // Fetch all live records from Supabase on mount
   const fetchAllData = useCallback(async () => {
     setIsLoading(true);
+    setSyncStatus("syncing");
     const supabase = createSupabaseBrowserClient();
+    const errors: string[] = [];
 
     try {
       // 1. Fetch Sales
@@ -359,19 +369,22 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (!salesErr && salesData) {
+      if (salesErr) {
+        console.error("Supabase Sales Fetch Error:", salesErr);
+        errors.push(`Sales: ${salesErr.message}`);
+        const saved = localStorage.getItem("nivati_real_sales");
+        if (saved) setSales(JSON.parse(saved));
+      } else if (salesData) {
         setSales(salesData.map((row) => ({
           id: row.id,
           customerName: row.customer_name,
           customerEmail: row.customer_email || "",
+          channel: row.channel || "direct",
           items: Array.isArray(row.items) ? row.items : [],
           totalAmount: Number(row.total_amount),
           date: row.sale_date,
           status: row.status,
         })));
-      } else {
-        const saved = localStorage.getItem("nivati_real_sales");
-        if (saved) setSales(JSON.parse(saved));
       }
 
       // 2. Fetch Expenses
@@ -380,7 +393,12 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (!expErr && expensesData) {
+      if (expErr) {
+        console.error("Supabase Expenses Fetch Error:", expErr);
+        errors.push(`Expenses: ${expErr.message}`);
+        const saved = localStorage.getItem("nivati_real_expenses");
+        if (saved) setExpenses(JSON.parse(saved));
+      } else if (expensesData) {
         setExpenses(expensesData.map((row) => ({
           id: row.id,
           title: row.title,
@@ -389,9 +407,6 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
           date: row.expense_date,
           status: row.status,
         })));
-      } else {
-        const saved = localStorage.getItem("nivati_real_expenses");
-        if (saved) setExpenses(JSON.parse(saved));
       }
 
       // 3. Fetch Raw Materials Stock Levels
@@ -399,7 +414,16 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         .from("stock_levels")
         .select("*");
 
-      if (!stockErr && stockData && stockData.length > 0) {
+      if (stockErr) {
+        console.error("Supabase Stock Levels Fetch Error:", stockErr);
+        errors.push(`Stock: ${stockErr.message}`);
+        const saved = localStorage.getItem("nivati_raw_materials");
+        if (saved) {
+          setRawMaterials(JSON.parse(saved));
+        } else {
+          setRawMaterials(DEFAULT_RAW_MATERIALS);
+        }
+      } else if (stockData && stockData.length > 0) {
         const dbMap = new Map(stockData.map((s) => [s.product_id, s]));
         const merged = DEFAULT_RAW_MATERIALS.map((item) => {
           const row = dbMap.get(item.id);
@@ -432,12 +456,7 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
 
         setRawMaterials(merged);
       } else {
-        const saved = localStorage.getItem("nivati_raw_materials");
-        if (saved) {
-          setRawMaterials(JSON.parse(saved));
-        } else {
-          setRawMaterials(DEFAULT_RAW_MATERIALS);
-        }
+        setRawMaterials(DEFAULT_RAW_MATERIALS);
       }
 
       // 4. Fetch Stock Logs
@@ -446,7 +465,12 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (!logsErr && logsData) {
+      if (logsErr) {
+        console.error("Supabase Stock Logs Fetch Error:", logsErr);
+        errors.push(`Stock Logs: ${logsErr.message}`);
+        const saved = localStorage.getItem("nivati_raw_materials_logs");
+        if (saved) setStockLogs(JSON.parse(saved));
+      } else if (logsData) {
         setStockLogs(logsData.map((row) => ({
           id: row.id,
           materialId: row.product_id,
@@ -457,9 +481,6 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
           date: row.log_date,
           note: row.note || "",
         })));
-      } else {
-        const saved = localStorage.getItem("nivati_raw_materials_logs");
-        if (saved) setStockLogs(JSON.parse(saved));
       }
 
       // 5. Fetch Recycle Bin Items
@@ -470,8 +491,16 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
 
       const now = Date.now();
 
-      if (!trashErr && trashData) {
-        // Auto-purge any items that have passed 30 days
+      if (trashErr) {
+        console.error("Supabase Recycle Bin Fetch Error:", trashErr);
+        errors.push(`Recycle Bin: ${trashErr.message}`);
+        const saved = localStorage.getItem("nivati_recycle_bin");
+        if (saved) {
+          const parsed: TrashItem[] = JSON.parse(saved);
+          const valid = parsed.filter((item) => new Date(item.expiresAt).getTime() > now);
+          setTrashItems(valid);
+        }
+      } else if (trashData) {
         const activeTrash: TrashItem[] = [];
         const expiredIds: string[] = [];
 
@@ -499,17 +528,22 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         if (expiredIds.length > 0) {
           await supabase.from("recycle_bin").delete().in("id", expiredIds);
         }
-      } else {
-        const saved = localStorage.getItem("nivati_recycle_bin");
-        if (saved) {
-          const parsed: TrashItem[] = JSON.parse(saved);
-          const valid = parsed.filter((item) => new Date(item.expiresAt).getTime() > now);
-          setTrashItems(valid);
-        }
       }
 
-    } catch (e) {
+      if (errors.length > 0) {
+        setSyncStatus("error");
+        setSyncErrorMessage(
+          `Database connection issue: ${errors[0]}. Please ensure Supabase schema and admin privileges are configured.`
+        );
+      } else {
+        setSyncStatus("synced");
+        setSyncErrorMessage(null);
+        setLastSyncedAt(new Date());
+      }
+    } catch (e: any) {
       console.error("Failed to load dashboard store data:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to connect to Supabase database.");
     } finally {
       setIsLoading(false);
     }
@@ -580,7 +614,7 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
 
     try {
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("recycle_bin").insert([{
+      const { error } = await supabase.from("recycle_bin").insert([{
         id: trashId,
         entity_id: entityId,
         entity_type: entityType,
@@ -590,8 +624,14 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         expires_at: expiresAt,
         payload: data,
       }]);
-    } catch (e) {
+      if (error) throw error;
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+    } catch (e: any) {
       console.error("Error writing trash item to database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to write to database recycle bin.");
+      throw e;
     }
 
     return trashId;
@@ -605,13 +645,14 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
 
     try {
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("recycle_bin").delete().eq("id", trashId);
+      const { error: delErr } = await supabase.from("recycle_bin").delete().eq("id", trashId);
+      if (delErr) throw delErr;
 
       // Re-insert into respective active store
       if (item.entityType === "sale") {
         const sale: Sale = item.data;
         setSales((prev) => [sale, ...prev]);
-        await supabase.from("sales").insert([{
+        const { error } = await supabase.from("sales").insert([{
           id: sale.id,
           customer_name: sale.customerName,
           customer_email: sale.customerEmail,
@@ -620,10 +661,11 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
           status: sale.status,
           sale_date: sale.date,
         }]);
+        if (error) throw error;
       } else if (item.entityType === "expense") {
         const expense: Expense = item.data;
         setExpenses((prev) => [expense, ...prev]);
-        await supabase.from("expenses").insert([{
+        const { error } = await supabase.from("expenses").insert([{
           id: expense.id,
           title: expense.title,
           amount: expense.amount,
@@ -631,10 +673,11 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
           status: expense.status,
           expense_date: expense.date,
         }]);
+        if (error) throw error;
       } else if (item.entityType === "material") {
         const material: RawMaterialStock = item.data;
         setRawMaterials((prev) => [material, ...prev]);
-        await supabase.from("stock_levels").insert([{
+        const { error } = await supabase.from("stock_levels").insert([{
           product_id: material.id,
           product_name: material.name,
           category: material.category,
@@ -644,13 +687,20 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
           unit_cost: material.unitCost,
           img: material.img,
         }]);
+        if (error) throw error;
       } else if (item.entityType === "product") {
         const productPayload = item.data;
-        await supabase.from("products").insert([productPayload]);
+        const { error } = await supabase.from("products").insert([productPayload]);
+        if (error) throw error;
       }
 
-    } catch (e) {
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+    } catch (e: any) {
       console.error("Error restoring trash item from database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to restore item in database.");
+      throw e;
     }
 
     return item;
@@ -661,9 +711,15 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
 
     try {
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("recycle_bin").delete().eq("id", trashId);
-    } catch (e) {
+      const { error } = await supabase.from("recycle_bin").delete().eq("id", trashId);
+      if (error) throw error;
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+    } catch (e: any) {
       console.error("Error permanently deleting trash item:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to delete item from database.");
+      throw e;
     }
   };
 
@@ -674,16 +730,22 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
     try {
       const supabase = createSupabaseBrowserClient();
       if (ids.length > 0) {
-        await supabase.from("recycle_bin").delete().in("id", ids);
+        const { error } = await supabase.from("recycle_bin").delete().in("id", ids);
+        if (error) throw error;
       }
-    } catch (e) {
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+    } catch (e: any) {
       console.error("Error emptying recycle bin:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to empty recycle bin in database.");
+      throw e;
     }
   };
 
 
   // ==============================================================================
-  // SALES ACTIONS (Database Synchronized)
+  // SALES ACTIONS (Database Synchronized with strict error checks)
   // ==============================================================================
   const addSale = async (saleData: Omit<Sale, "id" | "totalAmount">) => {
     const totalAmount = saleData.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
@@ -694,11 +756,11 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       totalAmount,
     };
 
-    setSales((prev) => [newSale, ...prev]);
+    setSyncStatus("syncing");
 
     try {
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("sales").insert([{
+      const { error } = await supabase.from("sales").insert([{
         id: saleId,
         customer_name: saleData.customerName,
         customer_email: saleData.customerEmail,
@@ -707,27 +769,26 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         status: saleData.status,
         sale_date: saleData.date,
       }]);
-    } catch (e) {
+
+      if (error) {
+        console.error("Supabase addSale error:", error);
+        throw new Error(error.message || "Failed to insert sale into database.");
+      }
+
+      setSales((prev) => [newSale, ...prev]);
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error saving sale to database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to save sale to database.");
+      throw e;
     }
   };
 
   const updateSale = async (id: string, updatedFields: Partial<Sale>) => {
-    setSales((prev) =>
-      prev.map((sale) => {
-        if (sale.id === id) {
-          const merged = { ...sale, ...updatedFields };
-          if (updatedFields.items) {
-            merged.totalAmount = updatedFields.items.reduce(
-              (sum, item) => sum + item.quantity * item.price,
-              0
-            );
-          }
-          return merged;
-        }
-        return sale;
-      })
-    );
+    setSyncStatus("syncing");
 
     try {
       const supabase = createSupabaseBrowserClient();
@@ -741,9 +802,36 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       if (updatedFields.status !== undefined) payload.status = updatedFields.status;
       if (updatedFields.date !== undefined) payload.sale_date = updatedFields.date;
 
-      await supabase.from("sales").update(payload).eq("id", id);
-    } catch (e) {
+      const { error } = await supabase.from("sales").update(payload).eq("id", id);
+      if (error) {
+        console.error("Supabase updateSale error:", error);
+        throw new Error(error.message || "Failed to update sale in database.");
+      }
+
+      setSales((prev) =>
+        prev.map((sale) => {
+          if (sale.id === id) {
+            const merged = { ...sale, ...updatedFields };
+            if (updatedFields.items) {
+              merged.totalAmount = updatedFields.items.reduce(
+                (sum, item) => sum + item.quantity * item.price,
+                0
+              );
+            }
+            return merged;
+          }
+          return sale;
+        })
+      );
+
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error updating sale in database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to update sale in database.");
+      throw e;
     }
   };
 
@@ -751,28 +839,41 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
     const saleToDelete = sales.find((s) => s.id === id);
     if (!saleToDelete) return;
 
-    setSales((prev) => prev.filter((s) => s.id !== id));
-
-    // Move to 30-Day Recycle Bin
-    await moveToTrash(
-      "sale",
-      id,
-      `Sale ${saleToDelete.id} (${saleToDelete.customerName})`,
-      saleToDelete,
-      `Rs ${saleToDelete.totalAmount.toLocaleString()} • ${saleToDelete.items.length} items`
-    );
+    setSyncStatus("syncing");
 
     try {
+      // 1. Move to 30-Day Recycle Bin in Supabase
+      await moveToTrash(
+        "sale",
+        id,
+        `Sale ${saleToDelete.id} (${saleToDelete.customerName})`,
+        saleToDelete,
+        `Rs ${saleToDelete.totalAmount.toLocaleString()} • ${saleToDelete.items.length} items`
+      );
+
+      // 2. Delete from sales table
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("sales").delete().eq("id", id);
-    } catch (e) {
+      const { error } = await supabase.from("sales").delete().eq("id", id);
+      if (error) {
+        console.error("Supabase deleteSale error:", error);
+        throw new Error(error.message || "Failed to delete sale from database.");
+      }
+
+      setSales((prev) => prev.filter((s) => s.id !== id));
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error deleting sale in database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to delete sale from database.");
+      throw e;
     }
   };
 
 
   // ==============================================================================
-  // EXPENSES ACTIONS (Database Synchronized)
+  // EXPENSES ACTIONS (Database Synchronized with strict error checks)
   // ==============================================================================
   const addExpense = async (expenseData: Omit<Expense, "id">) => {
     const expenseId = `EXP-${Math.floor(100 + Math.random() * 900)}`;
@@ -780,11 +881,12 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       ...expenseData,
       id: expenseId,
     };
-    setExpenses((prev) => [newExpense, ...prev]);
+
+    setSyncStatus("syncing");
 
     try {
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("expenses").insert([{
+      const { error } = await supabase.from("expenses").insert([{
         id: expenseId,
         title: expenseData.title,
         amount: expenseData.amount,
@@ -792,15 +894,26 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         status: expenseData.status,
         expense_date: expenseData.date,
       }]);
-    } catch (e) {
+
+      if (error) {
+        console.error("Supabase addExpense error:", error);
+        throw new Error(error.message || "Failed to insert expense into database.");
+      }
+
+      setExpenses((prev) => [newExpense, ...prev]);
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error saving expense to database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to save expense to database.");
+      throw e;
     }
   };
 
   const updateExpense = async (id: string, updatedFields: Partial<Expense>) => {
-    setExpenses((prev) =>
-      prev.map((exp) => (exp.id === id ? { ...exp, ...updatedFields } : exp))
-    );
+    setSyncStatus("syncing");
 
     try {
       const supabase = createSupabaseBrowserClient();
@@ -811,9 +924,24 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       if (updatedFields.status !== undefined) payload.status = updatedFields.status;
       if (updatedFields.date !== undefined) payload.expense_date = updatedFields.date;
 
-      await supabase.from("expenses").update(payload).eq("id", id);
-    } catch (e) {
+      const { error } = await supabase.from("expenses").update(payload).eq("id", id);
+      if (error) {
+        console.error("Supabase updateExpense error:", error);
+        throw new Error(error.message || "Failed to update expense in database.");
+      }
+
+      setExpenses((prev) =>
+        prev.map((exp) => (exp.id === id ? { ...exp, ...updatedFields } : exp))
+      );
+
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error updating expense in database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to update expense in database.");
+      throw e;
     }
   };
 
@@ -821,28 +949,41 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
     const expToDelete = expenses.find((e) => e.id === id);
     if (!expToDelete) return;
 
-    setExpenses((prev) => prev.filter((exp) => exp.id !== id));
-
-    // Move to 30-Day Recycle Bin
-    await moveToTrash(
-      "expense",
-      id,
-      expToDelete.title,
-      expToDelete,
-      `Rs ${expToDelete.amount.toLocaleString()} • ${expToDelete.category}`
-    );
+    setSyncStatus("syncing");
 
     try {
+      // 1. Move to 30-Day Recycle Bin
+      await moveToTrash(
+        "expense",
+        id,
+        expToDelete.title,
+        expToDelete,
+        `Rs ${expToDelete.amount.toLocaleString()} • ${expToDelete.category}`
+      );
+
+      // 2. Delete from database
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("expenses").delete().eq("id", id);
-    } catch (e) {
+      const { error } = await supabase.from("expenses").delete().eq("id", id);
+      if (error) {
+        console.error("Supabase deleteExpense error:", error);
+        throw new Error(error.message || "Failed to delete expense from database.");
+      }
+
+      setExpenses((prev) => prev.filter((exp) => exp.id !== id));
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error deleting expense in database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to delete expense from database.");
+      throw e;
     }
   };
 
 
   // ==============================================================================
-  // RAW MATERIAL STOCK ACTIONS
+  // RAW MATERIAL STOCK ACTIONS (Database Synchronized with strict error checks)
   // ==============================================================================
   const addRawMaterial = async (materialData: Omit<RawMaterialStock, "id">) => {
     const slug = materialData.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -852,11 +993,11 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       id,
     };
 
-    setRawMaterials((prev) => [...prev, newMaterial]);
+    setSyncStatus("syncing");
 
     try {
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("stock_levels").insert([{
+      const { error } = await supabase.from("stock_levels").insert([{
         product_id: id,
         product_name: materialData.name,
         category: materialData.category,
@@ -866,15 +1007,26 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         unit_cost: materialData.unitCost,
         img: materialData.img,
       }]);
-    } catch (e) {
+
+      if (error) {
+        console.error("Supabase addRawMaterial error:", error);
+        throw new Error(error.message || "Failed to save raw material to database.");
+      }
+
+      setRawMaterials((prev) => [...prev, newMaterial]);
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error saving raw material to database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to save raw material to database.");
+      throw e;
     }
   };
 
   const updateRawMaterial = async (id: string, updatedFields: Partial<RawMaterialStock>) => {
-    setRawMaterials((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, ...updatedFields } : m))
-    );
+    setSyncStatus("syncing");
 
     try {
       const supabase = createSupabaseBrowserClient();
@@ -887,12 +1039,28 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       if (updatedFields.unitCost !== undefined) payload.unit_cost = updatedFields.unitCost;
       if (updatedFields.img !== undefined) payload.img = updatedFields.img;
 
-      await supabase.from("stock_levels").upsert({
+      const { error } = await supabase.from("stock_levels").upsert({
         product_id: id,
         ...payload,
       });
-    } catch (e) {
+
+      if (error) {
+        console.error("Supabase updateRawMaterial error:", error);
+        throw new Error(error.message || "Failed to update raw material in database.");
+      }
+
+      setRawMaterials((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, ...updatedFields } : m))
+      );
+
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error updating raw material in database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to update raw material in database.");
+      throw e;
     }
   };
 
@@ -900,22 +1068,35 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
     const matToDelete = rawMaterials.find((m) => m.id === id);
     if (!matToDelete) return;
 
-    setRawMaterials((prev) => prev.filter((m) => m.id !== id));
-
-    // Move to 30-Day Recycle Bin
-    await moveToTrash(
-      "material",
-      id,
-      matToDelete.name,
-      matToDelete,
-      `${matToDelete.stockLevel} ${matToDelete.unit} • Rs ${matToDelete.unitCost}/${matToDelete.unit}`
-    );
+    setSyncStatus("syncing");
 
     try {
+      // 1. Move to 30-Day Recycle Bin
+      await moveToTrash(
+        "material",
+        id,
+        matToDelete.name,
+        matToDelete,
+        `${matToDelete.stockLevel} ${matToDelete.unit} • Rs ${matToDelete.unitCost}/${matToDelete.unit}`
+      );
+
+      // 2. Delete from database
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("stock_levels").delete().eq("product_id", id);
-    } catch (e) {
+      const { error } = await supabase.from("stock_levels").delete().eq("product_id", id);
+      if (error) {
+        console.error("Supabase deleteRawMaterial error:", error);
+        throw new Error(error.message || "Failed to delete raw material from database.");
+      }
+
+      setRawMaterials((prev) => prev.filter((m) => m.id !== id));
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error deleting raw material from database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to delete raw material from database.");
+      throw e;
     }
   };
 
@@ -924,21 +1105,10 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
     delta: number, 
     note = "Manual count adjustment"
   ) => {
-    let finalLevel = 0;
-    let materialUnit = "units";
-    let materialName = id;
-
-    setRawMaterials((prev) =>
-      prev.map((m) => {
-        if (m.id === id) {
-          finalLevel = Math.max(0, m.stockLevel + delta);
-          materialUnit = m.unit;
-          materialName = m.name;
-          return { ...m, stockLevel: finalLevel };
-        }
-        return m;
-      })
-    );
+    const currentMat = rawMaterials.find((m) => m.id === id);
+    const finalLevel = Math.max(0, (currentMat?.stockLevel ?? 0) + delta);
+    const materialUnit = currentMat?.unit || "units";
+    const materialName = currentMat?.name || id;
 
     const logId = `LOG-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
     const newLog: StockLog = {
@@ -951,11 +1121,12 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       date: new Date().toISOString().split("T")[0],
       note,
     };
-    setStockLogs((logs) => [newLog, ...logs]);
+
+    setSyncStatus("syncing");
 
     try {
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("stock_logs").insert([{
+      const { error: logErr } = await supabase.from("stock_logs").insert([{
         id: logId,
         product_id: id,
         product_title: materialName,
@@ -965,13 +1136,28 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         log_date: new Date().toISOString().split("T")[0],
         note,
       }]);
+      if (logErr) throw logErr;
 
-      await supabase.from("stock_levels").upsert({
+      const { error: stockErr } = await supabase.from("stock_levels").upsert({
         product_id: id,
+        product_name: materialName,
         stock_level: finalLevel,
       });
-    } catch (e) {
+      if (stockErr) throw stockErr;
+
+      setRawMaterials((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, stockLevel: finalLevel } : m))
+      );
+      setStockLogs((logs) => [newLog, ...logs]);
+
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error updating adjusted raw material in database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to save stock adjustment to database.");
+      throw e;
     }
   };
 
@@ -991,10 +1177,6 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
     const matName = mat?.name || id;
     const matUnit = mat?.unit || "units";
 
-    setRawMaterials((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, stockLevel: totalQty, unitCost: averageCost } : m))
-    );
-
     const logId = `LOG-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
     const newLog: StockLog = {
       id: logId,
@@ -1006,20 +1188,13 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       date: new Date().toISOString().split("T")[0],
       note,
     };
-    setStockLogs((logs) => [newLog, ...logs]);
 
-    // Automatically record shipment in Operating Expenses ledger
-    await addExpense({
-      title: `Restock Raw Material: ${matName} (+${quantity} ${matUnit})`,
-      amount: quantity * unitCost,
-      category: "materials",
-      date: new Date().toISOString().split("T")[0],
-      status: "paid",
-    });
+    setSyncStatus("syncing");
 
     try {
       const supabase = createSupabaseBrowserClient();
-      await supabase.from("stock_logs").insert([{
+      
+      const { error: logErr } = await supabase.from("stock_logs").insert([{
         id: logId,
         product_id: id,
         product_title: matName,
@@ -1029,14 +1204,38 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         log_date: new Date().toISOString().split("T")[0],
         note,
       }]);
+      if (logErr) throw logErr;
 
-      await supabase.from("stock_levels").upsert({
+      const { error: stockErr } = await supabase.from("stock_levels").upsert({
         product_id: id,
+        product_name: matName,
         stock_level: totalQty,
         unit_cost: averageCost,
       });
-    } catch (e) {
+      if (stockErr) throw stockErr;
+
+      setRawMaterials((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, stockLevel: totalQty, unitCost: averageCost } : m))
+      );
+      setStockLogs((logs) => [newLog, ...logs]);
+
+      // Automatically record shipment in Operating Expenses ledger
+      await addExpense({
+        title: `Restock Raw Material: ${matName} (+${quantity} ${matUnit})`,
+        amount: quantity * unitCost,
+        category: "materials",
+        date: new Date().toISOString().split("T")[0],
+        status: "paid",
+      });
+
+      setSyncStatus("synced");
+      setSyncErrorMessage(null);
+      setLastSyncedAt(new Date());
+    } catch (e: any) {
       console.error("Error logging raw material restock in database:", e);
+      setSyncStatus("error");
+      setSyncErrorMessage(e?.message || "Failed to record raw material restock in database.");
+      throw e;
     }
   };
 
@@ -1049,6 +1248,9 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
         stockLogs,
         trashItems,
         isLoading,
+        syncStatus,
+        syncErrorMessage,
+        lastSyncedAt,
         addSale,
         updateSale,
         deleteSale,
