@@ -379,7 +379,7 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
                     className="fixed inset-0 z-20" 
                     onClick={() => setIsTimeDropdownOpen(false)} 
                   />
-                  <div className="absolute right-0 mt-2 z-30 w-36 rounded-2xl bg-white p-1.5 shadow-xl border border-[#e3e8e2] text-xs">
+                  <div className="absolute left-0 sm:left-auto sm:right-0 mt-2 z-30 w-36 rounded-2xl bg-white p-1.5 shadow-xl border border-[#e3e8e2] text-xs">
                     {["This Week", "This Month", "This Quarter", "All Time"].map((range) => (
                       <button
                         key={range}

@@ -349,20 +349,144 @@ export default function StockTab() {
         </div>
       </div>
 
-      {/* 3. STOCK MATRIX DATA TABLE */}
-      <div className="rounded-3xl sm:rounded-[28px] bg-white p-5 sm:p-7 border border-[#e3e8e2] shadow-sm">
-        <div className="overflow-x-auto scrollbar-hide -mx-5 sm:-mx-7 px-5 sm:px-7">
-          <table className="w-full text-left border-collapse min-w-195">
+      {/* 3. STOCK MATRIX: MOBILE SPACIOUS CARDS & DESKTOP TABLE */}
+      <div className="rounded-3xl sm:rounded-[28px] bg-white p-4.5 sm:p-7 border border-[#e3e8e2] shadow-sm">
+        
+        {/* MOBILE CARD VIEW (< 768px): Spacious, uncluttered, touch-friendly */}
+        <div className="block md:hidden space-y-4.5">
+          {filteredStock.map((item) => (
+            <div 
+              key={item.id} 
+              className="rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] p-4.5 space-y-4 shadow-2xs transition-all"
+            >
+              {/* Top Row: Thumbnail, Name, ID, Category */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-white border border-[#e8ede7]">
+                    {item.img ? (
+                      <img src={item.img} alt={item.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-[#283322]/40 font-serif text-base">
+                        📦
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="font-bold text-sm text-[#222a1d] truncate">{item.name}</h4>
+                    <p className="text-[10px] text-[#222a1d]/45 font-mono">{item.id}</p>
+                  </div>
+                </div>
+
+                <span className="shrink-0 rounded-full bg-white border border-[#e8ede7] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70 uppercase tracking-wider">
+                  {item.category}
+                </span>
+              </div>
+
+              {/* Middle Row: Inline Stock Stepper + Status Badge */}
+              <div className="flex items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-[#e8ede7]">
+                <div>
+                  <span className="text-[10px] font-semibold text-[#222a1d]/40 uppercase tracking-wider block">Quantity</span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <button 
+                      onClick={() => adjustMaterialStock(item.id, -1, "Manual deduction")}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#e3e8e2] bg-[#f8faf8] text-[#222a1d] hover:bg-[#283322] hover:text-white transition-colors cursor-pointer active:scale-95"
+                    >
+                      <MinusIcon className="h-4 w-4" />
+                    </button>
+                    <span className="font-mono font-bold text-sm text-[#222a1d] min-w-16 text-center">
+                      {item.stockLevel} <span className="text-[10px] font-normal text-[#222a1d]/50">{item.unit}</span>
+                    </span>
+                    <button 
+                      onClick={() => adjustMaterialStock(item.id, 1, "Manual addition")}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#e3e8e2] bg-[#f8faf8] text-[#222a1d] hover:bg-[#283322] hover:text-white transition-colors cursor-pointer active:scale-95"
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="text-right">
+                  <span className="text-[10px] font-semibold text-[#222a1d]/40 uppercase tracking-wider block mb-1">Status</span>
+                  <span className={`inline-block text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider text-white shadow-2xs ${
+                    item.status === "in-stock"
+                      ? "bg-[#15803d]"
+                      : item.status === "low-stock"
+                      ? "bg-[#d97706]"
+                      : "bg-[#dc2626]"
+                  }`}>
+                    {item.status === "in-stock" ? "Healthy" : item.status === "low-stock" ? "Low Stock" : "Depleted"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Details Metrics Grid */}
+              <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="rounded-xl bg-white p-2.5 border border-[#e8ede7]">
+                  <span className="text-[9px] text-[#222a1d]/40 uppercase font-semibold block">Unit Cost</span>
+                  <span className="font-mono font-bold text-[#222a1d] mt-0.5 block text-xs truncate">
+                    Rs {item.unitCost}
+                  </span>
+                </div>
+                <div className="rounded-xl bg-white p-2.5 border border-[#e8ede7]">
+                  <span className="text-[9px] text-[#222a1d]/40 uppercase font-semibold block">Safety Alert</span>
+                  <span className="font-mono font-bold text-[#222a1d] mt-0.5 block text-xs truncate">
+                    &lt; {item.safetyThreshold} {item.unit}
+                  </span>
+                </div>
+                <div className="rounded-xl bg-white p-2.5 border border-[#e8ede7]">
+                  <span className="text-[9px] text-[#222a1d]/40 uppercase font-semibold block">Valuation</span>
+                  <span className="font-mono font-bold text-[#283322] mt-0.5 block text-xs truncate">
+                    Rs {item.assetValue.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  onClick={() => handleOpenRestock(item)}
+                  className="flex-1 rounded-full bg-[#283322] py-2.5 text-xs font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer shadow-xs text-center"
+                >
+                  Restock Material
+                </button>
+                <button
+                  onClick={() => handleOpenProfile(item)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e3e8e2] bg-white text-[#222a1d]/70 hover:bg-[#f1f4f1] transition-colors cursor-pointer shrink-0"
+                  title="Edit Material Profile"
+                >
+                  <PencilSquareIcon className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => handleDeleteMaterial(item.id, item.name)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-red-200 bg-white text-red-500 hover:bg-red-50 transition-colors cursor-pointer shrink-0"
+                  title="Delete Material"
+                >
+                  <TrashIcon className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {filteredStock.length === 0 && (
+            <div className="py-12 text-center text-[#222a1d]/40 font-serif">
+              No raw materials match your filter or search criteria.
+            </div>
+          )}
+        </div>
+
+        {/* DESKTOP DATA TABLE (>= 768px): Full wide spreadsheet table */}
+        <div className="hidden md:block overflow-x-auto scrollbar-hide -mx-5 sm:-mx-7 px-5 sm:px-7">
+          <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
               <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
-                <th className="pb-3 pl-2">Raw Material</th>
-                <th className="pb-3">Category</th>
-                <th className="pb-3 text-center">Current Quantity</th>
-                <th className="pb-3 text-center">Status</th>
-                <th className="pb-3 text-center">Safety Alert</th>
-                <th className="pb-3 text-right">Unit Cost</th>
-                <th className="pb-3 text-right">Asset Valuation</th>
-                <th className="pb-3 pr-2 text-right">Actions</th>
+                <th className="pb-3.5 pl-2">Raw Material</th>
+                <th className="pb-3.5">Category</th>
+                <th className="pb-3.5 text-center">Current Quantity</th>
+                <th className="pb-3.5 text-center">Status</th>
+                <th className="pb-3.5 text-center">Safety Alert</th>
+                <th className="pb-3.5 text-right">Unit Cost</th>
+                <th className="pb-3.5 text-right">Asset Valuation</th>
+                <th className="pb-3.5 pr-2 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#f2f6f1] text-xs text-[#222a1d]">
@@ -370,7 +494,7 @@ export default function StockTab() {
                 <tr key={item.id} className="hover:bg-[#f8faf8] transition-colors group">
                   
                   {/* Material Info */}
-                  <td className="py-4 pl-2">
+                  <td className="py-4.5 sm:py-5 pl-2">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[#f1f4f1] border border-[#e8ede7]">
                         {item.img ? (
@@ -389,14 +513,14 @@ export default function StockTab() {
                   </td>
 
                   {/* Category */}
-                  <td className="py-4">
+                  <td className="py-4.5 sm:py-5">
                     <span className="inline-block rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70 uppercase tracking-wider">
                       {item.category}
                     </span>
                   </td>
 
                   {/* Inline +/- Stock Counter */}
-                  <td className="py-4">
+                  <td className="py-4.5 sm:py-5">
                     <div className="flex items-center justify-center gap-2">
                       <button 
                         onClick={() => adjustMaterialStock(item.id, -1, "Manual deduction")}
@@ -419,7 +543,7 @@ export default function StockTab() {
                   </td>
 
                   {/* Status Badge */}
-                  <td className="py-4 text-center">
+                  <td className="py-4.5 sm:py-5 text-center">
                     <span className={`inline-block text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider text-white shadow-xs ${
                       item.status === "in-stock"
                         ? "bg-[#15803d]"
@@ -432,22 +556,22 @@ export default function StockTab() {
                   </td>
 
                   {/* Safety Alert Threshold */}
-                  <td className="py-4 text-center font-mono text-[11px] text-[#222a1d]/60">
+                  <td className="py-4.5 sm:py-5 text-center font-mono text-[11px] text-[#222a1d]/60">
                     &lt; {item.safetyThreshold} {item.unit}
                   </td>
 
                   {/* Unit Cost */}
-                  <td className="py-4 text-right font-mono font-semibold text-xs text-[#222a1d]">
+                  <td className="py-4.5 sm:py-5 text-right font-mono font-semibold text-xs text-[#222a1d]">
                     Rs {item.unitCost} <span className="text-[10px] text-[#222a1d]/40">/{item.unit}</span>
                   </td>
 
                   {/* Total Asset Valuation */}
-                  <td className="py-4 text-right font-mono font-bold text-xs text-[#283322]">
+                  <td className="py-4.5 sm:py-5 text-right font-mono font-bold text-xs text-[#283322]">
                     Rs {item.assetValue.toLocaleString()}
                   </td>
 
                   {/* Action Buttons */}
-                  <td className="py-4 pr-2 text-right">
+                  <td className="py-4.5 sm:py-5 pr-2 text-right">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
                         onClick={() => handleOpenRestock(item)}

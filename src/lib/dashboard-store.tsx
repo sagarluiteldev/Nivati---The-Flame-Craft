@@ -15,6 +15,7 @@ export interface Sale {
   id: string;
   customerName: string;
   customerEmail: string;
+  channel?: "direct" | "website" | "instagram" | "tiktok" | "facebook" | string;
   items: SaleItem[];
   totalAmount: number;
   date: string;

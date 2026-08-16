@@ -561,29 +561,29 @@ export default function OverviewTab({
         <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 sm:p-7 border border-[#e3e8e2] shadow-sm flex flex-col justify-between">
           
           {/* Chart Header with Synchronized Dropdown */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d]">
+          <div className="flex items-center justify-between gap-2 mb-4 sm:mb-6">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <h2 className="text-sm sm:text-xl font-serif font-bold text-[#222a1d] truncate">
                   Performance Overview
                 </h2>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#f1f4f1] text-[#222a1d]/70">
+                <span className="hidden sm:inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#f1f4f1] text-[#222a1d]/70">
                   {timeRange}
                 </span>
               </div>
-              <p className="text-xs text-[#222a1d]/40 mt-0.5">
+              <p className="text-[10px] sm:text-xs text-[#222a1d]/40 truncate mt-0.5">
                 {chartSubtitle}
               </p>
             </div>
 
-            {/* Time Filter Pill (2-Way Synchronized) */}
-            <div className="relative">
+            {/* Time Filter Pill (Wider & aligned on same line on mobile) */}
+            <div className="relative shrink-0">
               <button
                 onClick={() => setIsPerfFilterOpen(!isPerfFilterOpen)}
-                className="flex items-center gap-1.5 rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-1.5 text-xs font-semibold text-[#222a1d] hover:border-[#283322]/30 transition-all cursor-pointer shadow-2xs"
+                className="flex items-center justify-between gap-1.5 sm:gap-2 rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-3 sm:px-4 py-1.5 text-[11px] sm:text-xs font-semibold text-[#222a1d] hover:border-[#283322]/30 transition-all cursor-pointer min-w-26 sm:min-w-28 shadow-xs"
               >
-                <span>{timeRange}</span>
-                <ChevronUpDownIcon className="h-3.5 w-3.5 text-[#222a1d]/50" />
+                <span className="truncate">{timeRange}</span>
+                <ChevronUpDownIcon className="h-3.5 w-3.5 text-[#222a1d]/50 shrink-0" />
               </button>
 
               {isPerfFilterOpen && (
@@ -820,214 +820,307 @@ export default function OverviewTab({
 
       </div>
 
-      {/* 3. RECENT ORDERS TABLE (Live Supabase Synchronized) */}
-      <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 sm:p-7 border border-[#e3e8e2] shadow-sm">
+      {/* 3. RECENT ORDERS: MOBILE SPACIOUS CARDS & DESKTOP TABLE */}
+      <div className="rounded-3xl sm:rounded-[28px] bg-white p-4.5 sm:p-7 border border-[#e3e8e2] shadow-sm">
         
-        {/* Table Header & Controls */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#eef2ee]">
-          <div>
-            <h3 className="text-lg font-serif font-bold text-[#222a1d]">
-              Recent Orders Ledger
-            </h3>
-            <p className="text-xs text-[#222a1d]/45 mt-0.5">
-              Live customer transactions recorded in database
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2.5">
-            {/* Search Input */}
-            <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#222a1d]/40" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search orders..."
-                className="w-full rounded-full border border-[#e3e8e2] bg-[#f8faf8] pl-10 pr-4 py-2 text-xs text-[#222a1d] placeholder:text-[#222a1d]/35 outline-none focus:border-[#283322]/40 focus:bg-white transition-all"
-              />
+          {/* Table Header & Controls */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#eef2ee]">
+            <div>
+              <h3 className="text-lg font-serif font-bold text-[#222a1d]">
+                Recent Orders Ledger
+              </h3>
+              <p className="text-xs text-[#222a1d]/45 mt-0.5">
+                Live customer transactions recorded in database
+              </p>
             </div>
 
-            {/* Sort By Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-                className="flex items-center gap-1.5 rounded-full border border-[#e3e8e2] bg-white px-3.5 py-2 text-xs font-semibold text-[#222a1d] hover:border-[#283322]/30 transition-all cursor-pointer"
+            <div className="flex items-center gap-2.5">
+              {/* Search Input */}
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#222a1d]/40" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search orders..."
+                  className="w-full rounded-full border border-[#e3e8e2] bg-[#f8faf8] pl-10 pr-4 py-2 text-xs text-[#222a1d] placeholder:text-[#222a1d]/35 outline-none focus:border-[#283322]/40 focus:bg-white transition-all"
+                />
+              </div>
+
+              {/* Sort By Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
+                  className="flex items-center gap-1.5 rounded-full border border-[#e3e8e2] bg-white px-3.5 py-2 text-xs font-semibold text-[#222a1d] hover:border-[#283322]/30 transition-all cursor-pointer"
+                >
+                  <ChevronUpDownIcon className="h-3.5 w-3.5 text-[#222a1d]/50" />
+                  <span>Sort by</span>
+                </button>
+
+                {isSortDropdownOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-20" 
+                      onClick={() => setIsSortDropdownOpen(false)} 
+                    />
+                    <div className="absolute right-0 mt-1.5 z-30 w-36 rounded-2xl bg-white p-1 shadow-xl border border-[#e3e8e2] text-xs">
+                      <button
+                        onClick={() => { setSortBy("date"); setIsSortDropdownOpen(false); }}
+                        className={`w-full text-left px-3 py-1.5 rounded-xl font-medium ${sortBy === "date" ? "bg-[#283322] text-white" : "hover:bg-[#f1f4f1]"}`}
+                      >
+                        Latest Date
+                      </button>
+                      <button
+                        onClick={() => { setSortBy("amount"); setIsSortDropdownOpen(false); }}
+                        className={`w-full text-left px-3 py-1.5 rounded-xl font-medium ${sortBy === "amount" ? "bg-[#283322] text-white" : "hover:bg-[#f1f4f1]"}`}
+                      >
+                        Highest Amount
+                      </button>
+                      <button
+                        onClick={() => { setSortBy("customer"); setIsSortDropdownOpen(false); }}
+                        className={`w-full text-left px-3 py-1.5 rounded-xl font-medium ${sortBy === "customer" ? "bg-[#283322] text-white" : "hover:bg-[#f1f4f1]"}`}
+                      >
+                        Customer Name
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* MOBILE CARD VIEW (< 768px): Spacious, touch-friendly, no overlap */}
+          <div className="block md:hidden space-y-4.5 pt-5">
+            {recentOrders.map((order) => (
+              <div 
+                key={order.id}
+                onClick={() => setActiveTab("sales")}
+                className="rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] p-4.5 space-y-3.5 shadow-2xs cursor-pointer hover:border-[#283322]/30 transition-all"
               >
-                <ChevronUpDownIcon className="h-3.5 w-3.5 text-[#222a1d]/50" />
-                <span>Sort by</span>
-              </button>
-
-              {isSortDropdownOpen && (
-                <>
-                  <div 
-                    className="fixed inset-0 z-20" 
-                    onClick={() => setIsSortDropdownOpen(false)} 
-                  />
-                  <div className="absolute right-0 mt-1.5 z-30 w-36 rounded-2xl bg-white p-1 shadow-xl border border-[#e3e8e2] text-xs">
-                    <button
-                      onClick={() => { setSortBy("date"); setIsSortDropdownOpen(false); }}
-                      className={`w-full text-left px-3 py-1.5 rounded-xl font-medium ${sortBy === "date" ? "bg-[#283322] text-white" : "hover:bg-[#f1f4f1]"}`}
-                    >
-                      Latest Date
-                    </button>
-                    <button
-                      onClick={() => { setSortBy("amount"); setIsSortDropdownOpen(false); }}
-                      className={`w-full text-left px-3 py-1.5 rounded-xl font-medium ${sortBy === "amount" ? "bg-[#283322] text-white" : "hover:bg-[#f1f4f1]"}`}
-                    >
-                      Highest Amount
-                    </button>
-                    <button
-                      onClick={() => { setSortBy("customer"); setIsSortDropdownOpen(false); }}
-                      className={`w-full text-left px-3 py-1.5 rounded-xl font-medium ${sortBy === "customer" ? "bg-[#283322] text-white" : "hover:bg-[#f1f4f1]"}`}
-                    >
-                      Customer Name
-                    </button>
+                <div className="flex items-center justify-between border-b border-[#eef2ee] pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-xs text-[#283322]">{order.id}</span>
+                    <span className="rounded-full bg-white border border-[#e8ede7] px-2.5 py-0.5 text-[9px] font-semibold text-[#222a1d]/70">
+                      {order.category}
+                    </span>
                   </div>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-[10px] text-[#222a1d]/50">{order.date}</span>
+                    <span className={`inline-block text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                      order.status === "completed"
+                        ? "bg-[#dcfce7] text-[#15803d]"
+                        : order.status === "pending"
+                        ? "bg-[#fef3c7] text-[#b45309]"
+                        : "bg-[#fee2e2] text-[#b91c1c]"
+                    }`}>
+                      {order.status}
+                    </span>
+                  </div>
+                </div>
 
-        {/* Data Table */}
-        <div className="overflow-x-auto scrollbar-hide -mx-6 sm:-mx-7 px-6 sm:px-7">
-          <table className="w-full text-left border-collapse min-w-190">
-            <thead>
-              <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
-                <th className="pb-3 pl-2 w-8">
-                  <input
-                    type="checkbox"
-                    checked={selectedOrders.length > 0 && selectedOrders.length === recentOrders.length}
-                    onChange={toggleSelectAllOrders}
-                    className="h-4 w-4 rounded border-[#d4ded3] text-[#283322] focus:ring-[#283322]"
-                  />
-                </th>
-                <th className="pb-3">Product info</th>
-                <th className="pb-3">Order Id</th>
-                <th className="pb-3">Date</th>
-                <th className="pb-3">Customer</th>
-                <th className="pb-3">Category</th>
-                <th className="pb-3 text-center">Status</th>
-                <th className="pb-3 text-center">Items</th>
-                <th className="pb-3 text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#f2f6f1] text-xs text-[#222a1d]">
-              {recentOrders.map((order) => {
-                const isSelected = selectedOrders.includes(order.id);
+                <div>
+                  <h4 className="font-bold text-sm text-[#222a1d]">{order.customerName}</h4>
+                  <p className="text-[11px] text-[#222a1d]/50">{order.customerEmail || "Walk-in Customer"}</p>
+                </div>
 
-                return (
-                  <tr 
-                    key={order.id} 
-                    className="hover:bg-[#f8faf8] transition-colors group cursor-pointer"
-                    onClick={() => setActiveTab("sales")}
-                  >
-                    <td className="py-4 pl-2" onClick={(e) => e.stopPropagation()}>
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => toggleSelectOrder(order.id)}
-                        className="h-4 w-4 rounded border-[#d4ded3] text-[#283322] focus:ring-[#283322]"
-                      />
-                    </td>
+                <div className="bg-white rounded-xl p-3.5 border border-[#e8ede7] space-y-2.5">
+                  <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">
+                    Items Ordered ({order.itemCount} units)
+                  </span>
+                  <div className="space-y-2.5 divide-y divide-[#f2f6f1]">
+                    {order.items.map((item, idx) => {
+                      const prod = catalogProducts.find((p) => p.id === item.productId);
+                      const img = prod?.img || "";
+                      const title = item.productTitle || prod?.title || item.productId;
 
-                    {/* Product Info (All products listed separately) */}
-                    <td className="py-4">
-                      <div className="space-y-2 py-0.5">
-                        {order.items.map((item, idx) => {
-                          const prod = catalogProducts.find((p) => p.id === item.productId);
-                          const img = prod?.img || "";
-                          const title = item.productTitle || prod?.title || item.productId;
-
-                          return (
-                            <div key={idx} className="flex items-center gap-2.5">
-                              <div className="h-9 w-9 shrink-0 overflow-hidden rounded-xl bg-[#f1f4f1] border border-[#e8ede7]">
-                                {img ? (
-                                  <img 
-                                    src={img} 
-                                    alt={title} 
-                                    className="h-full w-full object-cover" 
-                                  />
-                                ) : (
-                                  <div className="h-full w-full flex items-center justify-center text-[#283322]/30 font-serif text-xs">
-                                    🕯️
-                                  </div>
-                                )}
-                              </div>
-                              <div className="min-w-0">
-                                <p className="font-bold text-xs text-[#222a1d] truncate max-w-44">
-                                  {title}
-                                </p>
-                                <p className="text-[10px] text-[#222a1d]/50 font-mono">
-                                  {item.quantity} × Rs {item.price.toLocaleString()}
-                                </p>
-                              </div>
+                      return (
+                        <div key={idx} className="flex items-center justify-between pt-2.5 first:pt-0">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[#f1f4f1] border border-[#e8ede7]">
+                              {img ? (
+                                <img 
+                                  src={img} 
+                                  alt={title} 
+                                  className="h-full w-full object-cover" 
+                                />
+                              ) : (
+                                <div className="h-full w-full flex items-center justify-center text-[10px]">
+                                  🕯️
+                                </div>
+                              )}
                             </div>
-                          );
-                        })}
-                      </div>
-                    </td>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-xs text-[#222a1d] truncate max-w-40">
+                                {title}
+                              </p>
+                              <p className="text-[10px] font-mono text-[#222a1d]/50">
+                                {item.quantity} × Rs {item.price.toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                          <span className="font-mono font-bold text-xs text-[#222a1d] shrink-0">
+                            Rs {(item.quantity * item.price).toLocaleString()}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
 
-                    {/* Order ID */}
-                    <td className="py-4 font-mono font-bold text-xs text-[#283322]">
-                      {order.id}
-                    </td>
+                <div className="flex items-center justify-between pt-1 border-t border-[#eef2ee]">
+                  <span className="text-xs text-[#222a1d]/60 font-medium">Order Total</span>
+                  <span className="font-mono font-bold text-base text-[#283322]">
+                    Rs {order.totalAmount.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            ))}
 
-                    {/* Date */}
-                    <td className="py-4 text-[#222a1d]/60 font-mono text-[11px]">
-                      {order.date}
-                    </td>
+            {recentOrders.length === 0 && (
+              <div className="py-12 text-center text-[#222a1d]/40 font-serif">
+                No transactions recorded in database.
+              </div>
+            )}
+          </div>
 
-                    {/* Customer Details */}
-                    <td className="py-4">
-                      <p className="font-bold text-[#222a1d]">{order.customerName}</p>
-                      <p className="text-[10px] text-[#222a1d]/40 truncate max-w-35">{order.customerEmail || "Walk-in"}</p>
-                    </td>
+          {/* DESKTOP DATA TABLE (>= 768px): Full wide spreadsheet table */}
+          <div className="hidden md:block overflow-x-auto scrollbar-hide -mx-6 sm:-mx-7 px-6 sm:px-7 pt-2">
+            <table className="w-full text-left border-collapse min-w-[880px]">
+              <thead>
+                <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
+                  <th className="pb-3.5 pl-2 w-8">
+                    <input
+                      type="checkbox"
+                      checked={selectedOrders.length > 0 && selectedOrders.length === recentOrders.length}
+                      onChange={toggleSelectAllOrders}
+                      className="h-4 w-4 rounded border-[#d4ded3] text-[#283322] focus:ring-[#283322]"
+                    />
+                  </th>
+                  <th className="pb-3.5">Product info</th>
+                  <th className="pb-3.5">Order Id</th>
+                  <th className="pb-3.5">Date</th>
+                  <th className="pb-3.5">Customer</th>
+                  <th className="pb-3.5">Category</th>
+                  <th className="pb-3.5 text-center">Status</th>
+                  <th className="pb-3.5 text-center">Items</th>
+                  <th className="pb-3.5 text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#f2f6f1] text-xs text-[#222a1d]">
+                {recentOrders.map((order) => {
+                  const isSelected = selectedOrders.includes(order.id);
 
-                    {/* Category */}
-                    <td className="py-4">
-                      <span className="inline-block rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70">
-                        {order.category}
-                      </span>
-                    </td>
+                  return (
+                    <tr 
+                      key={order.id} 
+                      className="hover:bg-[#f8faf8] transition-colors group cursor-pointer"
+                      onClick={() => setActiveTab("sales")}
+                    >
+                      <td className="py-4.5 sm:py-5 pl-2" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleSelectOrder(order.id)}
+                          className="h-4 w-4 rounded border-[#d4ded3] text-[#283322] focus:ring-[#283322]"
+                        />
+                      </td>
 
-                    {/* Status */}
-                    <td className="py-4 text-center">
-                      <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${
-                        order.status === "completed"
-                          ? "bg-[#dcfce7] text-[#15803d]"
-                          : order.status === "pending"
-                          ? "bg-[#fef3c7] text-[#b45309]"
-                          : "bg-[#fee2e2] text-[#b91c1c]"
-                      }`}>
-                        {order.status}
-                      </span>
-                    </td>
+                      <td className="py-4.5 sm:py-5">
+                        <div className="space-y-2 py-0.5">
+                          {order.items.map((item, idx) => {
+                            const prod = catalogProducts.find((p) => p.id === item.productId);
+                            const img = prod?.img || "";
+                            const title = item.productTitle || prod?.title || item.productId;
 
-                    {/* Items */}
-                    <td className="py-4 text-center font-bold text-xs">
-                      {order.itemCount}
-                    </td>
+                            return (
+                              <div key={idx} className="flex items-center gap-2.5">
+                                <div className="h-9 w-9 shrink-0 overflow-hidden rounded-xl bg-[#f1f4f1] border border-[#e8ede7]">
+                                  {img ? (
+                                    <img 
+                                      src={img} 
+                                      alt={title} 
+                                      className="h-full w-full object-cover" 
+                                    />
+                                  ) : (
+                                    <div className="h-full w-full flex items-center justify-center text-[#283322]/30 font-serif text-xs">
+                                      🕯️
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="font-bold text-xs text-[#222a1d] truncate max-w-44">
+                                    {title}
+                                  </p>
+                                  <p className="text-[10px] text-[#222a1d]/50 font-mono">
+                                    {item.quantity} × Rs {item.price.toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </td>
 
-                    {/* Total */}
-                    <td className="py-4 text-right font-mono font-bold text-xs sm:text-sm text-[#283322]">
-                      Rs {order.totalAmount.toLocaleString()}
+                      {/* Order ID */}
+                      <td className="py-4.5 sm:py-5 font-mono font-bold text-xs text-[#283322]">
+                        {order.id}
+                      </td>
+
+                      {/* Date */}
+                      <td className="py-4.5 sm:py-5 text-[#222a1d]/60 font-mono text-[11px]">
+                        {order.date}
+                      </td>
+
+                      {/* Customer Details */}
+                      <td className="py-4.5 sm:py-5">
+                        <p className="font-bold text-[#222a1d]">{order.customerName}</p>
+                        <p className="text-[10px] text-[#222a1d]/40 truncate max-w-35">{order.customerEmail || "Walk-in"}</p>
+                      </td>
+
+                      {/* Category */}
+                      <td className="py-4.5 sm:py-5">
+                        <span className="inline-block rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70">
+                          {order.category}
+                        </span>
+                      </td>
+
+                      {/* Status */}
+                      <td className="py-4.5 sm:py-5 text-center">
+                        <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${
+                          order.status === "completed"
+                            ? "bg-[#dcfce7] text-[#15803d]"
+                            : order.status === "pending"
+                            ? "bg-[#fef3c7] text-[#b45309]"
+                            : "bg-[#fee2e2] text-[#b91c1c]"
+                        }`}>
+                          {order.status}
+                        </span>
+                      </td>
+
+                      {/* Items */}
+                      <td className="py-4.5 sm:py-5 text-center font-bold text-xs">
+                        {order.itemCount}
+                      </td>
+
+                      {/* Total */}
+                      <td className="py-4.5 sm:py-5 text-right font-mono font-bold text-xs sm:text-sm text-[#283322]">
+                        Rs {order.totalAmount.toLocaleString()}
+                      </td>
+                    </tr>
+                  );
+                })}
+
+                {recentOrders.length === 0 && (
+                  <tr>
+                    <td colSpan={9} className="py-12 text-center text-[#222a1d]/40 font-serif">
+                      No transactions recorded in database.
                     </td>
                   </tr>
-                );
-              })}
-
-              {recentOrders.length === 0 && (
-                <tr>
-                  <td colSpan={9} className="py-12 text-center text-[#222a1d]/40 font-serif">
-                    No transactions recorded in database.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
     </div>
   );
