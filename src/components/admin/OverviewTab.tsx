@@ -1039,7 +1039,7 @@ export default function OverviewTab({
                   <th className="pb-3.5">Order Id</th>
                   <th className="pb-3.5">Date</th>
                   <th className="pb-3.5">Customer</th>
-                  <th className="pb-3.5">Category</th>
+                  <th className="pb-3.5 text-center">Category</th>
                   <th className="pb-3.5 text-center">Status</th>
                   <th className="pb-3.5 text-center">Items</th>
                   <th className="pb-3.5 text-right">Total</th>
@@ -1079,7 +1079,7 @@ export default function OverviewTab({
                                       src={img} 
                                       alt={title} 
                                       className="h-full w-full object-cover" 
-                                    />
+                                      />
                                   ) : (
                                     <div className="h-full w-full flex items-center justify-center text-[#283322]/30 font-serif text-xs">
                                       🕯️
@@ -1116,11 +1116,20 @@ export default function OverviewTab({
                         <p className="text-[10px] text-[#222a1d]/40 truncate max-w-35">{order.customerEmail || "Walk-in"}</p>
                       </td>
 
-                      {/* Category */}
-                      <td className="py-4.5 sm:py-5 whitespace-nowrap">
-                        <span className="inline-block whitespace-nowrap rounded-full bg-[#f1f4f1] px-2.5 py-0.5 text-[10px] font-semibold text-[#222a1d]/70">
-                          {order.category}
-                        </span>
+                      {/* Category (Two lines centered) */}
+                      <td className="py-4.5 sm:py-5 text-center">
+                        <div className="flex flex-col items-center justify-center">
+                          <span className="inline-flex flex-col items-center justify-center text-center rounded-xl bg-[#f1f4f1] px-3 py-1 text-[10px] font-bold text-[#222a1d]/75 leading-tight">
+                            {order.category.includes(" ") ? (
+                              <>
+                                <span>{order.category.split(" ")[0]}</span>
+                                <span>{order.category.split(" ").slice(1).join(" ")}</span>
+                              </>
+                            ) : (
+                              <span>{order.category}</span>
+                            )}
+                          </span>
+                        </div>
                       </td>
 
                       {/* Status */}

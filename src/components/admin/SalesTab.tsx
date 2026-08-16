@@ -638,139 +638,188 @@ export default function SalesTab({ catalogProducts }: Props) {
         </div>
       </div>
 
-      {/* 5. INVOICE PREVIEW / PRINT SLIDE-OVER DRAWER */}
+      {/* 5. HIGH-FIDELITY PRINTABLE INVOICE MODAL (Matches Reference Layout) */}
       {isInvoiceOpen && selectedSale && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/40 backdrop-blur-xs p-0 sm:p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-6 overflow-y-auto">
           <div 
-            className="fixed inset-0" 
+            className="fixed inset-0 no-print" 
             onClick={() => setIsInvoiceOpen(false)} 
           />
           
-          <div className="relative h-full w-full max-w-xl bg-white p-6 sm:p-8 shadow-2xl flex flex-col justify-between border-l border-[#e3e8e2] sm:rounded-3xl animate-slide-in overflow-y-auto z-10">
-            <div>
-              {/* Header Actions */}
-              <div className="flex items-center justify-between pb-4 border-b border-[#f0f4ef]">
-                <span className="text-xs font-mono font-bold text-[#283322]">
-                  {selectedSale.id}
+          <div className="relative my-auto w-full max-w-2xl bg-white shadow-2xl rounded-3xl sm:rounded-[32px] border border-[#e3e8e2] overflow-hidden z-10 animate-scale-in">
+            
+            {/* Modal Control Bar (Screen-only, Hidden in Print) */}
+            <div className="no-print flex items-center justify-between px-6 sm:px-8 py-3.5 bg-[#f8faf8] border-b border-[#eef2ee]">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#16a34a]" />
+                <span className="font-mono text-xs font-bold text-[#283322]">
+                  Invoice {selectedSale.id}
                 </span>
-                <div className="flex items-center gap-2">
-                  <button 
-                    onClick={handlePrint}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e3e8e2] bg-[#f8faf8] text-[#222a1d]/70 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
-                    title="Print Invoice"
-                  >
-                    <PrinterIcon className="h-4 w-4" />
-                  </button>
-                  <button 
-                    onClick={() => setIsInvoiceOpen(false)}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e3e8e2] bg-[#f8faf8] text-[#222a1d]/50 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
-                  >
-                    <XMarkIcon className="h-4 w-4" />
-                  </button>
-                </div>
               </div>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={handlePrint}
+                  className="flex items-center gap-1.5 rounded-full bg-[#283322] px-4 py-1.5 text-xs font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer shadow-xs"
+                >
+                  <PrinterIcon className="h-3.5 w-3.5" />
+                  <span>Print Invoice</span>
+                </button>
+                <button 
+                  onClick={() => setIsInvoiceOpen(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-[#e3e8e2] text-[#222a1d]/60 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
 
-              {/* Printable Invoice Section */}
-              <div id="printable-invoice" className="mt-6 space-y-6">
-                
-                {/* Brand Banner */}
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h1 className="text-2xl font-serif font-bold tracking-tight text-[#222a1d]">
-                      NIVATI
-                    </h1>
-                    <p className="text-[10px] font-semibold text-[#222a1d]/40 uppercase tracking-widest mt-0.5">
-                      The Flame Craft Studio
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs font-bold text-[#222a1d]">Invoice Date</p>
-                    <p className="text-xs font-mono text-[#222a1d]/60 mt-0.5">{selectedSale.date}</p>
-                  </div>
-                </div>
-
-                {/* Billed To & Status */}
-                <div className="grid grid-cols-2 gap-4 rounded-2xl bg-[#f8faf8] p-4 border border-[#e8ede7]">
-                  <div>
-                    <h4 className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider">Billed To</h4>
-                    <p className="mt-1 text-sm font-bold text-[#222a1d]">{selectedSale.customerName}</p>
-                    <p className="text-xs text-[#222a1d]/60">{selectedSale.customerEmail || "No email provided (Walk-in)"}</p>
-                    {selectedSale.channel && (
-                      <span className="inline-block mt-2 text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#eef2ee] text-[#283322]">
-                        Channel: {selectedSale.channel.toUpperCase()}
+            {/* Printable Document Canvas */}
+            <div id="printable-invoice" className="bg-white p-7 sm:p-12 relative overflow-hidden flex flex-col justify-between min-h-[700px]">
+              
+              <div>
+                {/* 1. Header: Logo & Invoice Number */}
+                <div className="flex items-start justify-between gap-4">
+                  {/* Brand Logo / Emblem */}
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-[#283322] flex items-center justify-center text-[#fbfff8] shadow-xs shrink-0">
+                      <svg className="h-6 w-6 text-[#fbfff8]" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C11.5 4 9.5 6 9.5 8C9.5 9.5 10.3 10.8 11.5 11.5C12.7 10.8 13.5 9.5 13.5 8C13.5 6 11.5 4 12 2ZM12 9.5C9.5 9.5 7.5 11.5 7.5 14C7.5 17.5 10.5 20.5 12 22C13.5 20.5 16.5 17.5 16.5 14C16.5 11.5 14.5 9.5 12 9.5Z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <span className="font-serif font-black tracking-widest text-lg sm:text-xl text-[#222a1d] block leading-none">
+                        NIVATI
                       </span>
-                    )}
+                      <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.22em] text-[#222a1d]/50 block mt-1">
+                        The Flame Craft
+                      </span>
+                    </div>
                   </div>
+
+                  {/* Invoice Number */}
                   <div className="text-right">
-                    <h4 className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider">Payment Status</h4>
-                    <span className={`inline-block mt-1 text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${
-                      selectedSale.status === "completed"
-                        ? "bg-[#dcfce7] text-[#15803d]"
-                        : selectedSale.status === "pending"
-                        ? "bg-[#fef3c7] text-[#b45309]"
-                        : "bg-[#fee2e2] text-[#b91c1c]"
-                    }`}>
-                      {selectedSale.status}
+                    <span className="font-mono text-xs sm:text-sm font-bold tracking-widest text-[#222a1d]">
+                      NO. {selectedSale.id.replace("#", "").padStart(6, "0")}
                     </span>
                   </div>
                 </div>
 
-                {/* Items Ordered List */}
-                <div className="space-y-3">
-                  <h4 className="text-[10px] font-bold text-[#222a1d]/40 uppercase tracking-wider">
-                    Order Items Breakdown
-                  </h4>
+                {/* 2. Main Title */}
+                <h1 className="font-sans font-black text-3xl sm:text-4xl md:text-5xl tracking-tight text-[#222a1d] uppercase mt-7 sm:mt-9 mb-2 sm:mb-3">
+                  INVOICE
+                </h1>
+
+                {/* 3. Date */}
+                <p className="text-xs sm:text-sm text-[#222a1d] mb-6 sm:mb-8 font-normal">
+                  <span className="font-bold">Date:</span>{" "}
+                  {selectedSale.date ? selectedSale.date : new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}
+                </p>
+
+                {/* 4. Billed To & From Two-Column Section */}
+                <div className="grid grid-cols-2 gap-6 sm:gap-12 text-xs text-[#222a1d] mb-8">
+                  {/* Billed to */}
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-xs sm:text-sm text-[#222a1d] uppercase tracking-wide">
+                      Billed to:
+                    </h4>
+                    <p className="font-bold text-xs sm:text-sm text-[#222a1d] pt-0.5">
+                      {selectedSale.customerName}
+                    </p>
+                    <p className="text-[#222a1d]/70 text-xs">
+                      {selectedSale.channel ? `Order via ${CHANNEL_BADGES[selectedSale.channel]?.label || selectedSale.channel}` : "Direct Customer"}
+                    </p>
+                    <p className="text-[#222a1d]/60 text-xs font-mono">
+                      {selectedSale.customerEmail || "walkin@customer.com"}
+                    </p>
+                  </div>
+
+                  {/* From */}
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-xs sm:text-sm text-[#222a1d] uppercase tracking-wide">
+                      From:
+                    </h4>
+                    <p className="font-bold text-xs sm:text-sm text-[#222a1d] pt-0.5">
+                      Nivati Studio
+                    </p>
+                    <p className="text-[#222a1d]/70 text-xs">
+                      Kathmandu, Nepal
+                    </p>
+                    <p className="text-[#222a1d]/60 text-xs font-mono">
+                      hello@nivaticandles.com
+                    </p>
+                  </div>
+                </div>
+
+                {/* 5. Items Ordered Table */}
+                <div className="overflow-hidden rounded-md">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="border-b border-[#eef2ee] text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/40">
-                        <th className="pb-2">Description</th>
-                        <th className="pb-2 text-center">Qty</th>
-                        <th className="pb-2 text-right">Price</th>
-                        <th className="pb-2 text-right">Total</th>
+                      <tr className="bg-[#eef2ee] text-[#222a1d] text-[11px] font-bold">
+                        <th className="py-2.5 px-3.5 font-bold">Item</th>
+                        <th className="py-2.5 px-3.5 text-center font-bold">Quantity</th>
+                        <th className="py-2.5 px-3.5 text-right font-bold">Price</th>
+                        <th className="py-2.5 px-3.5 text-right font-bold">Amount</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#f2f6f1]">
                       {selectedSale.items.map((item, idx) => (
-                        <tr key={idx} className="py-2.5">
-                          <td className="py-2.5 font-semibold text-[#222a1d]">{item.productTitle}</td>
-                          <td className="py-2.5 text-center font-bold font-mono">{item.quantity}</td>
-                          <td className="py-2.5 text-right font-mono text-[#222a1d]/60">Rs {item.price.toLocaleString()}</td>
-                          <td className="py-2.5 text-right font-bold font-mono text-[#222a1d]">
+                        <tr key={idx} className="hover:bg-[#fafbfa]">
+                          <td className="py-3 px-3.5 font-semibold text-[#222a1d]">
+                            {item.productTitle}
+                          </td>
+                          <td className="py-3 px-3.5 text-center font-mono font-medium text-[#222a1d]">
+                            {item.quantity}
+                          </td>
+                          <td className="py-3 px-3.5 text-right font-mono text-[#222a1d]/70">
+                            Rs {item.price.toLocaleString()}
+                          </td>
+                          <td className="py-3 px-3.5 text-right font-mono font-bold text-[#222a1d]">
                             Rs {(item.quantity * item.price).toLocaleString()}
                           </td>
                         </tr>
                       ))}
                     </tbody>
+                    <tfoot>
+                      <tr className="border-t-2 border-[#e3e8e2]">
+                        <td colSpan={2} className="py-3.5 px-3.5"></td>
+                        <td className="py-3.5 px-3.5 text-right font-bold text-sm text-[#222a1d]">
+                          Total
+                        </td>
+                        <td className="py-3.5 px-3.5 text-right font-mono font-black text-base text-[#283322]">
+                          Rs {selectedSale.totalAmount.toLocaleString()}
+                        </td>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
 
-                {/* Total Calculation Card */}
-                <div className="flex justify-end pt-3 border-t border-[#eef2ee]">
-                  <div className="w-56 space-y-2">
-                    <div className="flex justify-between text-xs text-[#222a1d]/60">
-                      <span>Subtotal:</span>
-                      <span className="font-mono font-semibold">Rs {selectedSale.totalAmount.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-xs text-[#222a1d]/60">
-                      <span>Taxes & Duties:</span>
-                      <span className="font-mono font-semibold">Rs 0.00</span>
-                    </div>
-                    <div className="flex justify-between text-sm font-bold text-[#222a1d] border-t border-[#eef2ee] pt-2">
-                      <span>Grand Total:</span>
-                      <span className="font-mono text-base text-[#283322]">
-                        Rs {selectedSale.totalAmount.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
+                {/* 6. Payment Method & Note */}
+                <div className="mt-8 space-y-1.5 text-xs text-[#222a1d]">
+                  <p>
+                    <span className="font-bold">Payment method:</span>{" "}
+                    <span className="capitalize">{selectedSale.status === "completed" ? "Cash / Card" : selectedSale.status === "pending" ? "Pending" : "Cancelled"}</span>
+                  </p>
+                  <p>
+                    <span className="font-bold">Note:</span> Thank you for choosing us!
+                  </p>
                 </div>
-
               </div>
-            </div>
 
-            <div className="mt-8 border-t border-[#eef2ee] pt-4 text-center">
-              <p className="text-[10px] text-[#222a1d]/35 font-medium">
-                Nivati Organic Candleworks • Authenticated Sales Record
-              </p>
+              {/* 7. Bottom Decorative Organic Wavy Curves (Website Green & Sage Theme) */}
+              <div className="relative mt-12 sm:mt-16 -mx-7 sm:-mx-12 -mb-7 sm:-mb-12 overflow-hidden h-24 sm:h-32 pointer-events-none">
+                <svg viewBox="0 0 500 150" preserveAspectRatio="none" className="h-full w-full">
+                  <path 
+                    d="M-20,60 C120,160 300,10 520,70 L520,150 L-20,150 Z" 
+                    fill="#cad6c7" 
+                    opacity="0.6"
+                  />
+                  <path 
+                    d="M-20,95 C140,170 320,35 520,105 L520,150 L-20,150 Z" 
+                    fill="#283322"
+                  />
+                </svg>
+              </div>
+
             </div>
           </div>
         </div>
