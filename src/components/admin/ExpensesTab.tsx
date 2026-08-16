@@ -246,13 +246,13 @@ export default function ExpensesTab() {
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="font-mono font-bold text-xs sm:text-sm text-[#222a1d]">
+                    <span className="font-mono font-bold text-xs sm:text-sm text-[#283322]">
                       Rs {exp.amount.toLocaleString()}
                     </span>
-                    <span className={`inline-block text-[8px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider ${
+                    <span className={`inline-block text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider text-white shadow-2xs ${
                       exp.status === "paid"
-                        ? "bg-[#dcfce7] text-[#15803d]"
-                        : "bg-[#fef3c7] text-[#b45309]"
+                        ? "bg-[#15803d]"
+                        : "bg-[#d97706]"
                     }`}>
                       {exp.status}
                     </span>
@@ -359,10 +359,10 @@ export default function ExpensesTab() {
                     Rs {exp.amount.toLocaleString()}
                   </td>
                   <td className="py-4 text-center">
-                    <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${
+                    <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider text-white shadow-2xs ${
                       exp.status === "paid"
-                        ? "bg-[#dcfce7] text-[#15803d]"
-                        : "bg-[#fef3c7] text-[#b45309]"
+                        ? "bg-[#15803d]"
+                        : "bg-[#d97706]"
                     }`}>
                       {exp.status}
                     </span>

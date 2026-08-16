@@ -778,20 +778,20 @@ export default function OverviewTab({
 
             {/* Gauge Center Text */}
             <div className="text-center -mt-8">
-              <span className={`text-3xl sm:text-4xl font-bold tracking-tight font-sans ${
+              <span className={`text-2xl sm:text-[28px] font-bold tracking-tight font-sans ${
                 metrics.profitMargin < 0 ? "text-red-600" : metrics.profitMargin < 20 ? "text-orange-600" : metrics.profitMargin < 45 ? "text-amber-600" : "text-[#222a1d]"
               }`}>
                 {metrics.profitMargin.toFixed(1)}%
               </span>
               <div className="flex items-center justify-center gap-1 mt-1">
-                <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                <span className={`text-[10px] font-extrabold uppercase tracking-wider px-3 py-0.5 rounded-full shadow-2xs ${
                   metrics.profitMargin < 0
-                    ? "bg-red-100 text-red-700"
+                    ? "bg-[#dc2626] text-white"
                     : metrics.profitMargin < 20
-                    ? "bg-orange-100 text-orange-700"
+                    ? "bg-[#ea580c] text-white"
                     : metrics.profitMargin < 45
-                    ? "bg-amber-100 text-amber-700"
-                    : "bg-emerald-100 text-emerald-800"
+                    ? "bg-[#d97706] text-white"
+                    : "bg-[#15803d] text-white"
                 }`}>
                   {metrics.profitMargin < 0 ? "Loss" : metrics.profitMargin < 20 ? "Low Margin" : metrics.profitMargin < 45 ? "Moderate Margin" : "Optimal Profit"}
                 </span>
@@ -922,12 +922,12 @@ export default function OverviewTab({
                       <span className="font-mono font-bold text-xs sm:text-sm text-[#283322]">
                         Rs {order.totalAmount.toLocaleString()}
                       </span>
-                      <span className={`inline-block text-[8px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider ${
+                      <span className={`inline-block text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider text-white shadow-2xs ${
                         order.status === "completed"
-                          ? "bg-[#dcfce7] text-[#15803d]"
+                          ? "bg-[#15803d]"
                           : order.status === "pending"
-                          ? "bg-[#fef3c7] text-[#b45309]"
-                          : "bg-[#fee2e2] text-[#b91c1c]"
+                          ? "bg-[#d97706]"
+                          : "bg-[#dc2626]"
                       }`}>
                         {order.status}
                       </span>
@@ -1134,12 +1134,12 @@ export default function OverviewTab({
 
                       {/* Status */}
                       <td className="py-4.5 sm:py-5 text-center">
-                        <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${
+                        <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider text-white shadow-2xs ${
                           order.status === "completed"
-                            ? "bg-[#dcfce7] text-[#15803d]"
+                            ? "bg-[#15803d]"
                             : order.status === "pending"
-                            ? "bg-[#fef3c7] text-[#b45309]"
-                            : "bg-[#fee2e2] text-[#b91c1c]"
+                            ? "bg-[#d97706]"
+                            : "bg-[#dc2626]"
                         }`}>
                           {order.status}
                         </span>

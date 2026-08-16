@@ -68,14 +68,18 @@ h6 {
 /* ==============================================================================
    HIGH FIDELITY INVOICE PRINT STYLES
    Ensures pristine, publication-grade A4 invoice printing without dashboard chrome
+   or browser headers/footers (URL, dates, page numbers).
    ============================================================================== */
 @media print {
   @page {
-    size: A4 portrait;
-    margin: 12mm 15mm;
+    size: auto;
+    margin: 0mm !important;
   }
 
+  html,
   body {
+    margin: 0 !important;
+    padding: 0 !important;
     background: #ffffff !important;
     color: #222a1d !important;
     -webkit-print-color-adjust: exact !important;
@@ -92,13 +96,13 @@ h6 {
   }
 
   #printable-invoice {
-    position: fixed;
+    position: absolute;
     left: 0;
     top: 0;
-    width: 100vw;
-    min-height: 100vh;
-    margin: 0;
-    padding: 24px;
+    width: 100% !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding: 36px 44px !important;
     background: #ffffff !important;
     box-shadow: none !important;
     border: none !important;

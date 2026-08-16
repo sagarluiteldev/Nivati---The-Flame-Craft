@@ -216,7 +216,10 @@ export default function SalesTab({ catalogProducts }: Props) {
   };
 
   const handlePrint = () => {
+    const originalTitle = document.title;
+    document.title = "";
     window.print();
+    document.title = originalTitle;
   };
 
   return (
@@ -384,12 +387,12 @@ export default function SalesTab({ catalogProducts }: Props) {
                     <span className="font-mono font-bold text-xs sm:text-sm text-[#283322]">
                       Rs {sale.totalAmount.toLocaleString()}
                     </span>
-                    <span className={`inline-block text-[8px] font-extrabold px-2 py-0.2 rounded-full uppercase tracking-wider ${
+                    <span className={`inline-block text-[8px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider text-white shadow-2xs ${
                       sale.status === "completed"
-                        ? "bg-[#dcfce7] text-[#15803d]"
+                        ? "bg-[#15803d]"
                         : sale.status === "pending"
-                        ? "bg-[#fef3c7] text-[#b45309]"
-                        : "bg-[#fee2e2] text-[#b91c1c]"
+                        ? "bg-[#d97706]"
+                        : "bg-[#dc2626]"
                     }`}>
                       {sale.status}
                     </span>
@@ -585,12 +588,12 @@ export default function SalesTab({ catalogProducts }: Props) {
 
                     {/* Status */}
                     <td className="py-4.5 sm:py-5 text-center">
-                      <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider ${
+                      <span className={`inline-block text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider text-white shadow-2xs ${
                         sale.status === "completed"
-                          ? "bg-[#dcfce7] text-[#15803d]"
+                          ? "bg-[#15803d]"
                           : sale.status === "pending"
-                          ? "bg-[#fef3c7] text-[#b45309]"
-                          : "bg-[#fee2e2] text-[#b91c1c]"
+                          ? "bg-[#d97706]"
+                          : "bg-[#dc2626]"
                       }`}>
                         {sale.status}
                       </span>
@@ -679,33 +682,33 @@ export default function SalesTab({ catalogProducts }: Props) {
               <div>
                 {/* 1. Header: Logo & Invoice Number */}
                 <div className="flex items-start justify-between gap-4">
-                  {/* Brand Logo / Emblem */}
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-[#283322] flex items-center justify-center text-[#fbfff8] shadow-xs shrink-0">
-                      <svg className="h-6 w-6 text-[#fbfff8]" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C11.5 4 9.5 6 9.5 8C9.5 9.5 10.3 10.8 11.5 11.5C12.7 10.8 13.5 9.5 13.5 8C13.5 6 11.5 4 12 2ZM12 9.5C9.5 9.5 7.5 11.5 7.5 14C7.5 17.5 10.5 20.5 12 22C13.5 20.5 16.5 17.5 16.5 14C16.5 11.5 14.5 9.5 12 9.5Z" />
-                      </svg>
-                    </div>
+                  {/* Brand Logo from Original Website */}
+                  <div className="flex items-center gap-3.5">
+                    <img 
+                      src="/images/logo.png" 
+                      alt="Nivati Logo" 
+                      className="h-14 w-14 sm:h-18 sm:w-18 object-contain" 
+                    />
                     <div>
-                      <span className="font-serif font-black tracking-widest text-lg sm:text-xl text-[#222a1d] block leading-none">
+                      <span className="font-serif font-black tracking-widest text-xl sm:text-2xl text-[#222a1d] block leading-none">
                         NIVATI
                       </span>
-                      <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.22em] text-[#222a1d]/50 block mt-1">
+                      <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-[#222a1d]/60 block mt-1">
                         The Flame Craft
                       </span>
                     </div>
                   </div>
 
                   {/* Invoice Number */}
-                  <div className="text-right">
+                  <div className="text-right pt-1">
                     <span className="font-mono text-xs sm:text-sm font-bold tracking-widest text-[#222a1d]">
                       NO. {selectedSale.id.replace("#", "").padStart(6, "0")}
                     </span>
                   </div>
                 </div>
 
-                {/* 2. Main Title */}
-                <h1 className="font-sans font-black text-3xl sm:text-4xl md:text-5xl tracking-tight text-[#222a1d] uppercase mt-7 sm:mt-9 mb-2 sm:mb-3">
+                {/* 2. Main Title (Refined size) */}
+                <h1 className="font-sans font-black text-2xl sm:text-3xl md:text-4xl tracking-tight text-[#222a1d] uppercase mt-6 sm:mt-8 mb-2">
                   INVOICE
                 </h1>
 
@@ -739,10 +742,10 @@ export default function SalesTab({ catalogProducts }: Props) {
                       From:
                     </h4>
                     <p className="font-bold text-xs sm:text-sm text-[#222a1d] pt-0.5">
-                      Nivati Studio
+                      Nivati
                     </p>
                     <p className="text-[#222a1d]/70 text-xs">
-                      Kathmandu, Nepal
+                      Pokhara, Nepal
                     </p>
                     <p className="text-[#222a1d]/60 text-xs font-mono">
                       hello@nivaticandles.com
