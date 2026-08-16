@@ -47,10 +47,16 @@ export default function SalesTab({ catalogProducts }: Props) {
   // Filter sales
   const filteredSales = useMemo(() => {
     return sales.filter((s) => {
+      const q = searchQuery.toLowerCase();
       const matchesSearch = 
-        s.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.customerEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.id.toLowerCase().includes(searchQuery.toLowerCase());
+        s.customerName.toLowerCase().includes(q) ||
+        s.customerEmail.toLowerCase().includes(q) ||
+        s.id.toLowerCase().includes(q) ||
+        s.items.some(
+          (item) =>
+            (item.productTitle && item.productTitle.toLowerCase().includes(q)) ||
+            (item.productId && item.productId.toLowerCase().includes(q))
+        );
         
       const matchesStatus = statusFilter === "all" || s.status === statusFilter;
       
@@ -283,10 +289,10 @@ export default function SalesTab({ catalogProducts }: Props) {
         {/* Create Invoice Primary Button */}
         <button
           onClick={handleOpenNewForm}
-          className="flex items-center justify-center gap-2 rounded-full bg-[#283322] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer w-full sm:w-auto active:scale-95"
+          className="flex items-center justify-center gap-2 rounded-full bg-[#16a34a] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#15803d] transition-all cursor-pointer w-full sm:w-auto active:scale-95"
         >
           <PlusIcon className="h-4 w-4" />
-          <span>Create Invoice</span>
+          <span>New Sale Entry</span>
         </button>
       </div>
 
@@ -298,6 +304,7 @@ export default function SalesTab({ catalogProducts }: Props) {
               <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
                 <th className="pb-3 pl-2">Invoice ID</th>
                 <th className="pb-3">Customer Details</th>
+                <th className="pb-3">Products Ordered</th>
                 <th className="pb-3">Order Date</th>
                 <th className="pb-3 text-center">Items</th>
                 <th className="pb-3 text-right">Total Amount</th>
@@ -323,18 +330,49 @@ export default function SalesTab({ catalogProducts }: Props) {
                     <div className="text-[10px] text-[#222a1d]/45">{sale.customerEmail || "Walk-in / In-store"}</div>
                   </td>
 
+                  {/* Products Ordered (All items listed separately with thumbnails) */}
+                  <td className="py-4">
+                    <div className="space-y-1.5 min-w-44 py-0.5">
+                      {sale.items.map((item, idx) => {
+                        const catalogProd = catalogProducts.find((p) => p.id === item.productId);
+                        const title = item.productTitle || catalogProd?.title || item.productId;
+                        const img = catalogProd?.img || "";
+
+                        return (
+                          <div key={idx} className="flex items-center gap-2">
+                            <div className="h-7 w-7 shrink-0 overflow-hidden rounded-lg bg-[#f1f4f1] border border-[#e8ede7]">
+                              {img ? (
+                                <img src={img} alt={title} className="h-full w-full object-cover" />
+                              ) : (
+                                <div className="h-full w-full flex items-center justify-center text-[10px]">🕯️</div>
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-xs text-[#222a1d] truncate max-w-44">
+                                {title}
+                              </p>
+                              <p className="text-[10px] font-mono text-[#222a1d]/50">
+                                {item.quantity} × Rs {item.price.toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </td>
+
                   {/* Date */}
                   <td className="py-4 font-mono text-[11px] text-[#222a1d]/60">
                     {sale.date}
                   </td>
 
-                  {/* Items */}
+                  {/* Total Units */}
                   <td className="py-4 text-center font-semibold">
                     {sale.items.reduce((sum, item) => sum + item.quantity, 0)} pcs
                   </td>
 
-                  {/* Total */}
-                  <td className="py-4 text-right font-mono font-bold text-sm text-[#222a1d]">
+                  {/* Total Amount */}
+                  <td className="py-4 text-right font-mono font-bold text-sm text-[#283322]">
                     Rs {sale.totalAmount.toLocaleString()}
                   </td>
 

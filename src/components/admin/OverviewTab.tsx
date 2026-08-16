@@ -25,11 +25,42 @@ interface Props {
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+// 21-step precision chromatic spectrum (exact 9-degree symmetry across 180° arc)
+const GAUGE_POWER_COLORS = [
+  "#ef4444", // 0: Pure Red (Loss / Critical)
+  "#f43f5e", // 1: Crimson Red
+  "#f97316", // 2: Coral Red-Orange
+  "#fb923c", // 3: Warm Orange
+  "#f59e0b", // 4: Amber
+  "#fbbf24", // 5: Warm Amber
+  "#facc15", // 6: Golden Yellow
+  "#eab308", // 7: Deep Yellow
+  "#d9f99d", // 8: Soft Lime
+  "#a3e635", // 9: Vivid Lime
+  "#84cc16", // 10: Spring Lime (Exact 270° Apex)
+  "#4ade80", // 11: Mint Green
+  "#22c55e", // 12: Vibrant Green
+  "#16a34a", // 13: Emerald Green
+  "#15803d", // 14: Deep Emerald
+  "#166534", // 15: Forest Green
+  "#1e3d23", // 16: Pine Green
+  "#24301e", // 17: Nivati Pine
+  "#283322", // 18: Signature Nivati Green
+  "#1c2418", // 19: Deep Pine Nivati
+  "#141a11", // 20: Darkest Pine
+];
+
 export default function OverviewTab({ catalogProducts, setActiveTab, timeRange = "This Month" }: Props) {
   const { sales, expenses, rawMaterials } = useDashboardStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"date" | "amount" | "customer">("date");
-  const [selectedMonthIdx, setSelectedMonthIdx] = useState<number>(7); // Default to August (idx 7)
+  const [selectedMonthIdx, setSelectedMonthIdx] = useState<number>(() => {
+    const currentMonthNum = new Date().getMonth() + 1;
+    const currentKey = currentMonthNum < 10 ? `0${currentMonthNum}` : `${currentMonthNum}`;
+    const trackingMonthKeys = ["05", "06", "07", "08", "09", "10", "11", "12"];
+    const idx = trackingMonthKeys.indexOf(currentKey);
+    return idx !== -1 ? idx : 3; // Defaults to August (idx 3)
+  });
   const [performanceFilter, setPerformanceFilter] = useState("This Year");
   const [isPerfFilterOpen, setIsPerfFilterOpen] = useState(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
@@ -81,20 +112,20 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
     return currentMonthNum < 10 ? `0${currentMonthNum}` : `${currentMonthNum}`;
   }, []);
 
-  const monthsData = useMemo(() => {
+  const { monthsData, yAxisLabels } = useMemo(() => {
     // Generate 8 active tracking months (May to Dec)
     const months = [
-      { key: "05", name: "May", defaultPct: 45 },
-      { key: "06", name: "Jun", defaultPct: 35 },
-      { key: "07", name: "Jul", defaultPct: 40 },
-      { key: "08", name: "Aug", defaultPct: 82 },
-      { key: "09", name: "Sep", defaultPct: 30 },
-      { key: "10", name: "Oct", defaultPct: 52 },
-      { key: "11", name: "Nov", defaultPct: 68 },
-      { key: "12", name: "Dec", defaultPct: 38 },
+      { key: "05", name: "May" },
+      { key: "06", name: "Jun" },
+      { key: "07", name: "Jul" },
+      { key: "08", name: "Aug" },
+      { key: "09", name: "Sep" },
+      { key: "10", name: "Oct" },
+      { key: "11", name: "Nov" },
+      { key: "12", name: "Dec" },
     ];
 
-    // Compute monthly actuals from database sales
+    // Compute monthly actuals strictly from database sales
     const monthlyStats = months.map((m) => {
       const monthSales = sales.filter((s) => {
         if (s.status !== "completed") return false;
@@ -110,32 +141,65 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
         key: m.key,
         sales: units,
         revenue,
-        defaultPct: m.defaultPct,
         isCurrent: m.key === currentMonthKey,
       };
     });
 
-    const maxRevenue = Math.max(...monthlyStats.map((m) => m.revenue), 0);
+    const maxMonthlyRevenue = Math.max(...monthlyStats.map((m) => m.revenue), 0);
 
-    return monthlyStats.map((item) => {
-      const heightPct = maxRevenue > 0 && item.revenue > 0
-        ? Math.max(20, Math.round((item.revenue / maxRevenue) * 90))
-        : (item.revenue > 0 ? 82 : item.defaultPct);
+    // Compute clean dynamic ceiling for Y-Axis
+    let ceiling = 20000;
+    if (maxMonthlyRevenue > 0) {
+      if (maxMonthlyRevenue <= 5000) ceiling = 5000;
+      else if (maxMonthlyRevenue <= 10000) ceiling = 10000;
+      else if (maxMonthlyRevenue <= 25000) ceiling = 25000;
+      else if (maxMonthlyRevenue <= 50000) ceiling = 50000;
+      else if (maxMonthlyRevenue <= 100000) ceiling = 100000;
+      else ceiling = Math.ceil(maxMonthlyRevenue / 50000) * 50000;
+    }
+
+    const formatK = (val: number) => (val >= 1000 ? `${Math.round(val / 1000)}k` : `${val}`);
+    const labels = [
+      formatK(ceiling),
+      formatK(Math.round(ceiling * 0.75)),
+      formatK(Math.round(ceiling * 0.5)),
+      formatK(Math.round(ceiling * 0.25)),
+      "0",
+    ];
+
+    const computedMonths = monthlyStats.map((item) => {
+      // Height is calculated strictly as a percentage of the revenue ceiling
+      let heightPct = 6; // Minimal clean baseline bar when revenue is 0
+      if (item.revenue > 0 && ceiling > 0) {
+        heightPct = Math.min(95, Math.max(10, Math.round((item.revenue / ceiling) * 90)));
+      }
 
       return {
         ...item,
         heightPct,
       };
     });
+
+    return {
+      monthsData: computedMonths,
+      yAxisLabels: labels,
+    };
   }, [sales, currentMonthKey]);
 
   // 3. Filtered & Sorted Recent Orders List from Database
   const recentOrders = useMemo(() => {
     const list = sales.map((s) => {
-      const firstItem = s.items[0];
-      const product = firstItem ? catalogProducts.find((p) => p.id === firstItem.productId) : null;
-      const categoryStr = product?.category ? (Array.isArray(product.category) ? product.category[0] : product.category) : "Candles";
-      
+      // Find all category tags from all items
+      const categories = new Set<string>();
+      s.items.forEach((item) => {
+        const prod = catalogProducts.find((p) => p.id === item.productId);
+        if (prod?.category) {
+          if (Array.isArray(prod.category)) prod.category.forEach((c) => categories.add(c));
+          else categories.add(prod.category);
+        }
+      });
+      const categoryStr = categories.size > 0 ? Array.from(categories).join(", ") : "Candles";
+
       return {
         id: s.id,
         customerName: s.customerName,
@@ -143,20 +207,26 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
         date: s.date,
         totalAmount: s.totalAmount,
         status: s.status,
+        items: s.items,
         itemCount: s.items.reduce((sum, item) => sum + item.quantity, 0),
-        firstProductTitle: product?.title || firstItem?.productTitle || "Custom Candle Order",
-        firstProductImg: product?.img || "",
         category: categoryStr,
       };
     });
 
     // Search filter
-    const filtered = list.filter((order) =>
-      order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.customerEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.firstProductTitle.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filtered = list.filter((order) => {
+      const q = searchQuery.toLowerCase();
+      const matchesMeta =
+        order.customerName.toLowerCase().includes(q) ||
+        order.customerEmail.toLowerCase().includes(q) ||
+        order.id.toLowerCase().includes(q);
+      const matchesItems = order.items.some(
+        (i) =>
+          (i.productTitle && i.productTitle.toLowerCase().includes(q)) ||
+          (i.productId && i.productId.toLowerCase().includes(q))
+      );
+      return matchesMeta || matchesItems;
+    });
 
     // Sorting
     return filtered.sort((a, b) => {
@@ -198,7 +268,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
         <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab("sales")}
-            className="flex items-center gap-1.5 rounded-full bg-[#283322] px-4 py-2 text-xs font-bold text-white hover:bg-[#34422c] shadow-sm transition-all cursor-pointer"
+            className="flex items-center gap-1.5 rounded-full bg-[#16a34a] px-4 py-2 text-xs font-bold text-white hover:bg-[#15803d] shadow-sm transition-all cursor-pointer active:scale-95"
           >
             <PlusIcon className="h-4 w-4" />
             <span>New Sale Entry</span>
@@ -241,8 +311,8 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
               Total Orders Logged
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#fef3c7] text-[#d97706]">
-              <UserGroupIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d97706] text-white shadow-sm shadow-amber-600/20">
+              <UserGroupIcon className="h-5 w-5 text-white" />
             </div>
           </div>
 
@@ -251,7 +321,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
               <span className="text-3xl sm:text-4xl font-bold tracking-tight text-[#222a1d] font-sans">
                 {metrics.totalOrdersCount}
               </span>
-              <span className="inline-flex items-center gap-0.5 rounded-full bg-[#eff6ff] px-2 py-0.5 text-[11px] font-bold text-[#2563eb]">
+              <span className="inline-flex items-center gap-0.5 rounded-full bg-[#d97706] px-2.5 py-0.5 text-[11px] font-bold text-white shadow-xs">
                 Invoices
               </span>
             </div>
@@ -267,8 +337,8 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
               Operating Costs
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e0f2fe] text-[#0284c7]">
-              <ReceiptPercentIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0284c7] text-white shadow-sm shadow-sky-600/20">
+              <ReceiptPercentIcon className="h-5 w-5 text-white" />
             </div>
           </div>
 
@@ -290,8 +360,8 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
               Net Profit
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#dcfce7] text-[#16a34a]">
-              <BanknotesIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#16a34a] text-white shadow-sm shadow-emerald-600/20">
+              <BanknotesIcon className="h-5 w-5 text-white" />
             </div>
           </div>
 
@@ -369,7 +439,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
             
             {/* Horizontal Dashed Gridlines & Y-Axis Scale */}
             <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8 pr-2">
-              {["50k", "30k", "20k", "10k", "5k", "0k"].map((label, i) => (
+              {yAxisLabels.map((label, i) => (
                 <div key={i} className="flex items-center w-full gap-3 text-[10px] text-[#222a1d]/30 font-medium">
                   <span className="w-6 text-right shrink-0">{label}</span>
                   <div className="w-full border-b border-dashed border-[#e4eae3]" />
@@ -387,34 +457,25 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                   <div 
                     key={item.month} 
                     className="relative flex flex-col items-center h-full justify-end group cursor-pointer"
-                    onClick={() => setSelectedMonthIdx(idx)}
                   >
-                    {/* Interactive Floating Tooltip Card */}
-                    {isSelected && (
-                      <div className="absolute bottom-[85%] z-30 mb-2 w-36 sm:w-40 rounded-2xl bg-white p-3 shadow-xl border border-[#e3e8e2] text-left animate-fade-in pointer-events-none">
-                        <p className="text-[11px] font-bold text-[#222a1d]">
-                          {item.month} 2026
-                        </p>
-                        <div className="mt-2 space-y-1 text-[10px]">
-                          <div className="flex items-center justify-between text-[#222a1d]/60">
-                            <span className="flex items-center gap-1.5">
-                              <span className="h-1.5 w-1.5 rounded-full bg-[#94a3b8]" />
-                              Units Sold
-                            </span>
-                            <span className="font-bold text-[#222a1d]">{item.sales}</span>
-                          </div>
-                          <div className="flex items-center justify-between text-[#222a1d]/60">
-                            <span className="flex items-center gap-1.5">
-                              <span className="h-1.5 w-1.5 rounded-full bg-[#283322]" />
-                              Revenue
-                            </span>
-                            <span className="font-bold text-[#283322]">
-                              Rs {item.revenue.toLocaleString()}
-                            </span>
-                          </div>
+                    {/* Compact Desktop-Only Hover Tooltip (Hidden on Mobile) */}
+                    <div className="hidden md:group-hover:flex flex-col gap-1 absolute bottom-[90%] z-30 mb-2 w-max min-w-32 rounded-xl bg-white px-3 py-2 shadow-xl border border-[#e3e8e2] text-left pointer-events-none transition-opacity duration-150 animate-fade-in -translate-x-1/2 left-1/2">
+                      <p className="text-[10px] font-extrabold text-[#222a1d] border-b border-[#f0f4ef] pb-1">
+                        {item.month} 2026
+                      </p>
+                      <div className="space-y-0.5 text-[10px]">
+                        <div className="flex items-center justify-between gap-3 text-[#222a1d]/60">
+                          <span>Units Sold:</span>
+                          <span className="font-bold text-[#222a1d]">{item.sales}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-3 text-[#222a1d]/60">
+                          <span>Revenue:</span>
+                          <span className="font-bold text-[#283322]">
+                            Rs {item.revenue.toLocaleString()}
+                          </span>
                         </div>
                       </div>
-                    )}
+                    </div>
 
                     {/* Bar Pillar */}
                     <div className="w-full flex justify-center items-end h-full">
@@ -423,8 +484,6 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                         className={`w-full max-w-12 rounded-xl sm:rounded-2xl transition-all duration-300 group-hover:scale-y-[1.03] ${
                           item.isCurrent
                             ? "bg-linear-to-t from-[#242c1e] to-[#45573b] shadow-lg shadow-[#283322]/20"
-                            : isSelected
-                            ? "bg-[#283322]/25 ring-2 ring-[#283322]/40"
                             : "bg-[#e8ede7] hover:bg-[#dbe2da]"
                         }`}
                       />
@@ -432,7 +491,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
 
                     {/* X-Axis Month Label */}
                     <span className={`absolute -bottom-6 text-xs font-semibold transition-colors ${
-                      item.isCurrent ? "text-[#283322] font-bold" : isSelected ? "text-[#283322]" : "text-[#222a1d]/40"
+                      item.isCurrent ? "text-[#283322] font-bold" : "text-[#222a1d]/40 group-hover:text-[#283322]"
                     }`}>
                       {item.month}
                     </span>
@@ -444,10 +503,10 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
 
           {/* Chart Legend Footer */}
           <div className="flex items-center justify-between pt-4 border-t border-[#f0f4ef] text-xs text-[#222a1d]/50">
-            <span className="font-medium">
-              Click any bar to preview month metrics
+            <span className="font-medium hidden sm:inline">
+              Hover over any month to view performance
             </span>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 ml-auto sm:ml-0">
               <span className="flex items-center gap-1.5 font-semibold text-[#283322]">
                 <span className="h-2 w-2 rounded-full bg-[#283322]" /> Current Month
               </span>
@@ -482,24 +541,41 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
           {/* Semi-Circular Radial Gauge Graphic */}
           <div className="relative flex flex-col items-center justify-center my-4">
             <svg 
-              viewBox="0 0 240 140" 
+              viewBox="0 0 240 145" 
               className="w-full max-w-60 overflow-visible"
             >
-              {Array.from({ length: 18 }).map((_, i) => {
-                const angle = 180 + (i * (180 / 17));
+              {/* Subtle Dashed Base Arc Rail */}
+              <path
+                d="M 42 125 A 78 78 0 0 1 198 125"
+                fill="none"
+                stroke="#eef2ee"
+                strokeWidth="1.5"
+                strokeDasharray="2 4"
+                className="opacity-70"
+              />
+
+              {Array.from({ length: 21 }).map((_, i) => {
+                // Exact 9-degree integer angles: 180° to 360°
+                const angle = 180 + i * 9;
                 const rad = (angle * Math.PI) / 180;
-                const rInner = 82;
-                const rOuter = 104;
+                const rInner = 80;
+                const rOuter = 99;
                 const cx = 120;
                 const cy = 125;
 
-                const x1 = cx + rInner * Math.cos(rad);
-                const y1 = cy + rInner * Math.sin(rad);
-                const x2 = cx + rOuter * Math.cos(rad);
-                const y2 = cy + rOuter * Math.sin(rad);
+                const x1 = +(cx + rInner * Math.cos(rad)).toFixed(2);
+                const y1 = +(cy + rInner * Math.sin(rad)).toFixed(2);
+                const x2 = +(cx + rOuter * Math.cos(rad)).toFixed(2);
+                const y2 = +(cy + rOuter * Math.sin(rad)).toFixed(2);
 
-                const activeSegments = Math.round((Math.max(0, Math.min(100, metrics.profitMargin)) / 100) * 18);
-                const isActive = i <= activeSegments;
+                const isLoss = metrics.profitMargin < 0;
+                const clampedMargin = Math.max(0, Math.min(100, metrics.profitMargin));
+                const activeSegments = isLoss ? 1 : Math.round((clampedMargin / 100) * 21);
+                const isActive = i < activeSegments;
+
+                const tickColor = isActive 
+                  ? (isLoss && i === 0 ? "#ef4444" : GAUGE_POWER_COLORS[i])
+                  : "#e8ede7";
 
                 return (
                   <line
@@ -508,10 +584,10 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                     y1={y1}
                     x2={x2}
                     y2={y2}
-                    stroke={isActive ? (i > 13 ? "#f59e0b" : "#283322") : "#e8ede7"}
-                    strokeWidth="7"
+                    stroke={tickColor}
+                    strokeWidth="5.5"
                     strokeLinecap="round"
-                    className="transition-all duration-500"
+                    className="transition-colors duration-300"
                   />
                 );
               })}
@@ -519,12 +595,24 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
 
             {/* Gauge Center Text */}
             <div className="text-center -mt-8">
-              <span className="text-3xl sm:text-4xl font-bold tracking-tight text-[#222a1d] font-sans">
+              <span className={`text-3xl sm:text-4xl font-bold tracking-tight font-sans ${
+                metrics.profitMargin < 0 ? "text-red-600" : metrics.profitMargin < 20 ? "text-orange-600" : metrics.profitMargin < 45 ? "text-amber-600" : "text-[#222a1d]"
+              }`}>
                 {metrics.profitMargin.toFixed(1)}%
               </span>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#222a1d]/40 mt-1">
-                Net Margin
-              </p>
+              <div className="flex items-center justify-center gap-1 mt-1">
+                <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                  metrics.profitMargin < 0
+                    ? "bg-red-100 text-red-700"
+                    : metrics.profitMargin < 20
+                    ? "bg-orange-100 text-orange-700"
+                    : metrics.profitMargin < 45
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-emerald-100 text-emerald-800"
+                }`}>
+                  {metrics.profitMargin < 0 ? "Loss" : metrics.profitMargin < 20 ? "Low Margin" : metrics.profitMargin < 45 ? "Moderate Margin" : "Optimal Profit"}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -540,7 +628,7 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                 <span className="text-base sm:text-lg font-bold font-sans text-[#222a1d]">
                   {metrics.totalOrdersCount}
                 </span>
-                <span className="inline-flex items-center rounded-full bg-[#fef3c7] px-1.5 py-0.5 text-[10px] font-bold text-[#d97706]">
+                <span className="inline-flex items-center rounded-full bg-[#d97706] px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
                   Live
                 </span>
               </div>
@@ -674,30 +762,40 @@ export default function OverviewTab({ catalogProducts, setActiveTab, timeRange =
                       />
                     </td>
 
-                    {/* Product Info */}
+                    {/* Product Info (All products listed separately) */}
                     <td className="py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-[#f1f4f1] border border-[#e8ede7]">
-                          {order.firstProductImg ? (
-                            <img 
-                              src={order.firstProductImg} 
-                              alt={order.firstProductTitle} 
-                              className="h-full w-full object-cover" 
-                            />
-                          ) : (
-                            <div className="h-full w-full flex items-center justify-center text-[#283322]/30 font-serif text-sm">
-                              🕯️
+                      <div className="space-y-2 py-0.5">
+                        {order.items.map((item, idx) => {
+                          const prod = catalogProducts.find((p) => p.id === item.productId);
+                          const img = prod?.img || "";
+                          const title = item.productTitle || prod?.title || item.productId;
+
+                          return (
+                            <div key={idx} className="flex items-center gap-2.5">
+                              <div className="h-9 w-9 shrink-0 overflow-hidden rounded-xl bg-[#f1f4f1] border border-[#e8ede7]">
+                                {img ? (
+                                  <img 
+                                    src={img} 
+                                    alt={title} 
+                                    className="h-full w-full object-cover" 
+                                  />
+                                ) : (
+                                  <div className="h-full w-full flex items-center justify-center text-[#283322]/30 font-serif text-xs">
+                                    🕯️
+                                  </div>
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="font-bold text-xs text-[#222a1d] truncate max-w-44">
+                                  {title}
+                                </p>
+                                <p className="text-[10px] text-[#222a1d]/50 font-mono">
+                                  {item.quantity} × Rs {item.price.toLocaleString()}
+                                </p>
+                              </div>
                             </div>
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-bold text-[#222a1d] line-clamp-1 max-w-40">
-                            {order.firstProductTitle}
-                          </p>
-                          <p className="text-[10px] text-[#222a1d]/40">
-                            Handcrafted candle
-                          </p>
-                        </div>
+                          );
+                        })}
                       </div>
                     </td>
 

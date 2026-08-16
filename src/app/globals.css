@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 @theme inline {
   --color-olive: var(--theme-olive, #3b4132);
   --color-creme: var(--theme-creme, #FBFEF9);
@@ -23,8 +22,6 @@
   --theme-creme: #FBFEF9;
 }
 
-
-
 html,
 body {
   @apply bg-creme text-olive antialiased font-sans;
@@ -46,4 +43,24 @@ h6 {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* ==============================================================================
+   DISABLE HOVER EFFECTS ON MOBILE / TOUCH DEVICES ONLY
+   Prevents sticky hover states, unnatural scale jumps, and tap lags on mobile.
+   ============================================================================== */
+@media (hover: none), (max-width: 768px) {
+  *,
+  *::before,
+  *::after {
+    /* Reset scale/transforms triggered by hover */
+    &:hover {
+      transform: none !important;
+    }
+  }
+
+  /* Disable sticky hover backgrounds and shadow popups on touch cards */
+  .group:hover * {
+    transform: none !important;
+  }
 }

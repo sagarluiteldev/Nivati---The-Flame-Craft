@@ -228,8 +228,8 @@ export default function StockTab() {
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
               Optimal Stock Supplies
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#dcfce7] text-[#16a34a]">
-              <CheckCircleIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#16a34a] text-white shadow-sm shadow-emerald-600/20">
+              <CheckCircleIcon className="h-5 w-5 text-white" />
             </div>
           </div>
           <div className="mt-5">
@@ -248,8 +248,8 @@ export default function StockTab() {
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
               Low Stock Warnings
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#fef3c7] text-[#d97706]">
-              <ExclamationTriangleIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d97706] text-white shadow-sm shadow-amber-600/20">
+              <ExclamationTriangleIcon className="h-5 w-5 text-white" />
             </div>
           </div>
           <div className="mt-5">
@@ -268,8 +268,8 @@ export default function StockTab() {
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
               Depleted Materials
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#fee2e2] text-[#dc2626]">
-              <XCircleIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#dc2626] text-white shadow-sm shadow-red-600/20">
+              <XCircleIcon className="h-5 w-5 text-white" />
             </div>
           </div>
           <div className="mt-5">
@@ -420,12 +420,12 @@ export default function StockTab() {
 
                   {/* Status Badge */}
                   <td className="py-4 text-center">
-                    <span className={`inline-block text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider ${
+                    <span className={`inline-block text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider text-white shadow-xs ${
                       item.status === "in-stock"
-                        ? "bg-[#dcfce7] text-[#15803d]"
+                        ? "bg-[#15803d]"
                         : item.status === "low-stock"
-                        ? "bg-[#fef3c7] text-[#b45309]"
-                        : "bg-[#fee2e2] text-[#b91c1c]"
+                        ? "bg-[#d97706]"
+                        : "bg-[#dc2626]"
                     }`}>
                       {item.status === "in-stock" ? "Healthy" : item.status === "low-stock" ? "Low Stock" : "Depleted"}
                     </span>

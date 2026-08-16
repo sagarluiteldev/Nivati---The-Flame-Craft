@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect, useRef } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { 
   PlusIcon as Plus, 
@@ -69,17 +69,6 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const editorSectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isEditorOpen && typeof window !== "undefined" && window.innerWidth < 1024) {
-      const timer = setTimeout(() => {
-        editorSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [isEditorOpen, selectedProduct]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -164,6 +153,27 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
     });
   };
 
+  const handleToggleActive = async (product: AdminCatalogProduct) => {
+    const nextActive = !product.isActive;
+    startTransition(async () => {
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const { error } = await supabase
+          .from("products")
+          .update({ is_active: nextActive })
+          .eq("id", product.id);
+        if (error) throw error;
+        setProducts((prev) =>
+          prev.map((p) => (p.id === product.id ? { ...p, isActive: nextActive } : p))
+        );
+        showToast(`Product "${product.title}" is now ${nextActive ? "visible in store" : "hidden from store"}`);
+      } catch (e) {
+        console.error("Error toggling product status:", e);
+        alert("Failed to update status in database.");
+      }
+    });
+  };
+
   const handleSyncCatalog = async () => {
     if (!confirm("This will import seed products into your Supabase database. Existing products with matching IDs will be updated. Continue?")) return;
 
@@ -223,30 +233,30 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
   return (
     <DashboardStoreProvider catalogProducts={products}>
       {/* Full screen edge-to-edge container */}
-      <div className="min-h-screen w-full bg-[#f8faf8] text-[#222a1d] flex flex-col">
+      <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#f8faf8] text-[#222a1d] flex flex-col">
         
         {/* Full-width sticky / top navbar */}
-        <header className="sticky top-0 z-30 w-full border-b border-[#e3e8e2] bg-white/95 backdrop-blur-md px-4 sm:px-6 md:px-8 lg:px-10 py-3.5 sm:py-4">
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+        <header className="sticky top-0 z-30 w-full border-b border-[#e3e8e2] bg-white/95 backdrop-blur-md px-3 sm:px-6 md:px-8 lg:px-10 py-3 sm:py-4">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
             
             {/* Left: Original Nivati Logo + Brand Identity */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5 sm:gap-3">
                 <img 
                   src="/images/logo.png" 
                   alt="Nivati Logo" 
-                  className="h-10 w-10 sm:h-11 sm:w-11 object-contain shrink-0" 
+                  className="h-9 w-9 sm:h-11 sm:w-11 object-contain shrink-0" 
                 />
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#222a1d]">
+                    <span className="font-serif text-lg sm:text-2xl font-bold tracking-tight text-[#222a1d]">
                       NIVATI
                     </span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#283322]/10 text-[#283322]">
+                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#283322]/10 text-[#283322]">
                       Admin
                     </span>
                   </div>
-                  <p className="text-[10px] sm:text-xs text-[#222a1d]/45 font-medium tracking-wide">
+                  <p className="text-[9px] sm:text-xs text-[#222a1d]/45 font-medium tracking-wide">
                     The Flame Craft Studio
                   </p>
                 </div>
@@ -255,15 +265,15 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
               {/* Mobile Quick Sign-Out */}
               <button
                 onClick={handleSignOut}
-                className="lg:hidden flex h-9 w-9 items-center justify-center rounded-full border border-[#283322]/15 bg-white text-[#283322] hover:bg-[#283322] hover:text-white transition-colors"
+                className="lg:hidden flex h-8 w-8 items-center justify-center rounded-full border border-[#283322]/15 bg-white text-[#283322] hover:bg-[#283322] hover:text-white transition-colors"
                 title="Sign Out"
               >
                 <LogOut className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Center: Top Pill Navigation Bar */}
-            <nav className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto scrollbar-hide py-1 px-1 bg-[#f1f4f1] rounded-full p-1.5 border border-[#e3e8e2] shadow-inner max-w-full">
+            {/* Center: Top Pill Navigation Bar (Scrollable on Mobile) */}
+            <nav className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto scrollbar-hide py-1 px-1 bg-[#f1f4f1] rounded-full p-1 border border-[#e3e8e2] shadow-inner max-w-full">
               {navItems.map((item) => {
                 const isActive = activeTab === item.id;
                 const Icon = item.icon;
@@ -271,26 +281,26 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full text-xs font-semibold tracking-wide whitespace-nowrap transition-all duration-200 cursor-pointer ${
                       isActive
                         ? "bg-[#283322] text-white shadow-md shadow-[#283322]/15"
                         : "text-[#222a1d]/60 hover:text-[#222a1d] hover:bg-white"
                     }`}
                   >
-                    <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-white" : "text-[#222a1d]/50"}`} />
+                    <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 ${isActive ? "text-white" : "text-[#222a1d]/50"}`} />
                     <span>{item.name}</span>
                   </button>
                 );
               })}
             </nav>
 
-            {/* Right: Actions (Date Selector, Export, Sync, Signout - Without user avatar) */}
+            {/* Right: Actions (Date Selector, Export, Sync, Signout) */}
             <div className="flex items-center justify-between lg:justify-end gap-2 sm:gap-2.5">
               {/* Date Filter Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setIsTimeDropdownOpen(!isTimeDropdownOpen)}
-                  className="flex items-center gap-2 rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-3.5 sm:px-4 py-2 text-xs font-semibold text-[#222a1d] shadow-sm hover:border-[#283322]/30 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-semibold text-[#222a1d] shadow-sm hover:border-[#283322]/30 transition-all cursor-pointer"
                 >
                   <span>{timeRange}</span>
                   <ChevronDownIcon className="h-3.5 w-3.5 text-[#222a1d]/50" />
@@ -327,11 +337,22 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
               {/* Export Button */}
               <button
                 onClick={handleExportData}
-                className="flex items-center gap-1.5 rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-3.5 sm:px-4 py-2 text-xs font-semibold text-[#222a1d] shadow-sm hover:border-[#283322]/30 hover:bg-[#f1f4f1] transition-all cursor-pointer"
+                className="flex items-center gap-1.5 rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-semibold text-[#222a1d] shadow-sm hover:border-[#283322]/30 hover:bg-[#f1f4f1] transition-all cursor-pointer"
                 title="Export Data"
               >
                 <ArrowUpTrayIcon className="h-3.5 w-3.5 text-[#222a1d]/60" />
                 <span className="hidden sm:inline">Export</span>
+              </button>
+
+              {/* Sync Seed Button */}
+              <button
+                onClick={handleSyncCatalog}
+                disabled={isPending}
+                className="hidden sm:flex items-center gap-1.5 rounded-full border border-[#e3e8e2] bg-[#f8faf8] px-3 py-1.5 sm:py-2 text-xs font-semibold text-[#222a1d] shadow-sm hover:border-[#283322]/30 hover:bg-[#f1f4f1] transition-all cursor-pointer disabled:opacity-50"
+                title="Sync Seed Catalog"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 text-[#222a1d]/60 ${isPending ? 'animate-spin' : ''}`} />
+                <span>Seed</span>
               </button>
 
               {/* Desktop Sign-Out */}
@@ -347,11 +368,11 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
         </header>
 
         {/* Main Content Area - Full Screen fluid width */}
-        <main className="flex-1 w-full px-4 sm:px-6 md:px-8 lg:px-10 py-6 sm:py-8">
+        <main className="flex-1 w-full max-w-full px-3 sm:px-6 md:px-8 lg:px-10 py-5 sm:py-8">
           
           {/* System Notices / Messages */}
           {errorMessage && (
-            <div className="mb-6 flex items-center justify-between rounded-2xl border border-red-200 bg-red-50 px-5 py-3.5 text-xs text-red-900 shadow-sm">
+            <div className="mb-6 flex items-center justify-between rounded-2xl border border-red-200 bg-red-50 px-4 sm:px-5 py-3.5 text-xs text-red-900 shadow-sm">
               <div className="flex items-center gap-2">
                 <span className="font-bold uppercase tracking-wider text-[10px] px-2 py-0.5 rounded bg-red-100 text-red-800">
                   Database Notice
@@ -384,56 +405,30 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
             />
           )}
 
+          {/* PRODUCTS CATALOG TAB - Mobile First & Responsive */}
           {activeTab === "catalog" && (
             <div className="space-y-6">
-              {/* Catalog Action Subheader */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-[#e3e8e2] shadow-sm">
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#222a1d]">Product Catalog</h2>
-                  <p className="text-xs text-[#222a1d]/50 mt-0.5">
-                    Manage candle collections, pricing, scents, and storefront visibility in Supabase
-                  </p>
-                </div>
-                
-                <div className="flex items-center gap-2.5 w-full sm:w-auto">
-                  <button
-                    onClick={() => {
-                      setSelectedProduct(null);
-                      setIsEditorOpen(true);
-                    }}
-                    className="flex-1 sm:flex-initial flex items-center justify-center gap-2 rounded-full bg-[#283322] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer active:scale-95"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span>New Product</span>
-                  </button>
-                  <button
-                    onClick={handleSyncCatalog}
-                    disabled={isPending}
-                    className="flex-1 sm:flex-initial flex items-center justify-center gap-2 rounded-full border border-[#e3e8e2] bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-[#222a1d] shadow-sm hover:border-[#283322]/30 hover:bg-[#f1f4f1] transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
-                    <span>Sync Seed</span>
-                  </button>
-                </div>
-              </div>
+              <ProductList
+                products={filteredProducts}
+                selectedId={selectedProduct?.id ?? null}
+                onSelect={(p) => {
+                  setSelectedProduct(p);
+                  setIsEditorOpen(true);
+                }}
+                onDelete={handleDelete}
+                onToggleActive={handleToggleActive}
+                onNewProduct={() => {
+                  setSelectedProduct(null);
+                  setIsEditorOpen(true);
+                }}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+              />
 
-              <div className="grid gap-8 lg:grid-cols-[420px_1fr]">
-                <div className="space-y-6">
-                  <ProductList
-                    products={filteredProducts}
-                    selectedId={selectedProduct?.id ?? null}
-                    onSelect={(p) => {
-                      setSelectedProduct(p);
-                      setIsEditorOpen(true);
-                    }}
-                    onDelete={handleDelete}
-                    searchQuery={searchQuery}
-                    onSearchChange={setSearchQuery}
-                  />
-                </div>
-
-                <div ref={editorSectionRef}>
-                  {isEditorOpen ? (
+              {/* DEDICATED RESPONSIVE PRODUCT EDITOR MODAL / DRAWER */}
+              {isEditorOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4 md:p-6 overflow-y-auto animate-fade-in">
+                  <div className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto scrollbar-hide my-auto">
                     <ProductEditor
                       key={selectedProduct?.id ?? "new"}
                       product={selectedProduct}
@@ -444,29 +439,9 @@ export default function AdminDashboard({ adminEmail, initialProducts, dataError 
                       }}
                       isSaving={isPending}
                     />
-                  ) : (
-                    <div className="flex min-h-105 flex-col items-center justify-center rounded-3xl border border-dashed border-[#d5ded4] bg-white/60 p-8 text-center">
-                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f1f4f1] text-[#283322] shadow-sm mb-4">
-                        <Package2 className="h-7 w-7 text-[#283322]" />
-                      </div>
-                      <h3 className="text-xl font-serif font-bold text-[#222a1d]">Select a Product</h3>
-                      <p className="mt-2 text-xs text-[#222a1d]/50 max-w-sm leading-relaxed">
-                        Choose a product from the left catalog to edit its images, olfactory notes, pricing, tags, or create a brand new candle product.
-                      </p>
-                      <button
-                        onClick={() => {
-                          setSelectedProduct(null);
-                          setIsEditorOpen(true);
-                        }}
-                        className="mt-6 flex items-center gap-2 rounded-full bg-[#283322] px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer"
-                      >
-                        <Plus className="h-4 w-4" />
-                        <span>Create New Item</span>
-                      </button>
-                    </div>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
 
