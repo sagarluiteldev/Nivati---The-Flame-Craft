@@ -9,6 +9,9 @@ import {
   MagnifyingGlassIcon,
   BanknotesIcon,
   ReceiptPercentIcon,
+  CircleStackIcon,
+  MegaphoneIcon,
+  TruckIcon,
   ChevronDownIcon
 } from "@heroicons/react/24/outline";
 import { useDashboardStore, type Expense, type ExpenseCategory } from "@/lib/dashboard-store";
@@ -112,55 +115,110 @@ export default function ExpensesTab() {
   return (
     <div className="space-y-6 sm:space-y-8">
       
-      {/* 1. EXPENSE SUMMARY CARDS */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
-            Total Operational Costs
-          </span>
-          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#222a1d]">
-            Rs {summaryMetrics.total.toLocaleString()}
-          </h4>
-          <span className="text-[10px] text-[#222a1d]/40 font-medium mt-1 block">
-            Across {filteredExpenses.length} entries
-          </span>
+      {/* 1. TOP HEADER & NEW ENTRY ACTION */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#222a1d] tracking-tight">
+            Operating Expenses Ledger
+          </h1>
+          <p className="text-xs sm:text-sm text-[#222a1d]/50 mt-0.5">
+            Track workshop supplies, marketing spend, packaging materials, and studio overhead
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleOpenNewForm}
+            className="flex items-center gap-1.5 rounded-full bg-[#16a34a] px-4 py-2 text-xs font-bold text-white hover:bg-[#15803d] shadow-sm transition-all cursor-pointer active:scale-95"
+          >
+            <PlusIcon className="h-4 w-4" />
+            <span>New Expense Entry</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 2. EXPENSE SUMMARY CARDS */}
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        
+        {/* Total Operational Costs */}
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
+              Total Operating Costs
+            </span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#283322] text-white shadow-sm shadow-[#283322]/20">
+              <ReceiptPercentIcon className="h-5 w-5 text-white" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl sm:text-3xl font-bold font-sans text-[#222a1d]">
+              Rs {summaryMetrics.total.toLocaleString()}
+            </span>
+            <p className="mt-2 text-xs text-[#222a1d]/40">
+              Across {filteredExpenses.length} expense entries
+            </p>
+          </div>
         </div>
 
-        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
-            Wax & Fragrance
-          </span>
-          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#283322]">
-            Rs {summaryMetrics.materials.toLocaleString()}
-          </h4>
-          <span className="text-[10px] text-emerald-600 font-semibold mt-1 block">
-            Core Raw Materials
-          </span>
+        {/* Wax & Fragrance */}
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
+              Wax & Ingredients
+            </span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#16a34a] text-white shadow-sm shadow-emerald-600/20">
+              <CircleStackIcon className="h-5 w-5 text-white" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl sm:text-3xl font-bold font-sans text-[#222a1d]">
+              Rs {summaryMetrics.materials.toLocaleString()}
+            </span>
+            <p className="mt-2 text-xs text-emerald-600 font-semibold">
+              Core raw materials
+            </p>
+          </div>
         </div>
 
-        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
-            Marketing & Ads
-          </span>
-          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#2563eb]">
-            Rs {summaryMetrics.marketing.toLocaleString()}
-          </h4>
-          <span className="text-[10px] text-blue-600 font-semibold mt-1 block">
-            Growth & Outreach
-          </span>
+        {/* Marketing & Outreach */}
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
+              Marketing & Outreach
+            </span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563eb] text-white shadow-sm shadow-blue-600/20">
+              <MegaphoneIcon className="h-5 w-5 text-white" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl sm:text-3xl font-bold font-sans text-[#222a1d]">
+              Rs {summaryMetrics.marketing.toLocaleString()}
+            </span>
+            <p className="mt-2 text-xs text-blue-600 font-semibold">
+              Growth & advertising
+            </p>
+          </div>
         </div>
 
-        <div className="rounded-[22px] sm:rounded-[26px] bg-white p-5 border border-[#e3e8e2] shadow-sm">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/45">
-            Packaging & Freight
-          </span>
-          <h4 className="mt-2 text-xl sm:text-2xl font-sans font-bold text-[#d97706]">
-            Rs {summaryMetrics.logistics.toLocaleString()}
-          </h4>
-          <span className="text-[10px] text-amber-600 font-semibold mt-1 block">
-            Jars, boxes & shipping
-          </span>
+        {/* Packaging & Logistics */}
+        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">
+              Packaging & Logistics
+            </span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d97706] text-white shadow-sm shadow-amber-600/20">
+              <TruckIcon className="h-5 w-5 text-white" />
+            </div>
+          </div>
+          <div className="mt-4">
+            <span className="text-2xl sm:text-3xl font-bold font-sans text-[#222a1d]">
+              Rs {summaryMetrics.logistics.toLocaleString()}
+            </span>
+            <p className="mt-2 text-xs text-amber-600 font-semibold">
+              Jars, boxes & freight
+            </p>
+          </div>
         </div>
+
       </div>
 
       {/* 2. FILTER AND ACTION BAR */}

@@ -253,8 +253,8 @@ export default function SalesTab({ catalogProducts }: Props) {
         <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">Gross Revenue</span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#dcfce7] text-[#15803d]">
-              <CheckCircleIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#16a34a] text-white shadow-sm shadow-emerald-600/20">
+              <CheckCircleIcon className="h-5 w-5 text-white" />
             </div>
           </div>
           <div className="mt-4">
@@ -269,8 +269,8 @@ export default function SalesTab({ catalogProducts }: Props) {
         <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">Total Invoices</span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f1f4f1] text-[#283322]">
-              <DocumentTextIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#283322] text-white shadow-sm shadow-[#283322]/20">
+              <DocumentTextIcon className="h-5 w-5 text-white" />
             </div>
           </div>
           <div className="mt-4">
@@ -285,8 +285,8 @@ export default function SalesTab({ catalogProducts }: Props) {
         <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">Pending Settlement</span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#fef3c7] text-[#b45309]">
-              <ClockIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d97706] text-white shadow-sm shadow-amber-600/20">
+              <ClockIcon className="h-5 w-5 text-white" />
             </div>
           </div>
           <div className="mt-4">
@@ -301,8 +301,8 @@ export default function SalesTab({ catalogProducts }: Props) {
         <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">Avg Order Value</span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e0f2fe] text-[#0284c7]">
-              <ShoppingBagIcon className="h-5 w-5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0284c7] text-white shadow-sm shadow-sky-600/20">
+              <ShoppingBagIcon className="h-5 w-5 text-white" />
             </div>
           </div>
           <div className="mt-4">
