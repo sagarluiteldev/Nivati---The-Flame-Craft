@@ -577,8 +577,8 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
 
             {/* DEDICATED RESPONSIVE PRODUCT EDITOR MODAL / DRAWER */}
             {isEditorOpen && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4 md:p-6 overflow-y-auto animate-fade-in">
-                <div className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto scrollbar-hide my-auto">
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4 md:p-6 overflow-y-auto overscroll-contain animate-fade-in">
+                <div className="relative w-full max-w-4xl max-h-[92dvh] overflow-y-auto scrollbar-hide my-auto">
                   <ProductEditor
                     key={selectedProduct?.id ?? "new"}
                     product={selectedProduct}
@@ -616,8 +616,8 @@ function AdminDashboardInner({ adminEmail, initialProducts, dataError }: Props) 
 
         {/* DATABASE SYNC DIAGNOSTICS MODAL */}
         {isSyncModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
-            <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl border border-[#e3e8e2] text-left">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto overscroll-contain animate-fade-in">
+            <div className="relative my-auto w-full max-w-lg max-h-[92dvh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-white p-5 sm:p-6 shadow-2xl border border-[#e3e8e2] text-left">
               <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
                 <div className="flex items-center gap-2.5">
                   <div className={`flex h-8 w-8 items-center justify-center rounded-xl ${

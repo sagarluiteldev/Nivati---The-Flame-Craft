@@ -649,14 +649,14 @@ export default function StockTab() {
       {/* MODAL 1: ADD NEW RAW MATERIAL                                         */}
       {/* ===================================================================== */}
       {isAddMaterialOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#e3e8e2]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto overscroll-contain animate-fade-in">
+          <div className="relative my-auto w-full max-w-lg max-h-[92dvh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-[#e3e8e2]">
             <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#283322] px-2 py-0.5 rounded bg-[#283322]/10">
                   New Raw Material
                 </span>
-                <h3 className="text-xl font-serif font-bold text-[#222a1d] mt-1">
+                <h3 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d] mt-1">
                   Add Supply to Warehouse
                 </h3>
               </div>
@@ -668,26 +668,26 @@ export default function StockTab() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateMaterial} className="mt-6 space-y-4">
-              <label className="block">
+            <form onSubmit={handleCreateMaterial} className="mt-5 space-y-4">
+              <label className="block min-w-0">
                 <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Material Name *</span>
                 <input
                   type="text"
                   required
                   value={newMatName}
                   onChange={(e) => setNewMatName(e.target.value)}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   placeholder="e.g. Coconut Wax Flakes, Wooden Wicks, Ceramic Jar"
                 />
               </label>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Category</span>
                   <select
                     value={newMatCategory}
                     onChange={(e) => setNewMatCategory(e.target.value as MaterialCategory)}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
                   >
                     <option value="wax">Waxes & Dyes</option>
                     <option value="wicks">Wicks & Accessories</option>
@@ -700,21 +700,21 @@ export default function StockTab() {
                   </select>
                 </label>
 
-                <label className="block">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Unit of Measure</span>
                   <input
                     type="text"
                     required
                     value={newMatUnit}
                     onChange={(e) => setNewMatUnit(e.target.value)}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                     placeholder="kg, pcs, packs, bottles, rolls"
                   />
                 </label>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-3">
-                <label className="block">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Initial Stock</span>
                   <input
                     type="number"
@@ -722,11 +722,11 @@ export default function StockTab() {
                     min={0}
                     value={newMatStock}
                     onChange={(e) => setNewMatStock(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
 
-                <label className="block">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Safety Threshold</span>
                   <input
                     type="number"
@@ -734,11 +734,11 @@ export default function StockTab() {
                     min={1}
                     value={newMatSafety}
                     onChange={(e) => setNewMatSafety(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
 
-                <label className="block">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Unit Cost (Rs)</span>
                   <input
                     type="number"
@@ -746,7 +746,7 @@ export default function StockTab() {
                     min={0}
                     value={newMatCost}
                     onChange={(e) => setNewMatCost(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
               </div>
@@ -775,14 +775,14 @@ export default function StockTab() {
       {/* MODAL 2: RESTOCK SHIPMENT                                             */}
       {/* ===================================================================== */}
       {isRestockOpen && activeMaterial && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="relative w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#e3e8e2]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto overscroll-contain animate-fade-in">
+          <div className="relative my-auto w-full max-w-md max-h-[92dvh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-[#e3e8e2]">
             <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#16a34a] px-2 py-0.5 rounded bg-[#dcfce7]">
                   Receive Supply
                 </span>
-                <h3 className="text-xl font-serif font-bold text-[#222a1d] mt-1">
+                <h3 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d] mt-1">
                   Restock {activeMaterial.name}
                 </h3>
               </div>
@@ -794,7 +794,7 @@ export default function StockTab() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveRestock} className="mt-6 space-y-4">
+            <form onSubmit={handleSaveRestock} className="mt-5 space-y-4">
               <div className="rounded-2xl bg-[#f8faf8] p-3.5 border border-[#e8ede7] text-xs space-y-1.5">
                 <div className="flex justify-between text-[#222a1d]/60">
                   <span>Current On-Hand:</span>
@@ -806,8 +806,8 @@ export default function StockTab() {
                 </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Quantity Received ({activeMaterial.unit}) *</span>
                   <input
                     type="number"
@@ -815,11 +815,11 @@ export default function StockTab() {
                     min={1}
                     value={restockQty}
                     onChange={(e) => setRestockQty(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
 
-                <label className="block">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Purchase Cost / Unit (Rs) *</span>
                   <input
                     type="number"
@@ -827,18 +827,18 @@ export default function StockTab() {
                     min={0}
                     value={restockCost}
                     onChange={(e) => setRestockCost(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
               </div>
 
-              <label className="block">
+              <label className="block min-w-0">
                 <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Batch Note / Supplier</span>
                 <input
                   type="text"
                   value={restockNote}
                   onChange={(e) => setRestockNote(e.target.value)}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   placeholder="e.g. Batch #402, Supplier XYZ"
                 />
               </label>
@@ -877,14 +877,14 @@ export default function StockTab() {
       {/* MODAL 3: EDIT MATERIAL PROFILE                                        */}
       {/* ===================================================================== */}
       {isProfileOpen && activeMaterial && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="relative w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#e3e8e2]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto overscroll-contain animate-fade-in">
+          <div className="relative my-auto w-full max-w-md max-h-[92dvh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-[#e3e8e2]">
             <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#283322] px-2 py-0.5 rounded bg-[#283322]/10">
                   Settings
                 </span>
-                <h3 className="text-xl font-serif font-bold text-[#222a1d] mt-1">
+                <h3 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d] mt-1">
                   Configure Material Profile
                 </h3>
               </div>
@@ -896,25 +896,25 @@ export default function StockTab() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveProfile} className="mt-6 space-y-4">
-              <label className="block">
+            <form onSubmit={handleSaveProfile} className="mt-5 space-y-4">
+              <label className="block min-w-0">
                 <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Material Name</span>
                 <input
                   type="text"
                   required
                   value={profileName}
                   onChange={(e) => setProfileName(e.target.value)}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                 />
               </label>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Category</span>
                   <select
                     value={profileCategory}
                     onChange={(e) => setProfileCategory(e.target.value as MaterialCategory)}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
                   >
                     <option value="wax">Waxes & Dyes</option>
                     <option value="wicks">Wicks & Accessories</option>
@@ -927,20 +927,20 @@ export default function StockTab() {
                   </select>
                 </label>
 
-                <label className="block">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Unit of Measure</span>
                   <input
                     type="text"
                     required
                     value={profileUnit}
                     onChange={(e) => setProfileUnit(e.target.value)}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-3">
-                <label className="block">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Stock Level</span>
                   <input
                     type="number"
@@ -948,11 +948,11 @@ export default function StockTab() {
                     min={0}
                     value={profileStock}
                     onChange={(e) => setProfileStock(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
 
-                <label className="block">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Safety Alert</span>
                   <input
                     type="number"
@@ -960,11 +960,11 @@ export default function StockTab() {
                     min={0}
                     value={profileSafety}
                     onChange={(e) => setProfileSafety(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
 
-                <label className="block">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Unit Cost (Rs)</span>
                   <input
                     type="number"
@@ -972,7 +972,7 @@ export default function StockTab() {
                     min={0}
                     value={profileCost}
                     onChange={(e) => setProfileCost(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   />
                 </label>
               </div>
@@ -1002,13 +1002,13 @@ export default function StockTab() {
       {/* ===================================================================== */}
       {isLogsOpen && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm animate-fade-in">
-          <div className="relative h-full w-full max-w-lg bg-white p-6 sm:p-8 shadow-2xl overflow-y-auto">
+          <div className="relative h-full w-full max-w-lg bg-white p-4 sm:p-8 shadow-2xl overflow-y-auto flex flex-col">
             <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#283322] px-2 py-0.5 rounded bg-[#283322]/10">
                   Warehouse Audit
                 </span>
-                <h3 className="text-2xl font-serif font-bold text-[#222a1d] mt-1">
+                <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#222a1d] mt-1">
                   Raw Materials Activity Trail
                 </h3>
               </div>
@@ -1020,9 +1020,9 @@ export default function StockTab() {
               </button>
             </div>
 
-            <div className="mt-6 space-y-4">
+            <div className="mt-5 space-y-3 flex-1 overflow-y-auto">
               {stockLogs.map((log) => (
-                <div key={log.id} className="rounded-2xl bg-[#f8faf8] p-4 border border-[#e8ede7] text-xs">
+                <div key={log.id} className="rounded-2xl bg-[#f8faf8] p-3.5 sm:p-4 border border-[#e8ede7] text-xs">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-[#222a1d]">{log.materialName}</span>
                     <span className="font-mono text-[10px] text-[#222a1d]/40">{log.date}</span>

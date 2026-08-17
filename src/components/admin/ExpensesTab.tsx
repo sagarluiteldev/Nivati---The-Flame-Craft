@@ -460,12 +460,12 @@ export default function ExpensesTab() {
 
       {/* 4. CREATE / EDIT EXPENSE MODAL */}
       {isEditorOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-[28px] bg-white p-6 sm:p-7 shadow-2xl border border-[#e3e8e2]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto overscroll-contain">
+          <div className="my-auto w-full max-w-md max-h-[92dvh] overflow-y-auto rounded-2xl sm:rounded-[28px] bg-white p-5 sm:p-7 shadow-2xl border border-[#e3e8e2]">
             
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
-              <h3 className="text-xl font-serif font-bold text-[#222a1d]">
+              <h3 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d]">
                 {editingExpense ? `Edit Expense ${editingExpense.id}` : "Log Operating Expense"}
               </h3>
               <button 
@@ -476,21 +476,21 @@ export default function ExpensesTab() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-              <label className="block">
+            <form onSubmit={handleSubmit} className="mt-4 sm:mt-5 space-y-4">
+              <label className="block min-w-0">
                 <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Expense Title *</span>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                   placeholder="e.g. 50kg Organic Soy Wax Pellets"
                 />
               </label>
 
-              <div className="grid gap-4 grid-cols-2">
-                <label className="block">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Amount (Rs) *</span>
                   <input
                     type="number"
@@ -498,28 +498,28 @@ export default function ExpensesTab() {
                     min={1}
                     value={amount || ""}
                     onChange={(e) => setAmount(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                     placeholder="e.g. 12500"
                   />
                 </label>
-                <label className="block">
+                <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Date Logged *</span>
                   <input
                     type="date"
                     required
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full max-w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white box-border appearance-none"
                   />
                 </label>
               </div>
 
-              <label className="block">
+              <label className="block min-w-0">
                 <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Expense Category</span>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
                 >
                   {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
                     <option key={key} value={key}>{label}</option>
@@ -527,12 +527,12 @@ export default function ExpensesTab() {
                 </select>
               </label>
 
-              <label className="block">
+              <label className="block min-w-0">
                 <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Payment Status</span>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as "paid" | "pending")}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
+                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
                 >
                   <option value="paid">Paid & Cleared</option>
                   <option value="pending">Pending Payment</option>
@@ -544,13 +544,13 @@ export default function ExpensesTab() {
                 <button
                   type="button"
                   onClick={() => setIsEditorOpen(false)}
-                  className="rounded-full px-5 py-2 text-xs font-semibold text-[#222a1d]/50 hover:bg-[#f1f4f1] cursor-pointer"
+                  className="rounded-full px-4 sm:px-5 py-2 text-xs font-semibold text-[#222a1d]/50 hover:bg-[#f1f4f1] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#283322] px-7 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer active:scale-95"
+                  className="rounded-full bg-[#283322] px-6 sm:px-7 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer active:scale-95"
                 >
                   {editingExpense ? "Update Expense" : "Save to Ledger"}
                 </button>

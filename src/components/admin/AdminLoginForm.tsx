@@ -69,19 +69,19 @@ export default function AdminLoginForm({
   };
 
   return (
-    <section className="w-full max-w-md rounded-4xl border border-olive/10 bg-creme/92 p-8 shadow-2xl shadow-olive/10 backdrop-blur-xl">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-olive text-creme">
-        <LockKeyhole className="h-6 w-6" />
+    <section className="w-full max-w-md rounded-3xl sm:rounded-4xl border border-olive/10 bg-creme/92 p-5 sm:p-8 shadow-2xl shadow-olive/10 backdrop-blur-xl">
+      <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-olive text-creme">
+        <LockKeyhole className="h-5 w-5 sm:h-6 sm:w-6" />
       </div>
 
-      <p className="mt-6 text-xs uppercase tracking-[0.35em] text-olive/45">Secure Access</p>
-      <h1 className="mt-3 text-4xl font-serif text-olive">Sign In</h1>
-      <p className="mt-3 text-sm leading-6 text-olive/70">
+      <p className="mt-4 sm:mt-6 text-[10px] sm:text-xs uppercase tracking-[0.35em] text-olive/45">Secure Access</p>
+      <h1 className="mt-2 sm:mt-3 text-3xl sm:text-4xl font-serif text-olive">Sign In</h1>
+      <p className="mt-2 sm:mt-3 text-xs sm:text-sm leading-5 sm:leading-6 text-olive/70">
         Enter your credentials to access the Nivati Management System. Only authorized
         administrative accounts may proceed.
       </p>
 
-      <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+      <form className="mt-6 sm:mt-8 space-y-4 sm:space-y-5" onSubmit={handleSubmit}>
         <label className="block">
           <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-olive/45">
             Email Address

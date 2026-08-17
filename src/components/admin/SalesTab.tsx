@@ -643,16 +643,16 @@ export default function SalesTab({ catalogProducts }: Props) {
 
       {/* 5. HIGH-FIDELITY PRINTABLE INVOICE MODAL (Matches Reference Layout) */}
       {isInvoiceOpen && selectedSale && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-6 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-2 sm:p-4 md:p-6 overflow-y-auto overscroll-contain">
           <div 
             className="fixed inset-0 no-print" 
             onClick={() => setIsInvoiceOpen(false)} 
           />
           
-          <div className="relative my-auto w-full max-w-2xl bg-white shadow-2xl rounded-3xl sm:rounded-[32px] border border-[#e3e8e2] overflow-hidden z-10 animate-scale-in">
+          <div className="relative my-auto w-full max-w-2xl max-h-[92dvh] bg-white shadow-2xl rounded-2xl sm:rounded-[32px] border border-[#e3e8e2] overflow-hidden z-10 flex flex-col animate-scale-in">
             
             {/* Modal Control Bar (Screen-only, Hidden in Print) */}
-            <div className="no-print flex items-center justify-between px-6 sm:px-8 py-3.5 bg-[#f8faf8] border-b border-[#eef2ee]">
+            <div className="no-print flex items-center justify-between px-4 sm:px-8 py-3 bg-[#f8faf8] border-b border-[#eef2ee] shrink-0">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-[#16a34a]" />
                 <span className="font-mono text-xs font-bold text-[#283322]">
@@ -662,10 +662,11 @@ export default function SalesTab({ catalogProducts }: Props) {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={handlePrint}
-                  className="flex items-center gap-1.5 rounded-full bg-[#283322] px-4 py-1.5 text-xs font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer shadow-xs"
+                  className="flex items-center gap-1.5 rounded-full bg-[#283322] px-3.5 sm:px-4 py-1.5 text-xs font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer shadow-xs"
                 >
                   <PrinterIcon className="h-3.5 w-3.5" />
-                  <span>Print Invoice</span>
+                  <span className="hidden xs:inline">Print</span>
+                  <span className="xs:hidden">Print</span>
                 </button>
                 <button 
                   onClick={() => setIsInvoiceOpen(false)}
@@ -677,23 +678,23 @@ export default function SalesTab({ catalogProducts }: Props) {
             </div>
 
             {/* Printable Document Canvas */}
-            <div id="printable-invoice" className="bg-white p-7 sm:p-12 relative overflow-hidden flex flex-col justify-between min-h-[700px]">
+            <div id="printable-invoice" className="bg-white p-4 sm:p-8 md:p-12 relative overflow-y-auto flex-1 flex flex-col justify-between">
               
               <div>
                 {/* 1. Header: Logo & Invoice Number */}
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start justify-between gap-3">
                   {/* Brand Logo from Original Website */}
-                  <div className="flex items-center gap-3.5">
+                  <div className="flex items-center gap-2.5 sm:gap-3.5">
                     <img 
                       src="/images/logo.png" 
                       alt="Nivati Logo" 
-                      className="h-14 w-14 sm:h-18 sm:w-18 object-contain" 
+                      className="h-10 w-10 sm:h-16 sm:w-16 object-contain" 
                     />
                     <div>
-                      <span className="font-serif font-black tracking-widest text-xl sm:text-2xl text-[#222a1d] block leading-none">
+                      <span className="font-serif font-black tracking-widest text-lg sm:text-2xl text-[#222a1d] block leading-none">
                         NIVATI
                       </span>
-                      <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-[#222a1d]/60 block mt-1">
+                      <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-[#222a1d]/60 block mt-1">
                         The Flame Craft
                       </span>
                     </div>
@@ -701,82 +702,82 @@ export default function SalesTab({ catalogProducts }: Props) {
 
                   {/* Invoice Number */}
                   <div className="text-right pt-1">
-                    <span className="font-mono text-xs sm:text-sm font-bold tracking-widest text-[#222a1d]">
+                    <span className="font-mono text-[11px] sm:text-sm font-bold tracking-widest text-[#222a1d]">
                       NO. {selectedSale.id.replace("#", "").padStart(6, "0")}
                     </span>
                   </div>
                 </div>
 
                 {/* 2. Main Title (Refined size) */}
-                <h1 className="font-sans font-black text-2xl sm:text-3xl md:text-4xl tracking-tight text-[#222a1d] uppercase mt-6 sm:mt-8 mb-2">
+                <h1 className="font-sans font-black text-xl sm:text-3xl md:text-4xl tracking-tight text-[#222a1d] uppercase mt-4 sm:mt-8 mb-2">
                   INVOICE
                 </h1>
 
                 {/* 3. Date */}
-                <p className="text-xs sm:text-sm text-[#222a1d] mb-6 sm:mb-8 font-normal">
+                <p className="text-xs sm:text-sm text-[#222a1d] mb-4 sm:mb-8 font-normal">
                   <span className="font-bold">Date:</span>{" "}
                   {selectedSale.date ? selectedSale.date : new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}
                 </p>
 
                 {/* 4. Billed To & From Two-Column Section */}
-                <div className="grid grid-cols-2 gap-6 sm:gap-12 text-xs text-[#222a1d] mb-8">
+                <div className="grid grid-cols-2 gap-3 sm:gap-12 text-xs text-[#222a1d] mb-6 sm:mb-8">
                   {/* Billed to */}
-                  <div className="space-y-1">
-                    <h4 className="font-bold text-xs sm:text-sm text-[#222a1d] uppercase tracking-wide">
+                  <div className="space-y-0.5 sm:space-y-1 min-w-0">
+                    <h4 className="font-bold text-[11px] sm:text-sm text-[#222a1d] uppercase tracking-wide">
                       Billed to:
                     </h4>
-                    <p className="font-bold text-xs sm:text-sm text-[#222a1d] pt-0.5">
+                    <p className="font-bold text-xs sm:text-sm text-[#222a1d] pt-0.5 truncate">
                       {selectedSale.customerName}
                     </p>
-                    <p className="text-[#222a1d]/70 text-xs">
+                    <p className="text-[#222a1d]/70 text-[11px] sm:text-xs truncate">
                       {selectedSale.channel ? `Order via ${CHANNEL_BADGES[selectedSale.channel]?.label || selectedSale.channel}` : "Direct Customer"}
                     </p>
-                    <p className="text-[#222a1d]/60 text-xs font-mono">
+                    <p className="text-[#222a1d]/60 text-[10px] sm:text-xs font-mono truncate">
                       {selectedSale.customerEmail || "walkin@customer.com"}
                     </p>
                   </div>
 
                   {/* From */}
-                  <div className="space-y-1">
-                    <h4 className="font-bold text-xs sm:text-sm text-[#222a1d] uppercase tracking-wide">
+                  <div className="space-y-0.5 sm:space-y-1 min-w-0">
+                    <h4 className="font-bold text-[11px] sm:text-sm text-[#222a1d] uppercase tracking-wide">
                       From:
                     </h4>
                     <p className="font-bold text-xs sm:text-sm text-[#222a1d] pt-0.5">
                       Nivati
                     </p>
-                    <p className="text-[#222a1d]/70 text-xs">
+                    <p className="text-[#222a1d]/70 text-[11px] sm:text-xs">
                       Pokhara, Nepal
                     </p>
-                    <p className="text-[#222a1d]/60 text-xs font-mono">
+                    <p className="text-[#222a1d]/60 text-[10px] sm:text-xs font-mono truncate">
                       hello@nivaticandles.com
                     </p>
                   </div>
                 </div>
 
                 {/* 5. Items Ordered Table */}
-                <div className="overflow-hidden rounded-md">
-                  <table className="w-full text-left text-xs border-collapse">
+                <div className="overflow-x-auto w-full rounded-md border border-[#eef2ee] sm:border-0">
+                  <table className="w-full text-left text-xs border-collapse min-w-[280px]">
                     <thead>
-                      <tr className="bg-[#eef2ee] text-[#222a1d] text-[11px] font-bold">
-                        <th className="py-2.5 px-3.5 font-bold">Item</th>
-                        <th className="py-2.5 px-3.5 text-center font-bold">Quantity</th>
-                        <th className="py-2.5 px-3.5 text-right font-bold">Price</th>
-                        <th className="py-2.5 px-3.5 text-right font-bold">Amount</th>
+                      <tr className="bg-[#eef2ee] text-[#222a1d] text-[10px] sm:text-[11px] font-bold">
+                        <th className="py-2.5 px-2.5 sm:px-3.5 font-bold">Item</th>
+                        <th className="py-2.5 px-2 sm:px-3.5 text-center font-bold">Qty</th>
+                        <th className="py-2.5 px-2 sm:px-3.5 text-right font-bold">Price</th>
+                        <th className="py-2.5 px-2 sm:px-3.5 text-right font-bold">Amount</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#f2f6f1]">
                       {selectedSale.items.map((item, idx) => (
                         <tr key={idx} className="hover:bg-[#fafbfa]">
-                          <td className="py-3 px-3.5 font-semibold text-[#222a1d]">
+                          <td className="py-2.5 sm:py-3 px-2.5 sm:px-3.5 font-semibold text-[#222a1d]">
                             {item.productTitle}
                           </td>
-                          <td className="py-3 px-3.5 text-center font-mono font-medium text-[#222a1d]">
+                          <td className="py-2.5 sm:py-3 px-2 sm:px-3.5 text-center font-mono font-medium text-[#222a1d]">
                             {item.quantity}
                           </td>
-                          <td className="py-3 px-3.5 text-right font-mono text-[#222a1d]/70">
+                          <td className="py-2.5 sm:py-3 px-2 sm:px-3.5 text-right font-mono text-[#222a1d]/70 whitespace-nowrap">
                             Rs {item.price.toLocaleString()}
                           </td>
-                          <td className="py-3 px-3.5 text-right font-mono font-bold text-[#222a1d]">
+                          <td className="py-2.5 sm:py-3 px-2 sm:px-3.5 text-right font-mono font-bold text-[#222a1d] whitespace-nowrap">
                             Rs {(item.quantity * item.price).toLocaleString()}
                           </td>
                         </tr>
@@ -784,11 +785,11 @@ export default function SalesTab({ catalogProducts }: Props) {
                     </tbody>
                     <tfoot>
                       <tr className="border-t-2 border-[#e3e8e2]">
-                        <td colSpan={2} className="py-3.5 px-3.5"></td>
-                        <td className="py-3.5 px-3.5 text-right font-bold text-sm text-[#222a1d]">
+                        <td colSpan={2} className="py-3 px-2.5 sm:px-3.5"></td>
+                        <td className="py-3 px-2 sm:px-3.5 text-right font-bold text-xs sm:text-sm text-[#222a1d]">
                           Total
                         </td>
-                        <td className="py-3.5 px-3.5 text-right font-mono font-black text-base text-[#283322]">
+                        <td className="py-3 px-2 sm:px-3.5 text-right font-mono font-black text-sm sm:text-base text-[#283322] whitespace-nowrap">
                           Rs {selectedSale.totalAmount.toLocaleString()}
                         </td>
                       </tr>
@@ -797,7 +798,7 @@ export default function SalesTab({ catalogProducts }: Props) {
                 </div>
 
                 {/* 6. Payment Method & Note */}
-                <div className="mt-8 space-y-1.5 text-xs text-[#222a1d]">
+                <div className="mt-6 sm:mt-8 space-y-1 text-xs text-[#222a1d]">
                   <p>
                     <span className="font-bold">Payment method:</span>{" "}
                     <span className="capitalize">{selectedSale.status === "completed" ? "Cash / Card" : selectedSale.status === "pending" ? "Pending" : "Cancelled"}</span>
@@ -809,7 +810,7 @@ export default function SalesTab({ catalogProducts }: Props) {
               </div>
 
               {/* 7. Bottom Decorative Organic Wavy Curves (Website Green & Sage Theme) */}
-              <div className="relative mt-12 sm:mt-16 -mx-7 sm:-mx-12 -mb-7 sm:-mb-12 overflow-hidden h-24 sm:h-32 pointer-events-none">
+              <div className="relative mt-8 sm:mt-16 -mx-4 sm:-mx-12 -mb-4 sm:-mb-12 overflow-hidden h-16 sm:h-32 pointer-events-none">
                 <svg viewBox="0 0 500 150" preserveAspectRatio="none" className="h-full w-full">
                   <path 
                     d="M-20,60 C120,160 300,10 520,70 L520,150 L-20,150 Z" 
@@ -830,12 +831,12 @@ export default function SalesTab({ catalogProducts }: Props) {
 
       {/* 6. CREATE / EDIT INVOICE RECORD MODAL */}
       {isEditorOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="my-8 w-full max-w-xl rounded-[28px] bg-white p-6 sm:p-7 shadow-2xl border border-[#e3e8e2] overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto overscroll-contain">
+          <div className="my-auto w-full max-w-xl max-h-[92dvh] overflow-y-auto rounded-2xl sm:rounded-[28px] bg-white p-4 sm:p-7 shadow-2xl border border-[#e3e8e2]">
             
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
-              <h3 className="text-xl font-serif font-bold text-[#222a1d]">
+              <h3 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d]">
                 {editingSale ? `Edit Invoice ${editingSale.id}` : "New Sale Entry"}
               </h3>
               <button 
@@ -846,10 +847,10 @@ export default function SalesTab({ catalogProducts }: Props) {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+            <form onSubmit={handleSubmit} className="mt-5 space-y-4 sm:space-y-5">
               
               {/* Customer Inputs */}
-              <div className="grid gap-3.5 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Customer Name *</span>
                   <input
@@ -857,7 +858,7 @@ export default function SalesTab({ catalogProducts }: Props) {
                     required
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                     placeholder="Aarav Sharma"
                   />
                 </label>
@@ -867,14 +868,14 @@ export default function SalesTab({ catalogProducts }: Props) {
                     type="email"
                     value={customerEmail}
                     onChange={(e) => setCustomerEmail(e.target.value)}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-4 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
                     placeholder="aarav@example.com (optional)"
                   />
                 </label>
               </div>
 
               {/* Order Date, Channel Source & Payment Status */}
-              <div className="grid gap-3.5 grid-cols-1 sm:grid-cols-3">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
                 <label className="block min-w-0">
                   <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Order Date *</span>
                   <input
@@ -921,14 +922,14 @@ export default function SalesTab({ catalogProducts }: Props) {
                   Add Candle Products
                 </span>
                 
-                {/* Item Adder Row */}
-                <div className="grid gap-2 grid-cols-[1fr_70px_90px_60px] items-end">
+                {/* Responsive Item Adder Row */}
+                <div className="space-y-2">
                   <label className="block min-w-0">
                     <span className="mb-1 block text-[9px] font-bold text-[#222a1d]/40">Product</span>
                     <select
                       value={itemProductId}
                       onChange={(e) => handleProductChange(e.target.value)}
-                      className="w-full rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2.5 py-2 text-xs text-[#222a1d] outline-none cursor-pointer truncate"
+                      className="w-full rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-3 py-2 text-xs text-[#222a1d] outline-none cursor-pointer truncate"
                     >
                       {catalogProducts.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -938,35 +939,37 @@ export default function SalesTab({ catalogProducts }: Props) {
                     </select>
                   </label>
 
-                  <label className="block">
-                    <span className="mb-1 block text-[9px] font-bold text-[#222a1d]/40">Qty</span>
-                    <input
-                      type="number"
-                      min={1}
-                      value={itemQuantity}
-                      onChange={(e) => setItemQuantity(Number(e.target.value))}
-                      className="w-full rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2 py-2 text-xs text-center font-mono font-bold text-[#222a1d] outline-none"
-                    />
-                  </label>
+                  <div className="grid grid-cols-[80px_1fr_auto] sm:grid-cols-[90px_120px_auto] gap-2 items-end">
+                    <label className="block">
+                      <span className="mb-1 block text-[9px] font-bold text-[#222a1d]/40">Qty</span>
+                      <input
+                        type="number"
+                        min={1}
+                        value={itemQuantity}
+                        onChange={(e) => setItemQuantity(Number(e.target.value))}
+                        className="w-full rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2.5 py-2 text-xs text-center font-mono font-bold text-[#222a1d] outline-none"
+                      />
+                    </label>
 
-                  <label className="block">
-                    <span className="mb-1 block text-[9px] font-bold text-[#222a1d]/40">Price</span>
-                    <input
-                      type="number"
-                      min={0}
-                      value={itemPrice}
-                      onChange={(e) => setItemPrice(Number(e.target.value))}
-                      className="w-full rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2 py-2 text-xs font-mono text-[#222a1d] outline-none"
-                    />
-                  </label>
+                    <label className="block">
+                      <span className="mb-1 block text-[9px] font-bold text-[#222a1d]/40">Price (Rs)</span>
+                      <input
+                        type="number"
+                        min={0}
+                        value={itemPrice}
+                        onChange={(e) => setItemPrice(Number(e.target.value))}
+                        className="w-full rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2.5 py-2 text-xs font-mono text-[#222a1d] outline-none"
+                      />
+                    </label>
 
-                  <button
-                    type="button"
-                    onClick={handleAddItem}
-                    className="flex h-9 w-full items-center justify-center rounded-xl bg-[#283322] text-xs font-bold text-white hover:bg-[#34422c] cursor-pointer"
-                  >
-                    Add
-                  </button>
+                    <button
+                      type="button"
+                      onClick={handleAddItem}
+                      className="flex h-9 px-4 items-center justify-center rounded-xl bg-[#283322] text-xs font-bold text-white hover:bg-[#34422c] cursor-pointer shrink-0"
+                    >
+                      + Add
+                    </button>
+                  </div>
                 </div>
 
                 {/* Items Added List */}
@@ -979,11 +982,11 @@ export default function SalesTab({ catalogProducts }: Props) {
                           <p className="text-xs font-bold text-[#222a1d] truncate">{catalogItem?.title || item.productId}</p>
                           <p className="text-[9px] text-[#222a1d]/40 font-mono">ID: {item.productId}</p>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3">
                           <span className="text-xs font-mono text-[#222a1d]/60">
                             {item.quantity} × Rs {item.price.toLocaleString()}
                           </span>
-                          <span className="text-xs font-bold font-mono text-[#222a1d] min-w-17.5 text-right">
+                          <span className="text-xs font-bold font-mono text-[#222a1d] min-w-16 sm:min-w-17.5 text-right">
                             Rs {(item.quantity * item.price).toLocaleString()}
                           </span>
                           <button
@@ -1027,7 +1030,7 @@ export default function SalesTab({ catalogProducts }: Props) {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#16a34a] px-7 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#15803d] transition-all cursor-pointer active:scale-95"
+                  className="rounded-full bg-[#16a34a] px-6 sm:px-7 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#15803d] transition-all cursor-pointer active:scale-95"
                 >
                   {editingSale ? "Update Sale" : "Save Sale Entry"}
                 </button>

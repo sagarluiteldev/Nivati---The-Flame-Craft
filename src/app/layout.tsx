@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
@@ -16,6 +16,14 @@ const cormorant = Cormorant_Garamond({
 import { AppProvider } from "@/context/AppContext";
 import CartDrawer from "@/components/CartDrawer";
 import SmoothScroller from "@/components/SmoothScroller";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "Nivati - The Flame Craft",
