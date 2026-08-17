@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-
 import AdminLoginForm from "@/components/admin/AdminLoginForm";
 import AdminSetupNotice from "@/components/admin/AdminSetupNotice";
 import { getAdminSession } from "@/lib/admin-auth";
@@ -20,8 +19,8 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
 
   if (session.status === "missing-env") {
     return (
-      <main className="min-h-screen bg-[radial-gradient(circle_at_top,#f4eee4_0%,#FBFEF9_38%,#f2eee6_100%)] px-4 py-12 md:px-8">
-        <div className="mx-auto flex min-h-[80vh] max-w-7xl items-center justify-center">
+      <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#f4f7f4] flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-lg">
           <AdminSetupNotice />
         </div>
       </main>
@@ -30,19 +29,16 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
 
   const message =
     params.error === "unauthorized"
-      ? "Your account is authenticated but does not have the required administrative permissions."
+      ? "Your account is authenticated but does not have the required administrative permissions in the database."
       : undefined;
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,#f4eee4_0%,#FBFEF9_38%,#f2eee6_100%)] px-4 py-12 md:px-8">
-      <div className="mx-auto flex min-h-[80vh] max-w-7xl items-center justify-center">
-        <AdminLoginForm
-          defaultEmail={session.user?.email ?? ""}
-          message={message}
-          canSignOut={session.status === "not-admin"}
-        />
-      </div>
+    <main className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#f4f7f4] flex flex-col items-center justify-center p-4 sm:p-6">
+      <AdminLoginForm
+        defaultEmail={session.user?.email ?? ""}
+        message={message}
+        canSignOut={session.status === "not-admin"}
+      />
     </main>
   );
 }
-
