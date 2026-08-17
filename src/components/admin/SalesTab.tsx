@@ -498,7 +498,7 @@ export default function SalesTab({ catalogProducts }: Props) {
 
         {/* DESKTOP DATA TABLE (>= 768px): Full wide spreadsheet table */}
         <div className="hidden md:block overflow-x-auto scrollbar-hide -mx-5 sm:-mx-7 px-5 sm:px-7">
-          <table className="w-full text-left border-collapse min-w-[880px]">
+          <table className="w-full text-left border-collapse min-w-220">
             <thead>
               <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
                 <th className="pb-3.5 pl-2">Invoice ID</th>
@@ -649,7 +649,7 @@ export default function SalesTab({ catalogProducts }: Props) {
             onClick={() => setIsInvoiceOpen(false)} 
           />
           
-          <div className="relative my-auto w-full max-w-2xl max-h-[92dvh] bg-white shadow-2xl rounded-2xl sm:rounded-[32px] border border-[#e3e8e2] overflow-hidden z-10 flex flex-col animate-scale-in">
+          <div className="relative my-auto w-full max-w-2xl max-h-[92dvh] bg-white shadow-2xl rounded-2xl sm:rounded-4xl border border-[#e3e8e2] overflow-hidden z-10 flex flex-col animate-scale-in">
             
             {/* Modal Control Bar (Screen-only, Hidden in Print) */}
             <div className="no-print flex items-center justify-between px-4 sm:px-8 py-3 bg-[#f8faf8] border-b border-[#eef2ee] shrink-0">
@@ -756,7 +756,7 @@ export default function SalesTab({ catalogProducts }: Props) {
 
                 {/* 5. Items Ordered Table */}
                 <div className="overflow-x-auto w-full rounded-md border border-[#eef2ee] sm:border-0">
-                  <table className="w-full text-left text-xs border-collapse min-w-[280px]">
+                  <table className="w-full text-left text-xs border-collapse min-w-70">
                     <thead>
                       <tr className="bg-[#eef2ee] text-[#222a1d] text-[10px] sm:text-[11px] font-bold">
                         <th className="py-2.5 px-2.5 sm:px-3.5 font-bold">Item</th>

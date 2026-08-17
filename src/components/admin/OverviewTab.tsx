@@ -1024,7 +1024,7 @@ export default function OverviewTab({
 
           {/* DESKTOP DATA TABLE (>= 768px): Full wide spreadsheet table */}
           <div className="hidden md:block overflow-x-auto scrollbar-hide -mx-6 sm:-mx-7 px-6 sm:px-7 pt-2">
-            <table className="w-full text-left border-collapse min-w-[880px]">
+            <table className="w-full text-left border-collapse min-w-220">
               <thead>
                 <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
                   <th className="pb-3.5 pl-2 w-8">

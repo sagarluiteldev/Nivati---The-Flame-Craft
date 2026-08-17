@@ -511,7 +511,7 @@ export default function StockTab() {
 
         {/* DESKTOP DATA TABLE (>= 768px): Full wide spreadsheet table */}
         <div className="hidden md:block overflow-x-auto scrollbar-hide -mx-5 sm:-mx-7 px-5 sm:px-7">
-          <table className="w-full text-left border-collapse min-w-[900px]">
+          <table className="w-full text-left border-collapse min-w-225">
             <thead>
               <tr className="border-b border-[#eef2ee] text-[11px] font-bold uppercase tracking-wider text-[#222a1d]/40">
                 <th className="pb-3.5 pl-2">Raw Material</th>
