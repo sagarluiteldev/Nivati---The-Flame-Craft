@@ -1,9 +1,10 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
-const Facebook = ({ className, bgFill = "#f4f1ea", iconFill = "#3b4132" }: { className?: string; bgFill?: string; iconFill?: string }) => (
+const Facebook = ({ className, bgFill = "#FAFAFA", iconFill = "#3b4132" }: { className?: string; bgFill?: string; iconFill?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="12" fill={bgFill} />
     <path
@@ -13,7 +14,7 @@ const Facebook = ({ className, bgFill = "#f4f1ea", iconFill = "#3b4132" }: { cla
   </svg>
 );
 
-const Instagram = ({ className, bgFill = "#f4f1ea", iconFill = "#3b4132" }: { className?: string; bgFill?: string; iconFill?: string }) => (
+const Instagram = ({ className, bgFill = "#FAFAFA", iconFill = "#3b4132" }: { className?: string; bgFill?: string; iconFill?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="12" fill={bgFill} />
     <path
@@ -25,7 +26,7 @@ const Instagram = ({ className, bgFill = "#f4f1ea", iconFill = "#3b4132" }: { cl
   </svg>
 );
 
-const TikTok = ({ className, bgFill = "#f4f1ea", iconFill = "#3b4132" }: { className?: string; bgFill?: string; iconFill?: string }) => (
+const TikTok = ({ className, bgFill = "#FAFAFA", iconFill = "#3b4132" }: { className?: string; bgFill?: string; iconFill?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="12" fill={bgFill} />
     <path
@@ -37,27 +38,81 @@ const TikTok = ({ className, bgFill = "#f4f1ea", iconFill = "#3b4132" }: { class
 
 export default function Footer() {
   const letters = ["N", "I", "V", "A", "T", "I"];
+  const watermarkRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const { scrollYProgress } = useScroll({
+    target: watermarkRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Senior UI/UX Physics: Spring-damped transforms eliminate raw scroll jumps
+  const springConfig = { stiffness: 60, damping: 22, mass: 0.8 };
+
+  const rawY1 = useTransform(scrollYProgress, [0, 1], [-30, 30]);
+  const rawY2 = useTransform(scrollYProgress, [0, 1], [35, -35]);
+  const rawY3 = useTransform(scrollYProgress, [0, 1], [-30, 30]);
+  const rawY4 = useTransform(scrollYProgress, [0, 1], [30, -30]);
+
+  const rawR1 = useTransform(scrollYProgress, [0, 1], [-18, -12]);
+  const rawR2 = useTransform(scrollYProgress, [0, 1], [9, 15]);
+  const rawR3 = useTransform(scrollYProgress, [0, 1], [-13, -7]);
+  const rawR4 = useTransform(scrollYProgress, [0, 1], [15, 21]);
+
+  const y1 = useSpring(rawY1, springConfig);
+  const y2 = useSpring(rawY2, springConfig);
+  const y3 = useSpring(rawY3, springConfig);
+  const y4 = useSpring(rawY4, springConfig);
+
+  const r1 = useSpring(rawR1, springConfig);
+  const r2 = useSpring(rawR2, springConfig);
+  const r3 = useSpring(rawR3, springConfig);
+  const r4 = useSpring(rawR4, springConfig);
 
   const containerVariants = {
     hidden: {},
     visible: {
       transition: {
         staggerChildren: 0.08,
+        delayChildren: 0.05,
       },
     },
   };
 
   const letterVariants = (index: number) => ({
     hidden: {
+      y: index % 2 === 0 ? "-115%" : "115%",
+    },
+    visible: {
+      y: "0%",
+      transition: {
+        duration: 1.1,
+        ease: [0.16, 1, 0.3, 1] as const,
+      },
+    },
+  });
+
+  const candleVariants = (delay: number) => ({
+    hidden: {
       opacity: 0,
-      y: index % 2 === 0 ? -120 : 120,
+      scale: 0.6,
     },
     visible: {
       opacity: 1,
-      y: 0,
+      scale: 1,
       transition: {
-        duration: 1,
-        ease: [0.16, 1, 0.3, 1] as const, // Custom OutExpo easing
+        duration: 0.85,
+        delay,
+        ease: [0.16, 1, 0.3, 1] as const,
       },
     },
   });
@@ -66,46 +121,95 @@ export default function Footer() {
     <footer className="relative bg-creme pt-8 md:pt-16 pb-0 transition-colors duration-700 overflow-hidden">
       
       {/* Large Brand Watermark with Overlapping Candle Images */}
-      <div className="relative w-full overflow-hidden py-16 md:py-24 flex items-center justify-center select-none">
-        <div className="relative inline-block">
+      <div 
+        ref={watermarkRef}
+        className="relative w-full overflow-hidden py-16 md:py-24 flex items-center justify-center select-none"
+      >
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          className="relative inline-block"
+        >
           <motion.h2 
             variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
             className="text-[18vw] md:text-[14vw] font-serif font-black text-olive uppercase leading-none flex justify-center"
           >
             {letters.map((char, index) => (
-              <motion.span
+              <span
                 key={index}
-                variants={letterVariants(index)}
-                className="inline-block mr-[0.18em] last:mr-0"
+                className="inline-flex overflow-hidden py-[0.06em] -my-[0.06em] mr-[0.18em] last:mr-0"
               >
-                {char}
-              </motion.span>
+                <motion.span
+                  variants={letterVariants(index)}
+                  className="inline-block will-change-transform"
+                >
+                  {char}
+                </motion.span>
+              </span>
             ))}
           </motion.h2>
           
           {/* Left Overlapping Image (overlapping N) */}
-          <div className="absolute top-[50%] left-0 w-[22vw] h-[22vw] md:w-56 md:h-56 -translate-x-1/2 -translate-y-1/2 rotate-[-15deg] z-20 pointer-events-none">
-            <img src="/images/footer_1.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+          <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+            <motion.div 
+              style={isMobile ? undefined : { y: y1, rotate: r1 }}
+              className="will-change-transform"
+            >
+              <motion.div
+                variants={candleVariants(0.1)}
+                className="w-[20vw] h-[20vw] md:w-28 md:h-28 lg:w-44 lg:h-44 xl:w-56 xl:h-56 rotate-[-15deg]"
+              >
+                <img src="/images/footer_1.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+              </motion.div>
+            </motion.div>
           </div>
 
           {/* Top Overlapping Image (overlapping top of V/A) */}
-          <div className="absolute top-0 left-[38%] w-[17.5vw] h-[17.5vw] md:w-48 md:h-48 -translate-x-1/2 -translate-y-[40%] rotate-12 z-20 pointer-events-none">
-            <img src="/images/footer_2.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+          <div className="absolute top-0 left-[38%] -translate-x-1/2 -translate-y-[40%] z-20 pointer-events-none">
+            <motion.div 
+              style={isMobile ? undefined : { y: y2, rotate: r2 }}
+              className="will-change-transform"
+            >
+              <motion.div
+                variants={candleVariants(0.22)}
+                className="w-[16vw] h-[16vw] md:w-24 md:h-24 lg:w-36 lg:h-36 xl:w-48 xl:h-48 rotate-12"
+              >
+                <img src="/images/footer_2.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+              </motion.div>
+            </motion.div>
           </div>
 
           {/* Bottom Overlapping Image (overlapping bottom of A/T) */}
-          <div className="absolute bottom-0 left-[62%] w-[17.5vw] h-[17.5vw] md:w-48 md:h-48 -translate-x-1/2 translate-y-[40%] rotate-[-10deg] z-20 pointer-events-none">
-            <img src="/images/footer_3.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+          <div className="absolute bottom-0 left-[62%] -translate-x-1/2 translate-y-[40%] z-20 pointer-events-none">
+            <motion.div 
+              style={isMobile ? undefined : { y: y3, rotate: r3 }}
+              className="will-change-transform"
+            >
+              <motion.div
+                variants={candleVariants(0.32)}
+                className="w-[16vw] h-[16vw] md:w-24 md:h-24 lg:w-36 lg:h-36 xl:w-48 xl:h-48 rotate-[-10deg]"
+              >
+                <img src="/images/footer_3.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+              </motion.div>
+            </motion.div>
           </div>
 
           {/* Right Overlapping Image (overlapping final I) */}
-          <div className="absolute top-[50%] right-0 w-[22vw] h-[22vw] md:w-56 md:h-56 translate-x-1/2 -translate-y-1/2 rotate-18 z-20 pointer-events-none">
-            <img src="/images/footer_4.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+          <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+            <motion.div 
+              style={isMobile ? undefined : { y: y4, rotate: r4 }}
+              className="will-change-transform"
+            >
+              <motion.div
+                variants={candleVariants(0.44)}
+                className="w-[20vw] h-[20vw] md:w-28 md:h-28 lg:w-44 lg:h-44 xl:w-56 xl:h-56 rotate-18"
+              >
+                <img src="/images/footer_4.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+              </motion.div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Main Green Footer Box */}
@@ -127,7 +231,7 @@ export default function Footer() {
                   aria-label="Facebook"
                   className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-110 shadow-sm"
                 >
-                  <Facebook className="w-full h-full" bgFill="#f4f1ea" iconFill="#3b4132" />
+                  <Facebook className="w-full h-full" bgFill="#FAFAFA" iconFill="#3b4132" />
                 </a>
                 <a 
                   href="https://www.instagram.com/nivati.np" 
@@ -136,7 +240,7 @@ export default function Footer() {
                   aria-label="Instagram"
                   className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-110 shadow-sm"
                 >
-                  <Instagram className="w-full h-full" bgFill="#f4f1ea" iconFill="#3b4132" />
+                  <Instagram className="w-full h-full" bgFill="#FAFAFA" iconFill="#3b4132" />
                 </a>
                 <a 
                   href="https://www.tiktok.com/@nivati.np" 
@@ -145,7 +249,7 @@ export default function Footer() {
                   aria-label="TikTok"
                   className="w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-110 shadow-sm"
                 >
-                  <TikTok className="w-full h-full" bgFill="#f4f1ea" iconFill="#3b4132" />
+                  <TikTok className="w-full h-full" bgFill="#FAFAFA" iconFill="#3b4132" />
                 </a>
               </div>
             </div>

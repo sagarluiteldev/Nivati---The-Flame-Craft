@@ -9,7 +9,7 @@ const MotionImage = motion.create(Image);
 
 const slogans = [
   "Scented Handmade Candles",
-  "Artisan Craftsmanship",
+  "Handcrafted with Heart",
   "Sustainable Luxury",
   "Intentionally Poured"
 ];
@@ -123,21 +123,21 @@ export default function Hero() {
         <div 
           className="absolute inset-y-0 left-0 w-[45%] z-10 pointer-events-none" 
           style={{
-            background: 'linear-gradient(to right, #FBFEF9 0%, rgba(251, 254, 249, 0.98) 12%, rgba(251, 254, 249, 0.85) 30%, rgba(251, 254, 249, 0.5) 60%, rgba(251, 254, 249, 0.18) 82%, rgba(251, 254, 249, 0) 100%)'
+            background: 'linear-gradient(to right, #FAFAFA 0%, rgba(250, 250, 250, 0.98) 12%, rgba(250, 250, 250, 0.85) 30%, rgba(250, 250, 250, 0.5) 60%, rgba(250, 250, 250, 0.18) 82%, rgba(250, 250, 250, 0) 100%)'
           }}
         />
         {/* Top-to-Bottom Blend (Prevents harsh top boundaries) */}
         <div 
           className="absolute inset-x-0 top-0 h-[20%] z-10 pointer-events-none" 
           style={{
-            background: 'linear-gradient(to bottom, #FBFEF9 0%, rgba(251, 254, 249, 0.7) 35%, rgba(251, 254, 249, 0.25) 70%, rgba(251, 254, 249, 0) 100%)'
+            background: 'linear-gradient(to bottom, #FAFAFA 0%, rgba(250, 250, 250, 0.7) 35%, rgba(250, 250, 250, 0.25) 70%, rgba(250, 250, 250, 0) 100%)'
           }}
         />
         {/* Bottom-to-Top Blend (Prevents harsh bottom boundaries) */}
         <div 
           className="absolute inset-x-0 bottom-0 h-[20%] z-10 pointer-events-none" 
           style={{
-            background: 'linear-gradient(to top, #FBFEF9 0%, rgba(251, 254, 249, 0.7) 35%, rgba(251, 254, 249, 0.25) 70%, rgba(251, 254, 249, 0) 100%)'
+            background: 'linear-gradient(to top, #FAFAFA 0%, rgba(250, 250, 250, 0.7) 35%, rgba(250, 250, 250, 0.25) 70%, rgba(250, 250, 250, 0) 100%)'
           }}
         />
       </motion.div>
@@ -173,7 +173,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 1 }}
-                className="text-lg md:text-2xl lg:text-4xl italic font-light relative inline-block mt-2 lg:-mt-8 lg:ml-2 text-sage whitespace-nowrap"
+                className="text-lg md:text-2xl lg:text-4xl font-lora not-italic font-normal relative inline-block mt-2 lg:-mt-8 lg:ml-2 text-sage whitespace-nowrap"
               >
                 The Flame Craft
               </motion.span>
@@ -254,13 +254,13 @@ export default function Hero() {
             <div 
               className="absolute inset-x-0 top-0 h-[30%] z-10 pointer-events-none" 
               style={{
-                background: 'linear-gradient(to bottom, #FBFEF9 0%, rgba(251, 254, 249, 0.95) 15%, rgba(251, 254, 249, 0.7) 45%, rgba(251, 254, 249, 0.25) 75%, rgba(251, 254, 249, 0) 100%)'
+                background: 'linear-gradient(to bottom, #FAFAFA 0%, rgba(250, 250, 250, 0.95) 15%, rgba(250, 250, 250, 0.7) 45%, rgba(250, 250, 250, 0.25) 75%, rgba(250, 250, 250, 0) 100%)'
               }}
             />
             <div 
               className="absolute inset-x-0 bottom-0 h-[30%] z-10 pointer-events-none" 
               style={{
-                background: 'linear-gradient(to top, #FBFEF9 0%, rgba(251, 254, 249, 0.95) 15%, rgba(251, 254, 249, 0.7) 45%, rgba(251, 254, 249, 0.25) 75%, rgba(251, 254, 249, 0) 100%)'
+                background: 'linear-gradient(to top, #FAFAFA 0%, rgba(250, 250, 250, 0.95) 15%, rgba(250, 250, 250, 0.7) 45%, rgba(250, 250, 250, 0.25) 75%, rgba(250, 250, 250, 0) 100%)'
               }}
             />
           </div>

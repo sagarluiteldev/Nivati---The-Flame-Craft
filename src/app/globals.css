@@ -2,8 +2,8 @@
 
 @theme inline {
   --color-olive: var(--theme-olive, #3b4132);
-  --color-creme: var(--theme-creme, #FBFEF9);
-  --color-white: #FBFEF9;
+  --color-creme: var(--theme-creme, #FAFAFA);
+  --color-white: #FAFAFA;
   --color-sage: #a2ad9c;
   --color-terracotta: #d3a795;
 
@@ -13,13 +13,15 @@
   --font-sans:
     var(--font-jakarta), ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-lora:
+    var(--font-lora), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 
   --animate-spin-slow: spin 8s linear infinite;
 }
 
 :root {
   --theme-olive: #3b4132;
-  --theme-creme: #FBFEF9;
+  --theme-creme: #FAFAFA;
 }
 
 html,

@@ -10,19 +10,19 @@ export default function Experience() {
       opacity: 1,
       transition: { 
         staggerChildren: 0.12,
-        delayChildren: 0.1,
+        delayChildren: 0.08,
       },
     },
   };
 
   const item: Variants = {
-    hidden: { opacity: 0, y: 24 },
+    hidden: { opacity: 0, y: 18 },
     show: { 
       opacity: 1, 
       y: 0, 
       transition: { 
-        duration: 0.7, 
-        ease: [0.215, 0.61, 0.355, 1],
+        duration: 0.6, 
+        ease: [0.22, 1, 0.36, 1],
       } 
     },
   };
@@ -55,8 +55,8 @@ export default function Experience() {
           <motion.h2 
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, ease: [0.215, 0.61, 0.355, 1] }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="text-3xl md:text-5xl font-serif text-olive mb-6"
           >
             The Nivati Experience
@@ -64,8 +64,8 @@ export default function Experience() {
           <motion.div 
             initial={{ width: 0, opacity: 0 }}
             whileInView={{ width: "4rem", opacity: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, delay: 0.15, ease: [0.215, 0.61, 0.355, 1] }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="h-0.5 bg-sage mx-auto" 
           />
         </div>
@@ -75,18 +75,17 @@ export default function Experience() {
           variants={container}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, margin: "-60px" }}
         >
           {features.map((feature, idx) => (
             <motion.div 
               key={idx} 
               variants={item}
-              whileHover={{ y: -6, transition: { duration: 0.3, ease: "easeOut" } }}
-              style={{ willChange: "transform, opacity" }}
-              className="relative group p-8 md:p-10 rounded-2xl md:rounded-3xl bg-linear-to-br from-olive/5 to-transparent border border-olive/10 hover:border-olive/20 hover:shadow-2xl hover:shadow-olive/5 transition-all duration-500 overflow-hidden"
+              whileHover={{ y: -5, transition: { duration: 0.25, ease: "easeOut" } }}
+              className="relative group p-8 md:p-10 rounded-2xl md:rounded-3xl bg-linear-to-br from-olive/5 to-transparent border border-olive/10 hover:border-olive/20 hover:shadow-xl hover:shadow-olive/5 transition-colors duration-300 overflow-hidden"
             >
               {/* Icon Container */}
-              <div className="w-14 h-14 rounded-full bg-white/60 border border-olive/10 flex items-center justify-center mb-8 text-sage group-hover:scale-110 group-hover:bg-sage group-hover:text-white transition-all duration-300 ease-out">
+              <div className="w-14 h-14 rounded-full bg-white/80 border border-olive/10 flex items-center justify-center mb-8 text-sage group-hover:scale-105 group-hover:bg-sage group-hover:text-white transition-all duration-300 ease-out">
                 <feature.icon className="w-6 h-6" />
               </div>
 
@@ -97,7 +96,7 @@ export default function Experience() {
               </p>
               
               {/* Subtle bottom glow line on hover */}
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-sage to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-sage to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </motion.div>
           ))}
         </motion.div>

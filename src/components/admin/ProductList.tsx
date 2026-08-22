@@ -169,7 +169,7 @@ export default function ProductList({
         </div>
 
         {/* Category Filter Chips (Horizontal Scrollable on Mobile) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1 -mx-4 px-4 sm:-mx-0 sm:px-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1 -mx-4 px-4 sm:mx-0 sm:px-0">
           {categories.map((cat) => {
             const isSelected = selectedCategory === cat;
             return (
