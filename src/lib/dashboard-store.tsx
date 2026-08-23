@@ -15,6 +15,8 @@ export interface Sale {
   id: string;
   customerName: string;
   customerEmail: string;
+  customerPhone?: string;
+  customerAddress?: string;
   channel?: "direct" | "website" | "instagram" | "tiktok" | "facebook" | string;
   items: SaleItem[];
   totalAmount: number;
@@ -379,6 +381,8 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
           id: row.id,
           customerName: row.customer_name,
           customerEmail: row.customer_email || "",
+          customerPhone: row.customer_phone || row.phone || "",
+          customerAddress: row.customer_address || row.address || "",
           channel: row.channel || "direct",
           items: Array.isArray(row.items) ? row.items : [],
           totalAmount: Number(row.total_amount),
@@ -652,15 +656,32 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       if (item.entityType === "sale") {
         const sale: Sale = item.data;
         setSales((prev) => [sale, ...prev]);
-        const { error } = await supabase.from("sales").insert([{
+        const payload: Record<string, unknown> = {
           id: sale.id,
           customer_name: sale.customerName,
           customer_email: sale.customerEmail,
+          customer_phone: sale.customerPhone || "",
+          customer_address: sale.customerAddress || "",
+          channel: sale.channel || "direct",
           items: sale.items,
           total_amount: sale.totalAmount,
           status: sale.status,
           sale_date: sale.date,
-        }]);
+        };
+        let { error } = await supabase.from("sales").insert([payload]);
+        if (error && (error.message?.includes("column") || (error as any).code === "42703" || (error as any).code === "PGRST204")) {
+          const fallback = {
+            id: sale.id,
+            customer_name: sale.customerName,
+            customer_email: sale.customerEmail,
+            items: sale.items,
+            total_amount: sale.totalAmount,
+            status: sale.status,
+            sale_date: sale.date,
+          };
+          const res = await supabase.from("sales").insert([fallback]);
+          error = res.error;
+        }
         if (error) throw error;
       } else if (item.entityType === "expense") {
         const expense: Expense = item.data;
@@ -760,15 +781,33 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
 
     try {
       const supabase = createSupabaseBrowserClient();
-      const { error } = await supabase.from("sales").insert([{
+      const payload: Record<string, unknown> = {
         id: saleId,
         customer_name: saleData.customerName,
         customer_email: saleData.customerEmail,
+        customer_phone: saleData.customerPhone || "",
+        customer_address: saleData.customerAddress || "",
+        channel: saleData.channel || "direct",
         items: saleData.items,
         total_amount: totalAmount,
         status: saleData.status,
         sale_date: saleData.date,
-      }]);
+      };
+
+      let { error } = await supabase.from("sales").insert([payload]);
+      if (error && (error.message?.includes("column") || (error as any).code === "42703" || (error as any).code === "PGRST204")) {
+        const fallback = {
+          id: saleId,
+          customer_name: saleData.customerName,
+          customer_email: saleData.customerEmail,
+          items: saleData.items,
+          total_amount: totalAmount,
+          status: saleData.status,
+          sale_date: saleData.date,
+        };
+        const res = await supabase.from("sales").insert([fallback]);
+        error = res.error;
+      }
 
       if (error) {
         console.error("Supabase addSale error:", error);
@@ -795,6 +834,9 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       const payload: Record<string, unknown> = {};
       if (updatedFields.customerName !== undefined) payload.customer_name = updatedFields.customerName;
       if (updatedFields.customerEmail !== undefined) payload.customer_email = updatedFields.customerEmail;
+      if (updatedFields.customerPhone !== undefined) payload.customer_phone = updatedFields.customerPhone;
+      if (updatedFields.customerAddress !== undefined) payload.customer_address = updatedFields.customerAddress;
+      if (updatedFields.channel !== undefined) payload.channel = updatedFields.channel;
       if (updatedFields.items !== undefined) {
         payload.items = updatedFields.items;
         payload.total_amount = updatedFields.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
@@ -802,7 +844,15 @@ export function DashboardStoreProvider({ children }: ProviderProps) {
       if (updatedFields.status !== undefined) payload.status = updatedFields.status;
       if (updatedFields.date !== undefined) payload.sale_date = updatedFields.date;
 
-      const { error } = await supabase.from("sales").update(payload).eq("id", id);
+      let { error } = await supabase.from("sales").update(payload).eq("id", id);
+      if (error && (error.message?.includes("column") || (error as any).code === "42703" || (error as any).code === "PGRST204")) {
+        delete payload.customer_phone;
+        delete payload.customer_address;
+        delete payload.channel;
+        const res = await supabase.from("sales").update(payload).eq("id", id);
+        error = res.error;
+      }
+
       if (error) {
         console.error("Supabase updateSale error:", error);
         throw new Error(error.message || "Failed to update sale in database.");

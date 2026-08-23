@@ -13,7 +13,12 @@ import {
   CheckCircleIcon,
   ClockIcon,
   ChevronUpDownIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  SparklesIcon,
+  PhoneIcon,
+  MapPinIcon,
+  EnvelopeIcon,
+  UserIcon
 } from "@heroicons/react/24/outline";
 import { useDashboardStore, type Sale, type SaleItem } from "@/lib/dashboard-store";
 import type { AdminCatalogProduct } from "@/lib/catalog";
@@ -45,12 +50,16 @@ export default function SalesTab({ catalogProducts }: Props) {
   // Form State
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerAddress, setCustomerAddress] = useState("");
   const [saleChannel, setSaleChannel] = useState<string>("direct");
   const [saleDate, setSaleDate] = useState("");
   const [saleStatus, setSaleStatus] = useState<"pending" | "completed" | "cancelled">("completed");
-  const [saleItems, setSaleItems] = useState<Omit<SaleItem, "productTitle">[]>([]);
+  const [saleItems, setSaleItems] = useState<SaleItem[]>([]);
   
-  // Selected Product for item addition
+  // Item Entry Mode: 'catalog' for dropdown items, 'custom' for manual custom orders
+  const [itemMode, setItemMode] = useState<"catalog" | "custom">("catalog");
+  const [customItemTitle, setCustomItemTitle] = useState("");
   const [itemProductId, setItemProductId] = useState("");
   const [itemQuantity, setItemQuantity] = useState(1);
   const [itemPrice, setItemPrice] = useState(0);
@@ -62,6 +71,8 @@ export default function SalesTab({ catalogProducts }: Props) {
       const matchesSearch = 
         s.customerName.toLowerCase().includes(q) ||
         s.customerEmail.toLowerCase().includes(q) ||
+        (s.customerPhone && s.customerPhone.toLowerCase().includes(q)) ||
+        (s.customerAddress && s.customerAddress.toLowerCase().includes(q)) ||
         s.id.toLowerCase().includes(q) ||
         (s.channel && s.channel.toLowerCase().includes(q)) ||
         s.items.some(
@@ -95,14 +106,22 @@ export default function SalesTab({ catalogProducts }: Props) {
     setEditingSale(null);
     setCustomerName("");
     setCustomerEmail("");
+    setCustomerPhone("");
+    setCustomerAddress("");
     setSaleChannel("direct");
     setSaleDate(new Date().toISOString().split("T")[0]);
     setSaleStatus("completed");
     setSaleItems([]);
+    setItemMode("catalog");
+    setCustomItemTitle("");
     
     if (catalogProducts.length > 0) {
       setItemProductId(catalogProducts[0].id);
       setItemPrice(Number(catalogProducts[0].price));
+      setItemQuantity(1);
+    } else {
+      setItemProductId("");
+      setItemPrice(0);
       setItemQuantity(1);
     }
     setIsEditorOpen(true);
@@ -111,21 +130,33 @@ export default function SalesTab({ catalogProducts }: Props) {
   const handleOpenEditForm = (sale: Sale) => {
     setEditingSale(sale);
     setCustomerName(sale.customerName);
-    setCustomerEmail(sale.customerEmail);
+    setCustomerEmail(sale.customerEmail || "");
+    setCustomerPhone(sale.customerPhone || "");
+    setCustomerAddress(sale.customerAddress || "");
     setSaleChannel(sale.channel || "direct");
     setSaleDate(sale.date);
     setSaleStatus(sale.status);
     setSaleItems(
-      sale.items.map((i) => ({
-        productId: i.productId,
-        quantity: i.quantity,
-        price: i.price,
-      }))
+      sale.items.map((i) => {
+        const prod = catalogProducts.find((p) => p.id === i.productId);
+        return {
+          productId: i.productId,
+          productTitle: i.productTitle || prod?.title || i.productId,
+          quantity: i.quantity,
+          price: i.price,
+        };
+      })
     );
+    setItemMode("catalog");
+    setCustomItemTitle("");
     
     if (catalogProducts.length > 0) {
       setItemProductId(catalogProducts[0].id);
       setItemPrice(Number(catalogProducts[0].price));
+      setItemQuantity(1);
+    } else {
+      setItemProductId("");
+      setItemPrice(0);
       setItemQuantity(1);
     }
     setIsEditorOpen(true);
@@ -140,9 +171,42 @@ export default function SalesTab({ catalogProducts }: Props) {
   };
 
   const handleAddItem = () => {
-    if (!itemProductId || itemQuantity <= 0) return;
+    if (itemQuantity <= 0) return;
     
-    const existingIdx = saleItems.findIndex((i) => i.productId === itemProductId);
+    if (itemMode === "custom") {
+      const trimmedTitle = customItemTitle.trim();
+      if (!trimmedTitle) {
+        alert("Please enter a custom product/item name.");
+        return;
+      }
+      if (itemPrice < 0 || isNaN(itemPrice)) {
+        alert("Please enter a valid price for the custom item.");
+        return;
+      }
+
+      const customId = `custom-${Date.now()}`;
+      setSaleItems((prev) => [
+        ...prev,
+        {
+          productId: customId,
+          productTitle: trimmedTitle,
+          quantity: itemQuantity,
+          price: itemPrice,
+        },
+      ]);
+
+      setCustomItemTitle("");
+      setItemQuantity(1);
+      setItemPrice(0);
+      return;
+    }
+
+    // Catalog Mode
+    if (!itemProductId) return;
+    const catalogProd = catalogProducts.find((p) => p.id === itemProductId);
+    const prodTitle = catalogProd?.title || itemProductId;
+    
+    const existingIdx = saleItems.findIndex((i) => i.productId === itemProductId && i.price === itemPrice);
     if (existingIdx !== -1) {
       const updated = [...saleItems];
       updated[existingIdx].quantity += itemQuantity;
@@ -152,6 +216,7 @@ export default function SalesTab({ catalogProducts }: Props) {
         ...prev,
         {
           productId: itemProductId,
+          productTitle: prodTitle,
           quantity: itemQuantity,
           price: itemPrice,
         },
@@ -172,7 +237,7 @@ export default function SalesTab({ catalogProducts }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (saleItems.length === 0) {
-      alert("Please add at least one candle product to the order.");
+      alert("Please add at least one product or custom item to the order.");
       return;
     }
 
@@ -180,7 +245,7 @@ export default function SalesTab({ catalogProducts }: Props) {
       const catalogProd = catalogProducts.find((p) => p.id === item.productId);
       return {
         productId: item.productId,
-        productTitle: catalogProd?.title || item.productId,
+        productTitle: item.productTitle || catalogProd?.title || item.productId,
         quantity: item.quantity,
         price: item.price,
       };
@@ -190,6 +255,8 @@ export default function SalesTab({ catalogProducts }: Props) {
       updateSale(editingSale.id, {
         customerName,
         customerEmail,
+        customerPhone,
+        customerAddress,
         channel: saleChannel,
         date: saleDate,
         status: saleStatus,
@@ -199,6 +266,8 @@ export default function SalesTab({ catalogProducts }: Props) {
       addSale({
         customerName,
         customerEmail,
+        customerPhone,
+        customerAddress,
         channel: saleChannel,
         date: saleDate,
         status: saleStatus,
@@ -249,42 +318,42 @@ export default function SalesTab({ catalogProducts }: Props) {
       {/* 2. SALES SUMMARY CARDS */}
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         
-        {/* Gross Revenue */}
-        <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
+        {/* Card 1: Gross Sales (Dark Green Highlight) */}
+        <div className="relative overflow-hidden rounded-3xl sm:rounded-[28px] bg-linear-to-br from-[#242c1e] via-[#2c3725] to-[#384630] p-6 text-white shadow-xl shadow-[#283322]/15">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">Gross Revenue</span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#16a34a] text-white shadow-sm shadow-emerald-600/20">
-              <CheckCircleIcon className="h-5 w-5 text-white" />
+            <span className="text-xs font-semibold text-white/80 tracking-wide">Gross Sales Revenue</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#283322] shadow-sm">
+              <ShoppingBagIcon className="h-5 w-5 text-[#283322]" />
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-2xl sm:text-3xl font-bold font-sans text-[#222a1d]">
+            <span className="text-2xl sm:text-3xl font-bold font-serif tracking-tight">
               Rs {summaryMetrics.totalGross.toLocaleString()}
             </span>
-            <p className="mt-2 text-xs text-[#222a1d]/40">From all paid invoice settlements</p>
+            <p className="mt-2 text-xs text-white/60">Completed orders to date</p>
           </div>
         </div>
 
-        {/* Total Orders */}
+        {/* Total Orders Count */}
         <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">Total Invoices</span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#283322] text-white shadow-sm shadow-[#283322]/20">
-              <DocumentTextIcon className="h-5 w-5 text-white" />
+            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">Total Orders</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#283322] text-white shadow-sm">
+              <CheckCircleIcon className="h-5 w-5 text-white" />
             </div>
           </div>
           <div className="mt-4">
             <span className="text-2xl sm:text-3xl font-bold font-sans text-[#222a1d]">
               {summaryMetrics.totalOrders}
             </span>
-            <p className="mt-2 text-xs text-[#222a1d]/40">Logged in live database</p>
+            <p className="mt-2 text-xs text-[#222a1d]/40">All lifetime logged entries</p>
           </div>
         </div>
 
-        {/* Pending Invoices */}
+        {/* Pending Orders Count */}
         <div className="rounded-3xl sm:rounded-[28px] bg-white p-6 border border-[#e3e8e2] shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">Pending Settlement</span>
+            <span className="text-xs font-semibold text-[#222a1d]/60 tracking-wide">Pending Invoices</span>
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#d97706] text-white shadow-sm shadow-amber-600/20">
               <ClockIcon className="h-5 w-5 text-white" />
             </div>
@@ -293,7 +362,7 @@ export default function SalesTab({ catalogProducts }: Props) {
             <span className="text-2xl sm:text-3xl font-bold font-sans text-[#222a1d]">
               {summaryMetrics.pendingCount}
             </span>
-            <p className="mt-2 text-xs text-[#222a1d]/40">Awaiting payment verification</p>
+            <p className="mt-2 text-xs text-[#222a1d]/40">Awaiting payment or delivery</p>
           </div>
         </div>
 
@@ -325,7 +394,7 @@ export default function SalesTab({ catalogProducts }: Props) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by customer, invoice ID, product, or channel..."
+            placeholder="Search by customer, phone, address, invoice ID, product..."
             className="w-full rounded-full border border-[#e3e8e2] bg-[#f8faf8] pl-10 pr-4 py-2 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white transition-all"
           />
         </div>
@@ -352,7 +421,7 @@ export default function SalesTab({ catalogProducts }: Props) {
       {/* 4. SALES LEDGER: MOBILE SPACIOUS CARDS & DESKTOP TABLE */}
       <div className="rounded-3xl sm:rounded-[28px] bg-white p-4.5 sm:p-7 border border-[#e3e8e2] shadow-sm">
         
-        {/* MOBILE CARD VIEW (< 768px): Click to Expand (1:1 details) / Click to Minimize (Flat 16:9) */}
+        {/* MOBILE CARD VIEW (< 768px): Click to Expand / Click to Minimize */}
         <div className="block md:hidden space-y-2.5">
           {filteredSales.map((sale) => {
             const channelInfo = CHANNEL_BADGES[sale.channel || "direct"] || CHANNEL_BADGES.direct;
@@ -369,7 +438,7 @@ export default function SalesTab({ catalogProducts }: Props) {
                     : "border-[#e3e8e2] bg-[#f8faf8] p-3.5 space-y-2 shadow-2xs hover:border-[#283322]/30"
                 }`}
               >
-                {/* 1. TOP SUMMARY BAR (Always visible, minimal flat view) */}
+                {/* 1. TOP SUMMARY BAR (Always visible) */}
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5 min-w-0 flex-1">
                     <span className="font-mono font-bold text-xs text-[#283322] shrink-0">
@@ -402,18 +471,30 @@ export default function SalesTab({ catalogProducts }: Props) {
                   </div>
                 </div>
 
-                {/* 2. EXPANDED VIEW (~1:1 Full Detailed Mode) */}
+                {/* 2. EXPANDED VIEW Full Detailed Mode */}
                 {isExpanded && (
                   <div className="space-y-4 pt-3 border-t border-[#eef2ee] animate-fadeIn" onClick={(e) => e.stopPropagation()}>
                     
                     {/* Customer & Timestamp Info */}
-                    <div className="flex items-center justify-between gap-2 bg-[#f8faf8] p-3 rounded-xl border border-[#e8ede7]">
-                      <div>
+                    <div className="flex items-start justify-between gap-2 bg-[#f8faf8] p-3 rounded-xl border border-[#e8ede7]">
+                      <div className="space-y-0.5">
                         <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Customer</span>
                         <h4 className="font-bold text-xs sm:text-sm text-[#222a1d]">{sale.customerName}</h4>
-                        <p className="text-[10px] text-[#222a1d]/50">{sale.customerEmail || "Walk-in / In-store"}</p>
+                        {sale.customerPhone && (
+                          <p className="text-[10px] font-mono text-[#222a1d]/75 flex items-center gap-1">
+                            <span>📞</span> {sale.customerPhone}
+                          </p>
+                        )}
+                        {sale.customerAddress && (
+                          <p className="text-[10px] text-[#222a1d]/70 flex items-center gap-1">
+                            <span>📍</span> {sale.customerAddress}
+                          </p>
+                        )}
+                        {sale.customerEmail && (
+                          <p className="text-[10px] text-[#222a1d]/50">{sale.customerEmail}</p>
+                        )}
                       </div>
-                      <div className="text-right">
+                      <div className="text-right shrink-0">
                         <span className="text-[9px] font-bold text-[#222a1d]/40 uppercase tracking-wider block">Date</span>
                         <p className="font-mono text-xs text-[#222a1d] font-semibold">{sale.date}</p>
                         <span className={`inline-block rounded-full px-2 py-0.2 text-[8px] font-bold mt-0.5 ${channelInfo.bg} ${channelInfo.text}`}>
@@ -432,19 +513,25 @@ export default function SalesTab({ catalogProducts }: Props) {
                           const catalogProd = catalogProducts.find((p) => p.id === item.productId);
                           const title = item.productTitle || catalogProd?.title || item.productId;
                           const img = catalogProd?.img || "";
+                          const isCustom = !catalogProd || item.productId.startsWith("custom-");
 
                           return (
                             <div key={idx} className="flex items-center justify-between pt-2 first:pt-0">
                               <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-white border border-[#e8ede7]">
+                                <div className="h-9 w-9 shrink-0 overflow-hidden rounded-lg bg-white border border-[#e8ede7] flex items-center justify-center">
                                   {img ? (
                                     <img src={img} alt={title} className="h-full w-full object-cover" />
                                   ) : (
-                                    <div className="h-full w-full flex items-center justify-center text-xs">🕯️</div>
+                                    <span className="text-xs">{isCustom ? "✨" : "🕯️"}</span>
                                   )}
                                 </div>
                                 <div className="min-w-0">
-                                  <p className="font-semibold text-xs text-[#222a1d] truncate max-w-40">{title}</p>
+                                  <div className="flex items-center gap-1.5">
+                                    {isCustom && (
+                                      <span className="text-[8px] font-bold bg-amber-100 text-amber-900 px-1 rounded shrink-0">Custom</span>
+                                    )}
+                                    <p className="font-semibold text-xs text-[#222a1d] truncate max-w-40">{title}</p>
+                                  </div>
                                   <p className="text-[10px] font-mono text-[#222a1d]/50">
                                     {item.quantity} × Rs {item.price.toLocaleString()}
                                   </p>
@@ -488,12 +575,6 @@ export default function SalesTab({ catalogProducts }: Props) {
               </div>
             );
           })}
-
-          {filteredSales.length === 0 && (
-            <div className="py-12 text-center text-[#222a1d]/40 font-serif">
-              No sales records found matching filter criteria.
-            </div>
-          )}
         </div>
 
         {/* DESKTOP DATA TABLE (>= 768px): Full wide spreadsheet table */}
@@ -530,7 +611,18 @@ export default function SalesTab({ catalogProducts }: Props) {
                     {/* Customer */}
                     <td className="py-4.5 sm:py-5">
                       <div className="font-bold text-[#222a1d]">{sale.customerName}</div>
-                      <div className="text-[10px] text-[#222a1d]/45">{sale.customerEmail || "Walk-in / In-store"}</div>
+                      {sale.customerPhone && (
+                        <div className="text-[10px] text-[#222a1d]/75 font-mono">📞 {sale.customerPhone}</div>
+                      )}
+                      {sale.customerAddress && (
+                        <div className="text-[10px] text-[#222a1d]/65 truncate max-w-44">📍 {sale.customerAddress}</div>
+                      )}
+                      {sale.customerEmail && (
+                        <div className="text-[10px] text-[#222a1d]/45">{sale.customerEmail}</div>
+                      )}
+                      {!sale.customerPhone && !sale.customerEmail && !sale.customerAddress && (
+                        <div className="text-[10px] text-[#222a1d]/45">Walk-in / In-store</div>
+                      )}
                     </td>
 
                     {/* Channel Source Badge */}
@@ -540,27 +632,33 @@ export default function SalesTab({ catalogProducts }: Props) {
                       </span>
                     </td>
 
-                    {/* Products Ordered (All items listed separately with thumbnails) */}
+                    {/* Products Ordered */}
                     <td className="py-4.5 sm:py-5">
                       <div className="space-y-2 min-w-48 py-0.5">
                         {sale.items.map((item, idx) => {
                           const catalogProd = catalogProducts.find((p) => p.id === item.productId);
                           const title = item.productTitle || catalogProd?.title || item.productId;
                           const img = catalogProd?.img || "";
+                          const isCustom = !catalogProd || item.productId.startsWith("custom-");
 
                           return (
                             <div key={idx} className="flex items-center gap-2">
-                              <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[#f1f4f1] border border-[#e8ede7]">
+                              <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-[#f1f4f1] border border-[#e8ede7] flex items-center justify-center">
                                 {img ? (
                                   <img src={img} alt={title} className="h-full w-full object-cover" />
                                 ) : (
-                                  <div className="h-full w-full flex items-center justify-center text-[10px]">🕯️</div>
+                                  <span className="text-[10px]">{isCustom ? "✨" : "🕯️"}</span>
                                 )}
                               </div>
                               <div className="min-w-0">
-                                <p className="font-semibold text-xs text-[#222a1d] truncate max-w-44">
-                                  {title}
-                                </p>
+                                <div className="flex items-center gap-1">
+                                  {isCustom && (
+                                    <span className="text-[8px] font-bold bg-amber-100 text-amber-900 px-1 rounded shrink-0">Custom</span>
+                                  )}
+                                  <p className="font-semibold text-xs text-[#222a1d] truncate max-w-44">
+                                    {title}
+                                  </p>
+                                </div>
                                 <p className="text-[10px] font-mono text-[#222a1d]/50">
                                   {item.quantity} × Rs {item.price.toLocaleString()}
                                 </p>
@@ -601,175 +699,199 @@ export default function SalesTab({ catalogProducts }: Props) {
 
                     {/* Actions */}
                     <td className="py-4.5 sm:py-5 pr-2 text-right">
-                      <div className="flex items-center justify-end gap-1 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center justify-end gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => { setSelectedSale(sale); setIsInvoiceOpen(true); }}
-                          className="p-1.5 rounded-lg hover:bg-[#f1f4f1] text-[#222a1d]/60 hover:text-[#222a1d] transition-colors cursor-pointer"
-                          title="View Invoice"
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f1f4f1] text-[#222a1d]/70 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
+                          title="View / Print Invoice"
                         >
                           <DocumentTextIcon className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleOpenEditForm(sale)}
-                          className="p-1.5 rounded-lg hover:bg-[#f1f4f1] text-[#222a1d]/60 hover:text-[#222a1d] transition-colors cursor-pointer"
-                          title="Edit Order"
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f1f4f1] text-[#222a1d]/70 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
+                          title="Edit Sale Record"
                         >
-                          <PencilIcon className="h-4 w-4" />
+                          <PencilIcon className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteSale(sale.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-red-600 transition-colors cursor-pointer"
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-colors cursor-pointer"
                           title="Move to Recycle Bin"
                         >
-                          <TrashIcon className="h-4 w-4" />
+                          <TrashIcon className="h-3.5 w-3.5" />
                         </button>
                       </div>
                     </td>
+
                   </tr>
                 );
               })}
-
-              {filteredSales.length === 0 && (
-                <tr>
-                  <td colSpan={9} className="py-12 text-center text-[#222a1d]/40 font-serif">
-                    No sales records found matching filter criteria.
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
+
+          {filteredSales.length === 0 && (
+            <div className="py-12 text-center text-[#222a1d]/40 font-serif">
+              No sales records found matching filter criteria.
+            </div>
+          )}
         </div>
+
       </div>
 
-      {/* 5. HIGH-FIDELITY PRINTABLE INVOICE MODAL (Matches Reference Layout) */}
+      {/* 5. INVOICE / RECEIPT MODAL */}
       {isInvoiceOpen && selectedSale && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-2 sm:p-4 md:p-6 overflow-y-auto overscroll-contain">
-          <div 
-            className="fixed inset-0 no-print" 
-            onClick={() => setIsInvoiceOpen(false)} 
-          />
-          
-          <div className="relative my-auto w-full max-w-2xl max-h-[92dvh] bg-white shadow-2xl rounded-2xl sm:rounded-4xl border border-[#e3e8e2] overflow-hidden z-10 flex flex-col animate-scale-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-2 sm:p-4 overflow-y-auto overscroll-contain print:p-0 print:bg-white print:static">
+          <div className="relative w-full max-w-2xl max-h-[92dvh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-[#fbfdfa] p-4 sm:p-10 shadow-2xl border border-[#e3e8e2] print:max-w-none print:shadow-none print:border-none print:p-8 print:max-h-none print:overflow-visible">
             
-            {/* Modal Control Bar (Screen-only, Hidden in Print) */}
-            <div className="no-print flex items-center justify-between px-4 sm:px-8 py-3 bg-[#f8faf8] border-b border-[#eef2ee] shrink-0">
+            {/* Modal Controls (Hidden in Print) */}
+            <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4 mb-6 print:hidden">
               <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#16a34a]" />
-                <span className="font-mono text-xs font-bold text-[#283322]">
+                <span className="text-xs font-mono font-bold text-[#283322] bg-[#f1f4f1] px-2.5 py-1 rounded-full">
                   Invoice {selectedSale.id}
+                </span>
+                <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider text-white ${
+                  selectedSale.status === "completed"
+                    ? "bg-[#15803d]"
+                    : selectedSale.status === "pending"
+                    ? "bg-[#d97706]"
+                    : "bg-[#dc2626]"
+                }`}>
+                  {selectedSale.status}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <button 
+                <button
                   onClick={handlePrint}
-                  className="flex items-center gap-1.5 rounded-full bg-[#283322] px-3.5 sm:px-4 py-1.5 text-xs font-bold text-white hover:bg-[#34422c] transition-colors cursor-pointer shadow-xs"
+                  className="flex items-center gap-1.5 rounded-full bg-[#283322] px-3.5 py-1.5 text-xs font-bold text-white hover:bg-[#34422c] cursor-pointer shadow-xs"
                 >
                   <PrinterIcon className="h-3.5 w-3.5" />
-                  <span className="hidden xs:inline">Print</span>
-                  <span className="xs:hidden">Print</span>
+                  <span>Print Receipt</span>
                 </button>
-                <button 
+                <button
                   onClick={() => setIsInvoiceOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-[#e3e8e2] text-[#222a1d]/60 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f1f4f1] text-[#222a1d]/60 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
                 >
                   <XMarkIcon className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            {/* Printable Document Canvas */}
-            <div id="printable-invoice" className="bg-white p-4 sm:p-8 md:p-12 relative overflow-y-auto flex-1 flex flex-col justify-between">
+            {/* PRINTABLE RECEIPT TEMPLATE (NIVATI BRANDING) */}
+            <div className="print:m-0 space-y-6 sm:space-y-8">
               
-              <div>
-                {/* 1. Header: Logo & Invoice Number */}
-                <div className="flex items-start justify-between gap-3">
-                  {/* Brand Logo from Original Website */}
-                  <div className="flex items-center gap-2.5 sm:gap-3.5">
-                    <img 
-                      src="/images/logo.png" 
-                      alt="Nivati Logo" 
-                      className="h-10 w-10 sm:h-16 sm:w-16 object-contain" 
-                    />
-                    <div>
-                      <span className="font-serif font-black tracking-widest text-lg sm:text-2xl text-[#222a1d] block leading-none">
-                        NIVATI
-                      </span>
-                      <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-[#222a1d]/60 block mt-1">
-                        The Flame Craft
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Invoice Number */}
-                  <div className="text-right pt-1">
-                    <span className="font-mono text-[11px] sm:text-sm font-bold tracking-widest text-[#222a1d]">
-                      NO. {selectedSale.id.replace("#", "").padStart(6, "0")}
+              {/* 1. Header with Logo & Brand Name */}
+              <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4 sm:pb-6">
+                <div className="flex items-center gap-2.5 sm:gap-3.5">
+                  <img 
+                    src="/images/logo.png" 
+                    alt="Nivati Logo" 
+                    className="h-10 w-10 sm:h-16 sm:w-16 object-contain" 
+                  />
+                  <div>
+                    <span className="font-serif font-black tracking-widest text-lg sm:text-2xl text-[#222a1d] block leading-none">
+                      NIVATI
+                    </span>
+                    <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.25em] text-[#222a1d]/60 block mt-1">
+                      The Flame Craft
                     </span>
                   </div>
                 </div>
 
-                {/* 2. Main Title (Refined size) */}
-                <h1 className="font-sans font-black text-xl sm:text-3xl md:text-4xl tracking-tight text-[#222a1d] uppercase mt-4 sm:mt-8 mb-2">
-                  INVOICE
-                </h1>
+                {/* Invoice Number */}
+                <div className="text-right pt-1">
+                  <span className="font-mono text-[11px] sm:text-sm font-bold tracking-widest text-[#222a1d]">
+                    NO. {selectedSale.id.replace("#", "").padStart(6, "0")}
+                  </span>
+                </div>
+              </div>
 
-                {/* 3. Date */}
-                <p className="text-xs sm:text-sm text-[#222a1d] mb-4 sm:mb-8 font-normal">
-                  <span className="font-bold">Date:</span>{" "}
-                  {selectedSale.date ? selectedSale.date : new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}
-                </p>
+              {/* 2. Main Title */}
+              <h1 className="font-sans font-black text-xl sm:text-3xl md:text-4xl tracking-tight text-[#222a1d] uppercase mt-4 sm:mt-8 mb-2">
+                INVOICE
+              </h1>
 
-                {/* 4. Billed To & From Two-Column Section */}
-                <div className="grid grid-cols-2 gap-3 sm:gap-12 text-xs text-[#222a1d] mb-6 sm:mb-8">
-                  {/* Billed to */}
-                  <div className="space-y-0.5 sm:space-y-1 min-w-0">
-                    <h4 className="font-bold text-[11px] sm:text-sm text-[#222a1d] uppercase tracking-wide">
-                      Billed to:
-                    </h4>
-                    <p className="font-bold text-xs sm:text-sm text-[#222a1d] pt-0.5 truncate">
-                      {selectedSale.customerName}
+              {/* 3. Date */}
+              <p className="text-xs sm:text-sm text-[#222a1d] mb-4 sm:mb-8 font-normal">
+                <span className="font-bold">Date:</span>{" "}
+                {selectedSale.date ? selectedSale.date : new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}
+              </p>
+
+              {/* 4. Billed To & From Two-Column Section */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-12 text-xs text-[#222a1d] mb-6 sm:mb-8">
+                {/* Billed to */}
+                <div className="space-y-0.5 sm:space-y-1 min-w-0">
+                  <h4 className="font-bold text-[11px] sm:text-sm text-[#222a1d] uppercase tracking-wide">
+                    Billed to:
+                  </h4>
+                  <p className="font-bold text-xs sm:text-sm text-[#222a1d] pt-0.5 truncate">
+                    {selectedSale.customerName}
+                  </p>
+                  <p className="text-[#222a1d]/70 text-[11px] sm:text-xs truncate">
+                    {selectedSale.channel ? `Order via ${CHANNEL_BADGES[selectedSale.channel]?.label || selectedSale.channel}` : "Direct Customer"}
+                  </p>
+                  {selectedSale.customerPhone && (
+                    <p className="text-[#222a1d]/85 text-[10px] sm:text-xs font-mono truncate">
+                      Tel: {selectedSale.customerPhone}
                     </p>
-                    <p className="text-[#222a1d]/70 text-[11px] sm:text-xs truncate">
-                      {selectedSale.channel ? `Order via ${CHANNEL_BADGES[selectedSale.channel]?.label || selectedSale.channel}` : "Direct Customer"}
+                  )}
+                  {selectedSale.customerAddress && (
+                    <p className="text-[#222a1d]/80 text-[10px] sm:text-xs truncate">
+                      Addr: {selectedSale.customerAddress}
                     </p>
+                  )}
+                  {selectedSale.customerEmail && (
                     <p className="text-[#222a1d]/60 text-[10px] sm:text-xs font-mono truncate">
-                      {selectedSale.customerEmail || "walkin@customer.com"}
+                      {selectedSale.customerEmail}
                     </p>
-                  </div>
-
-                  {/* From */}
-                  <div className="space-y-0.5 sm:space-y-1 min-w-0">
-                    <h4 className="font-bold text-[11px] sm:text-sm text-[#222a1d] uppercase tracking-wide">
-                      From:
-                    </h4>
-                    <p className="font-bold text-xs sm:text-sm text-[#222a1d] pt-0.5">
-                      Nivati
-                    </p>
-                    <p className="text-[#222a1d]/70 text-[11px] sm:text-xs">
-                      Pokhara, Nepal
-                    </p>
-                    <p className="text-[#222a1d]/60 text-[10px] sm:text-xs font-mono truncate">
-                      hello@nivaticandles.com
-                    </p>
-                  </div>
+                  )}
                 </div>
 
-                {/* 5. Items Ordered Table */}
-                <div className="overflow-x-auto w-full rounded-md border border-[#eef2ee] sm:border-0">
-                  <table className="w-full text-left text-xs border-collapse min-w-70">
-                    <thead>
-                      <tr className="bg-[#eef2ee] text-[#222a1d] text-[10px] sm:text-[11px] font-bold">
-                        <th className="py-2.5 px-2.5 sm:px-3.5 font-bold">Item</th>
-                        <th className="py-2.5 px-2 sm:px-3.5 text-center font-bold">Qty</th>
-                        <th className="py-2.5 px-2 sm:px-3.5 text-right font-bold">Price</th>
-                        <th className="py-2.5 px-2 sm:px-3.5 text-right font-bold">Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#f2f6f1]">
-                      {selectedSale.items.map((item, idx) => (
+                {/* From */}
+                <div className="space-y-0.5 sm:space-y-1 min-w-0">
+                  <h4 className="font-bold text-[11px] sm:text-sm text-[#222a1d] uppercase tracking-wide">
+                    From:
+                  </h4>
+                  <p className="font-bold text-xs sm:text-sm text-[#222a1d] pt-0.5">
+                    Nivati
+                  </p>
+                  <p className="text-[#222a1d]/70 text-[11px] sm:text-xs">
+                    Pokhara, Nepal
+                  </p>
+                  <p className="text-[#222a1d]/60 text-[10px] sm:text-xs font-mono truncate">
+                    hello@nivaticandles.com
+                  </p>
+                </div>
+              </div>
+
+              {/* 5. Items Ordered Table */}
+              <div className="overflow-x-auto w-full rounded-md border border-[#eef2ee] sm:border-0">
+                <table className="w-full text-left text-xs border-collapse min-w-70">
+                  <thead>
+                    <tr className="bg-[#eef2ee] text-[#222a1d] text-[10px] sm:text-[11px] font-bold">
+                      <th className="py-2.5 px-2.5 sm:px-3.5 font-bold">Item</th>
+                      <th className="py-2.5 px-2 sm:px-3.5 text-center font-bold">Qty</th>
+                      <th className="py-2.5 px-2 sm:px-3.5 text-right font-bold">Price</th>
+                      <th className="py-2.5 px-2 sm:px-3.5 text-right font-bold">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#f2f6f1]">
+                    {selectedSale.items.map((item, idx) => {
+                      const catalogProd = catalogProducts.find((p) => p.id === item.productId);
+                      const isCustom = !catalogProd || item.productId.startsWith("custom-");
+                      const title = item.productTitle || catalogProd?.title || item.productId;
+
+                      return (
                         <tr key={idx} className="hover:bg-[#fafbfa]">
                           <td className="py-2.5 sm:py-3 px-2.5 sm:px-3.5 font-semibold text-[#222a1d]">
-                            {item.productTitle}
+                            <div className="flex items-center gap-1.5">
+                              {isCustom && (
+                                <span className="text-[8px] font-bold bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded uppercase tracking-wider print:border print:border-amber-300">
+                                  Custom
+                                </span>
+                              )}
+                              <span>{title}</span>
+                            </div>
                           </td>
                           <td className="py-2.5 sm:py-3 px-2 sm:px-3.5 text-center font-mono font-medium text-[#222a1d]">
                             {item.quantity}
@@ -781,36 +903,36 @@ export default function SalesTab({ catalogProducts }: Props) {
                             Rs {(item.quantity * item.price).toLocaleString()}
                           </td>
                         </tr>
-                      ))}
-                    </tbody>
-                    <tfoot>
-                      <tr className="border-t-2 border-[#e3e8e2]">
-                        <td colSpan={2} className="py-3 px-2.5 sm:px-3.5"></td>
-                        <td className="py-3 px-2 sm:px-3.5 text-right font-bold text-xs sm:text-sm text-[#222a1d]">
-                          Total
-                        </td>
-                        <td className="py-3 px-2 sm:px-3.5 text-right font-mono font-black text-sm sm:text-base text-[#283322] whitespace-nowrap">
-                          Rs {selectedSale.totalAmount.toLocaleString()}
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-
-                {/* 6. Payment Method & Note */}
-                <div className="mt-6 sm:mt-8 space-y-1 text-xs text-[#222a1d]">
-                  <p>
-                    <span className="font-bold">Payment method:</span>{" "}
-                    <span className="capitalize">{selectedSale.status === "completed" ? "Cash / Card" : selectedSale.status === "pending" ? "Pending" : "Cancelled"}</span>
-                  </p>
-                  <p>
-                    <span className="font-bold">Note:</span> Thank you for choosing us!
-                  </p>
-                </div>
+                      );
+                    })}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t-2 border-[#e3e8e2]">
+                      <td colSpan={2} className="py-3 px-2.5 sm:px-3.5"></td>
+                      <td className="py-3 px-2 sm:px-3.5 text-right font-bold text-xs sm:text-sm text-[#222a1d]">
+                        Total
+                      </td>
+                      <td className="py-3 px-2 sm:px-3.5 text-right font-mono font-black text-sm sm:text-base text-[#283322] whitespace-nowrap">
+                        Rs {selectedSale.totalAmount.toLocaleString()}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
 
-              {/* 7. Bottom Decorative Organic Wavy Curves (Website Green & Sage Theme) */}
-              <div className="relative mt-8 sm:mt-16 -mx-4 sm:-mx-12 -mb-4 sm:-mb-12 overflow-hidden h-16 sm:h-32 pointer-events-none">
+              {/* 6. Payment Method & Note */}
+              <div className="mt-6 sm:mt-8 space-y-1 text-xs text-[#222a1d]">
+                <p>
+                  <span className="font-bold">Payment method:</span>{" "}
+                  <span className="capitalize">{selectedSale.status === "completed" ? "Cash / Card / Online Transfer" : selectedSale.status === "pending" ? "Pending" : "Cancelled"}</span>
+                </p>
+                <p>
+                  <span className="font-bold">Note:</span> Thank you for choosing Nivati!
+                </p>
+              </div>
+
+              {/* 7. Bottom Decorative Curves */}
+              <div className="relative mt-8 sm:mt-16 -mx-4 sm:-mx-10 -mb-4 sm:-mb-10 overflow-hidden h-16 sm:h-28 pointer-events-none print:hidden">
                 <svg viewBox="0 0 500 150" preserveAspectRatio="none" className="h-full w-full">
                   <path 
                     d="M-20,60 C120,160 300,10 520,70 L520,150 L-20,150 Z" 
@@ -831,212 +953,358 @@ export default function SalesTab({ catalogProducts }: Props) {
 
       {/* 6. CREATE / EDIT INVOICE RECORD MODAL */}
       {isEditorOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto overscroll-contain">
-          <div className="my-auto w-full max-w-xl max-h-[92dvh] overflow-y-auto rounded-2xl sm:rounded-[28px] bg-white p-4 sm:p-7 shadow-2xl border border-[#e3e8e2]">
+        <div className="fixed inset-0 z-50 flex sm:items-center justify-center bg-black/50 backdrop-blur-sm sm:p-4 overflow-y-auto overscroll-contain">
+          <div className="w-full h-full sm:h-auto sm:max-h-[92dvh] sm:max-w-xl overflow-y-auto rounded-none sm:rounded-[28px] bg-white p-3.5 sm:p-7 shadow-2xl border-0 sm:border sm:border-[#e3e8e2] flex flex-col justify-between">
             
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
-              <h3 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d]">
-                {editingSale ? `Edit Invoice ${editingSale.id}` : "New Sale Entry"}
-              </h3>
-              <button 
-                onClick={() => setIsEditorOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f8faf8] text-[#222a1d]/50 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
-              >
-                <XMarkIcon className="h-4 w-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="mt-5 space-y-4 sm:space-y-5">
-              
-              {/* Customer Inputs */}
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Customer Name *</span>
-                  <input
-                    type="text"
-                    required
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
-                    placeholder="Aarav Sharma"
-                  />
-                </label>
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Customer Email (Optional)</span>
-                  <input
-                    type="email"
-                    value={customerEmail}
-                    onChange={(e) => setCustomerEmail(e.target.value)}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
-                    placeholder="aarav@example.com (optional)"
-                  />
-                </label>
+            <div>
+              {/* Modal Header */}
+              <div className="flex items-center justify-between border-b border-[#eef2ee] pb-2.5 sm:pb-4">
+                <div>
+                  <h3 className="text-base sm:text-xl font-serif font-bold text-[#222a1d]">
+                    {editingSale ? `Edit Invoice ${editingSale.id}` : "New Sale Entry"}
+                  </h3>
+                  <p className="text-[10px] sm:text-[11px] text-[#222a1d]/50 mt-0.5">
+                    Record retail purchases, custom client orders & direct sales
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setIsEditorOpen(false)}
+                  className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-[#f8faf8] text-[#222a1d]/50 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
+                >
+                  <XMarkIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </button>
               </div>
 
-              {/* Order Date, Channel Source & Payment Status */}
-              <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Order Date *</span>
-                  <input
-                    type="date"
-                    required
-                    value={saleDate}
-                    onChange={(e) => setSaleDate(e.target.value)}
-                    className="w-full max-w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] font-mono outline-none focus:border-[#283322]/40 focus:bg-white box-border appearance-none"
-                  />
-                </label>
+              <form onSubmit={handleSubmit} id="sales-entry-form" className="mt-3 sm:mt-5 space-y-3 sm:space-y-4">
                 
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Order Channel *</span>
-                  <select
-                    value={saleChannel}
-                    onChange={(e) => setSaleChannel(e.target.value)}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
-                  >
-                    <option value="direct">Direct / In-Person</option>
-                    <option value="website">Website</option>
-                    <option value="instagram">Instagram</option>
-                    <option value="tiktok">TikTok</option>
-                    <option value="facebook">Facebook</option>
-                  </select>
-                </label>
+                {/* Customer & Contact Details */}
+                <div className="space-y-2 sm:space-y-3 bg-[#f8faf8] p-2.5 sm:p-4 rounded-xl sm:rounded-2xl border border-[#e8ede7]">
+                  <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60 flex items-center gap-1">
+                    <UserIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#283322]" />
+                    Customer & Contact Information
+                  </span>
 
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Payment Status</span>
-                  <select
-                    value={saleStatus}
-                    onChange={(e) => setSaleStatus(e.target.value as "pending" | "completed" | "cancelled")}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
-                  >
-                    <option value="completed">Completed / Paid</option>
-                    <option value="pending">Pending Payment</option>
-                    <option value="cancelled">Cancelled / Void</option>
-                  </select>
-                </label>
-              </div>
+                  <div className="grid gap-2 sm:gap-3 sm:grid-cols-2">
+                    <label className="block min-w-0">
+                      <span className="mb-1 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Customer Name *</span>
+                      <input
+                        type="text"
+                        required
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs text-[#222a1d] outline-none focus:border-[#283322]/40"
+                        placeholder="Aarav Sharma"
+                      />
+                    </label>
 
-              {/* Items Picker and Listing */}
-              <div className="border-t border-[#eef2ee] pt-4 space-y-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60 block">
-                  Add Candle Products
-                </span>
-                
-                {/* Responsive Item Adder Row */}
-                <div className="space-y-2">
+                    <label className="block min-w-0">
+                      <span className="mb-1 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Phone Number (Optional)</span>
+                      <input
+                        type="tel"
+                        value={customerPhone}
+                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40"
+                        placeholder="+977 9801234567"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="grid gap-2 sm:gap-3 sm:grid-cols-2">
+                    <label className="block min-w-0">
+                      <span className="mb-1 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Customer Email (Optional)</span>
+                      <input
+                        type="email"
+                        value={customerEmail}
+                        onChange={(e) => setCustomerEmail(e.target.value)}
+                        className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs text-[#222a1d] outline-none focus:border-[#283322]/40"
+                        placeholder="aarav@example.com (optional)"
+                      />
+                    </label>
+
+                    <label className="block min-w-0">
+                      <span className="mb-1 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Delivery / Shipping Address (Optional)</span>
+                      <input
+                        type="text"
+                        value={customerAddress}
+                        onChange={(e) => setCustomerAddress(e.target.value)}
+                        className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs text-[#222a1d] outline-none focus:border-[#283322]/40"
+                        placeholder="Lakeside, Ward 6, Pokhara"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {/* Order Date, Channel Source & Payment Status */}
+                <div className="grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-3">
                   <label className="block min-w-0">
-                    <span className="mb-1 block text-[9px] font-bold text-[#222a1d]/40">Product</span>
+                    <span className="mb-1 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Order Date *</span>
+                    <input
+                      type="date"
+                      required
+                      value={saleDate}
+                      onChange={(e) => setSaleDate(e.target.value)}
+                      className="w-full max-w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2.5 sm:px-3.5 py-1.5 sm:py-2.5 text-[11px] sm:text-xs text-[#222a1d] font-mono outline-none focus:border-[#283322]/40 focus:bg-white box-border appearance-none"
+                    />
+                  </label>
+                  
+                  <label className="block min-w-0">
+                    <span className="mb-1 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Order Channel *</span>
                     <select
-                      value={itemProductId}
-                      onChange={(e) => handleProductChange(e.target.value)}
-                      className="w-full rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-3 py-2 text-xs text-[#222a1d] outline-none cursor-pointer truncate"
+                      value={saleChannel}
+                      onChange={(e) => setSaleChannel(e.target.value)}
+                      className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2.5 sm:px-3.5 py-1.5 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
                     >
-                      {catalogProducts.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.title} (Rs {Number(p.price).toLocaleString()})
-                        </option>
-                      ))}
+                      <option value="direct">Direct / In-Person</option>
+                      <option value="website">Website</option>
+                      <option value="instagram">Instagram</option>
+                      <option value="tiktok">TikTok</option>
+                      <option value="facebook">Facebook</option>
                     </select>
                   </label>
 
-                  <div className="grid grid-cols-[80px_1fr_auto] sm:grid-cols-[90px_120px_auto] gap-2 items-end">
-                    <label className="block">
-                      <span className="mb-1 block text-[9px] font-bold text-[#222a1d]/40">Qty</span>
-                      <input
-                        type="number"
-                        min={1}
-                        value={itemQuantity}
-                        onChange={(e) => setItemQuantity(Number(e.target.value))}
-                        className="w-full rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2.5 py-2 text-xs text-center font-mono font-bold text-[#222a1d] outline-none"
-                      />
-                    </label>
-
-                    <label className="block">
-                      <span className="mb-1 block text-[9px] font-bold text-[#222a1d]/40">Price (Rs)</span>
-                      <input
-                        type="number"
-                        min={0}
-                        value={itemPrice}
-                        onChange={(e) => setItemPrice(Number(e.target.value))}
-                        className="w-full rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2.5 py-2 text-xs font-mono text-[#222a1d] outline-none"
-                      />
-                    </label>
-
-                    <button
-                      type="button"
-                      onClick={handleAddItem}
-                      className="flex h-9 px-4 items-center justify-center rounded-xl bg-[#283322] text-xs font-bold text-white hover:bg-[#34422c] cursor-pointer shrink-0"
+                  <label className="block min-w-0">
+                    <span className="mb-1 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Payment Status</span>
+                    <select
+                      value={saleStatus}
+                      onChange={(e) => setSaleStatus(e.target.value as "pending" | "completed" | "cancelled")}
+                      className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2.5 sm:px-3.5 py-1.5 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
                     >
-                      + Add
-                    </button>
-                  </div>
+                      <option value="completed">Completed / Paid</option>
+                      <option value="pending">Pending Payment</option>
+                      <option value="cancelled">Cancelled / Void</option>
+                    </select>
+                  </label>
                 </div>
 
-                {/* Items Added List */}
-                <div className="rounded-2xl border border-[#e8ede7] bg-[#f8faf8] p-3 max-h-36 overflow-y-auto divide-y divide-[#e8ede7] scrollbar-hide">
-                  {saleItems.map((item, idx) => {
-                    const catalogItem = catalogProducts.find((p) => p.id === item.productId);
-                    return (
-                      <div key={idx} className="flex items-center justify-between py-2 first:pt-0 last:pb-0">
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs font-bold text-[#222a1d] truncate">{catalogItem?.title || item.productId}</p>
-                          <p className="text-[9px] text-[#222a1d]/40 font-mono">ID: {item.productId}</p>
-                        </div>
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <span className="text-xs font-mono text-[#222a1d]/60">
-                            {item.quantity} × Rs {item.price.toLocaleString()}
-                          </span>
-                          <span className="text-xs font-bold font-mono text-[#222a1d] min-w-16 sm:min-w-17.5 text-right">
-                            Rs {(item.quantity * item.price).toLocaleString()}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveItem(idx)}
-                            className="p-1 rounded-lg hover:bg-red-50 text-red-600 cursor-pointer"
-                          >
-                            <TrashIcon className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
+                {/* Items Picker and Listing */}
+                <div className="border-t border-[#eef2ee] pt-2.5 sm:pt-4 space-y-2.5 sm:space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60 block">
+                      Add Items ({saleItems.length})
+                    </span>
+                    {itemMode === "custom" && (
+                      <span className="inline-flex items-center gap-1 text-[8px] sm:text-[9px] font-bold text-amber-900 bg-amber-100 px-1.5 sm:px-2 py-0.5 rounded-full">
+                        ✨ Custom Order Mode
+                      </span>
+                    )}
+                  </div>
 
-                  {saleItems.length === 0 && (
-                    <p className="text-center py-4 text-xs text-[#222a1d]/35 font-medium">
-                      No products added to order yet.
-                    </p>
+                  {/* Mode Switcher Tabs */}
+                  <div className="flex items-center gap-1 p-1 bg-[#eef2ee] rounded-lg sm:rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setItemMode("catalog")}
+                      className={`flex-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded-md sm:rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 ${
+                        itemMode === "catalog"
+                          ? "bg-white text-[#283322] shadow-xs"
+                          : "text-[#222a1d]/60 hover:text-[#222a1d]"
+                      }`}
+                    >
+                      <ShoppingBagIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                      <span>Catalog Product</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setItemMode("custom")}
+                      className={`flex-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded-md sm:rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 sm:gap-1.5 ${
+                        itemMode === "custom"
+                          ? "bg-[#283322] text-white shadow-xs"
+                          : "text-[#222a1d]/60 hover:text-[#222a1d]"
+                      }`}
+                    >
+                      <SparklesIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                      <span>Custom / Manual Item</span>
+                    </button>
+                  </div>
+                  
+                  {/* Responsive Item Adder Row */}
+                  {itemMode === "catalog" ? (
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <label className="block min-w-0">
+                        <span className="mb-0.5 sm:mb-1 block text-[8px] sm:text-[9px] font-bold text-[#222a1d]/40">Select Catalog Product</span>
+                        <select
+                          value={itemProductId}
+                          onChange={(e) => handleProductChange(e.target.value)}
+                          className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs text-[#222a1d] outline-none cursor-pointer truncate font-medium focus:border-[#283322]/40 focus:bg-white"
+                        >
+                          {catalogProducts.map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {p.title} (Rs {Number(p.price).toLocaleString()})
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <div className="grid grid-cols-[65px_1fr_auto] sm:grid-cols-[90px_120px_auto] gap-1.5 sm:gap-2 items-end">
+                        <label className="block">
+                          <span className="mb-0.5 sm:mb-1 block text-[8px] sm:text-[9px] font-bold text-[#222a1d]/40">Qty</span>
+                          <input
+                            type="number"
+                            min={1}
+                            value={itemQuantity}
+                            onChange={(e) => setItemQuantity(Math.max(1, Number(e.target.value)))}
+                            className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-1.5 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs text-center font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                          />
+                        </label>
+
+                        <label className="block">
+                          <span className="mb-0.5 sm:mb-1 block text-[8px] sm:text-[9px] font-bold text-[#222a1d]/40">Price (Rs)</span>
+                          <input
+                            type="number"
+                            min={0}
+                            value={itemPrice}
+                            onChange={(e) => setItemPrice(Number(e.target.value))}
+                            className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                          />
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={handleAddItem}
+                          className="flex h-8 sm:h-9 px-3 sm:px-4 items-center justify-center rounded-lg sm:rounded-xl bg-[#283322] text-[11px] sm:text-xs font-bold text-white hover:bg-[#34422c] cursor-pointer shrink-0 active:scale-95 transition-all shadow-xs"
+                        >
+                          + Add
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <label className="block min-w-0">
+                        <div className="flex items-center justify-between mb-0.5 sm:mb-1">
+                          <span className="text-[8px] sm:text-[9px] font-bold text-[#222a1d]/40">Custom Product / Item Name *</span>
+                          <span className="text-[7px] sm:text-[8px] font-bold text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">Manual Custom Order</span>
+                        </div>
+                        <input
+                          type="text"
+                          value={customItemTitle}
+                          onChange={(e) => setCustomItemTitle(e.target.value)}
+                          placeholder="e.g. Custom Amber Jar Candle, Wedding Favors Box, Lavender Pillar..."
+                          className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white font-medium"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleAddItem();
+                            }
+                          }}
+                        />
+                      </label>
+
+                      <div className="grid grid-cols-[65px_1fr_auto] sm:grid-cols-[90px_120px_auto] gap-1.5 sm:gap-2 items-end">
+                        <label className="block">
+                          <span className="mb-0.5 sm:mb-1 block text-[8px] sm:text-[9px] font-bold text-[#222a1d]/40">Qty</span>
+                          <input
+                            type="number"
+                            min={1}
+                            value={itemQuantity}
+                            onChange={(e) => setItemQuantity(Math.max(1, Number(e.target.value)))}
+                            className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-1.5 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs text-center font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                          />
+                        </label>
+
+                        <label className="block">
+                          <span className="mb-0.5 sm:mb-1 block text-[8px] sm:text-[9px] font-bold text-[#222a1d]/40">Custom Price (Rs) *</span>
+                          <input
+                            type="number"
+                            min={0}
+                            value={itemPrice || ""}
+                            placeholder="0"
+                            onChange={(e) => setItemPrice(Number(e.target.value))}
+                            className="w-full rounded-lg sm:rounded-xl border border-[#e3e8e2] bg-[#f8faf8] px-2 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                          />
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={handleAddItem}
+                          className="flex h-8 sm:h-9 px-3 sm:px-4 items-center justify-center rounded-lg sm:rounded-xl bg-[#283322] text-[11px] sm:text-xs font-bold text-white hover:bg-[#34422c] cursor-pointer shrink-0 active:scale-95 transition-all shadow-xs"
+                        >
+                          + Add
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Items Added List */}
+                  <div className="rounded-xl sm:rounded-2xl border border-[#e8ede7] bg-[#f8faf8] p-2.5 sm:p-3 max-h-32 sm:max-h-40 overflow-y-auto divide-y divide-[#e8ede7] scrollbar-hide">
+                    {saleItems.map((item, idx) => {
+                      const catalogItem = catalogProducts.find((p) => p.id === item.productId);
+                      const isCustom = !catalogItem || item.productId.startsWith("custom-");
+                      const displayTitle = item.productTitle || catalogItem?.title || item.productId;
+
+                      return (
+                        <div key={idx} className="flex items-center justify-between py-1.5 sm:py-2 first:pt-0 last:pb-0 gap-2">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1">
+                              {isCustom && (
+                                <span className="shrink-0 inline-flex items-center gap-0.5 text-[7px] sm:text-[8px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 px-1 sm:px-1.5 py-0.2 rounded">
+                                  ✨ Custom
+                                </span>
+                              )}
+                              <p className="text-[11px] sm:text-xs font-bold text-[#222a1d] truncate">{displayTitle}</p>
+                            </div>
+                            <p className="text-[8px] sm:text-[9px] text-[#222a1d]/40 font-mono truncate">
+                              {isCustom ? "Custom manual item" : `ID: ${item.productId}`}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                            <span className="text-[10px] sm:text-xs font-mono text-[#222a1d]/60">
+                              {item.quantity} × Rs {item.price.toLocaleString()}
+                            </span>
+                            <span className="text-[11px] sm:text-xs font-bold font-mono text-[#222a1d] min-w-14 sm:min-w-17.5 text-right">
+                              Rs {(item.quantity * item.price).toLocaleString()}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveItem(idx)}
+                              className="p-1 rounded-lg hover:bg-red-50 text-red-600 cursor-pointer transition-colors"
+                              title="Remove item"
+                            >
+                              <TrashIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {saleItems.length === 0 && (
+                      <p className="text-center py-3 sm:py-4 text-[11px] sm:text-xs text-[#222a1d]/35 font-medium">
+                        No products or custom items added to order yet.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Subtotal Preview */}
+                  {saleItems.length > 0 && (
+                    <div className="flex justify-between items-center bg-[#f1f4f1] p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl">
+                      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#222a1d]/60">Receipt Total</span>
+                      <span className="text-sm sm:text-base font-bold font-mono text-[#283322]">
+                        Rs {saleItems.reduce((sum, item) => sum + item.quantity * item.price, 0).toLocaleString()}
+                      </span>
+                    </div>
                   )}
                 </div>
 
-                {/* Subtotal Preview */}
-                {saleItems.length > 0 && (
-                  <div className="flex justify-between items-center bg-[#f1f4f1] p-3.5 rounded-2xl">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#222a1d]/60">Receipt Total</span>
-                    <span className="text-base font-bold font-mono text-[#283322]">
-                      Rs {saleItems.reduce((sum, item) => sum + item.quantity * item.price, 0).toLocaleString()}
-                    </span>
-                  </div>
-                )}
-              </div>
+              </form>
+            </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-3 border-t border-[#eef2ee] pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsEditorOpen(false)}
-                  className="rounded-full px-5 py-2.5 text-xs font-semibold text-[#222a1d]/50 hover:bg-[#f1f4f1] cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-full bg-[#16a34a] px-6 sm:px-7 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#15803d] transition-all cursor-pointer active:scale-95"
-                >
-                  {editingSale ? "Update Sale" : "Save Sale Entry"}
-                </button>
-              </div>
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-2 sm:gap-3 border-t border-[#eef2ee] pt-3 sm:pt-4 pb-1 sm:pb-0 mt-3 sm:mt-4">
+              <button
+                type="button"
+                onClick={() => setIsEditorOpen(false)}
+                className="rounded-full px-3.5 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-[#222a1d]/50 hover:bg-[#f1f4f1] cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="sales-entry-form"
+                className="rounded-full bg-[#16a34a] px-5 sm:px-7 py-2 sm:py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#15803d] transition-all cursor-pointer active:scale-95"
+              >
+                {editingSale ? "Update Sale" : "Save Sale Entry"}
+              </button>
+            </div>
 
-            </form>
           </div>
         </div>
       )}

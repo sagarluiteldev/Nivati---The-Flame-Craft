@@ -460,103 +460,111 @@ export default function ExpensesTab() {
 
       {/* 4. CREATE / EDIT EXPENSE MODAL */}
       {isEditorOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto overscroll-contain">
-          <div className="my-auto w-full max-w-md max-h-[92dvh] overflow-y-auto rounded-2xl sm:rounded-[28px] bg-white p-5 sm:p-7 shadow-2xl border border-[#e3e8e2]">
+        <div className="fixed inset-0 z-50 flex sm:items-center justify-center bg-black/50 backdrop-blur-sm sm:p-4 overflow-y-auto overscroll-contain">
+          <div className="w-full h-full sm:h-auto sm:max-h-[92dvh] sm:max-w-md overflow-y-auto rounded-none sm:rounded-[28px] bg-white p-4 sm:p-7 shadow-2xl border-0 sm:border sm:border-[#e3e8e2] flex flex-col justify-between">
             
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-[#eef2ee] pb-4">
-              <h3 className="text-lg sm:text-xl font-serif font-bold text-[#222a1d]">
-                {editingExpense ? `Edit Expense ${editingExpense.id}` : "Log Operating Expense"}
-              </h3>
-              <button 
+            <div>
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-[#eef2ee] pb-2.5 sm:pb-4">
+                <div>
+                  <h3 className="text-base sm:text-xl font-serif font-bold text-[#222a1d]">
+                    {editingExpense ? `Edit Expense ${editingExpense.id}` : "Log Operating Expense"}
+                  </h3>
+                  <p className="text-[10px] sm:text-[11px] text-[#222a1d]/50 mt-0.5">
+                    Track raw materials, packaging, shipping & marketing costs
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setIsEditorOpen(false)}
+                  className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-[#f8faf8] text-[#222a1d]/50 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
+                >
+                  <XMarkIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} id="expense-entry-form" className="mt-3 sm:mt-5 space-y-3 sm:space-y-4">
+                <label className="block min-w-0">
+                  <span className="mb-1 sm:mb-1.5 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Expense Title *</span>
+                  <input
+                    type="text"
+                    required
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-full rounded-xl sm:rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                    placeholder="e.g. 50kg Organic Soy Wax Pellets"
+                  />
+                </label>
+
+                <div className="grid gap-2.5 sm:gap-3 grid-cols-1 sm:grid-cols-2">
+                  <label className="block min-w-0">
+                    <span className="mb-1 sm:mb-1.5 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Amount (Rs) *</span>
+                    <input
+                      type="number"
+                      required
+                      min={1}
+                      value={amount || ""}
+                      onChange={(e) => setAmount(Number(e.target.value))}
+                      className="w-full rounded-xl sm:rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
+                      placeholder="e.g. 12500"
+                    />
+                  </label>
+                  <label className="block min-w-0">
+                    <span className="mb-1 sm:mb-1.5 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Date Logged *</span>
+                    <input
+                      type="date"
+                      required
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      className="w-full max-w-full rounded-xl sm:rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white box-border appearance-none"
+                    />
+                  </label>
+                </div>
+
+                <label className="block min-w-0">
+                  <span className="mb-1 sm:mb-1.5 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Expense Category</span>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
+                    className="w-full rounded-xl sm:rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
+                  >
+                    {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                      <option key={key} value={key}>{label}</option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="block min-w-0">
+                  <span className="mb-1 sm:mb-1.5 block text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Payment Status</span>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value as "paid" | "pending")}
+                    className="w-full rounded-xl sm:rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3 sm:px-3.5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
+                  >
+                    <option value="paid">Paid & Cleared</option>
+                    <option value="pending">Pending Payment</option>
+                  </select>
+                </label>
+              </form>
+            </div>
+
+            {/* Modal Buttons */}
+            <div className="flex items-center justify-end gap-2 sm:gap-3 border-t border-[#eef2ee] pt-3 sm:pt-4 pb-1 sm:pb-0 mt-3 sm:mt-4">
+              <button
+                type="button"
                 onClick={() => setIsEditorOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f8faf8] text-[#222a1d]/50 hover:bg-[#283322] hover:text-white transition-colors cursor-pointer"
+                className="rounded-full px-3.5 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-xs font-semibold text-[#222a1d]/50 hover:bg-[#f1f4f1] cursor-pointer"
               >
-                <XMarkIcon className="h-4 w-4" />
+                Cancel
+              </button>
+              <button
+                type="submit"
+                form="expense-entry-form"
+                className="rounded-full bg-[#283322] px-5 sm:px-7 py-2 sm:py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer active:scale-95"
+              >
+                {editingExpense ? "Update Expense" : "Save to Ledger"}
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-4 sm:mt-5 space-y-4">
-              <label className="block min-w-0">
-                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Expense Title *</span>
-                <input
-                  type="text"
-                  required
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
-                  placeholder="e.g. 50kg Organic Soy Wax Pellets"
-                />
-              </label>
-
-              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Amount (Rs) *</span>
-                  <input
-                    type="number"
-                    required
-                    min={1}
-                    value={amount || ""}
-                    onChange={(e) => setAmount(Number(e.target.value))}
-                    className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono font-bold text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white"
-                    placeholder="e.g. 12500"
-                  />
-                </label>
-                <label className="block min-w-0">
-                  <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Date Logged *</span>
-                  <input
-                    type="date"
-                    required
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="w-full max-w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-mono text-[#222a1d] outline-none focus:border-[#283322]/40 focus:bg-white box-border appearance-none"
-                  />
-                </label>
-              </div>
-
-              <label className="block min-w-0">
-                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Expense Category</span>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value as ExpenseCategory)}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
-                >
-                  {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-                    <option key={key} value={key}>{label}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="block min-w-0">
-                <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#222a1d]/60">Payment Status</span>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as "paid" | "pending")}
-                  className="w-full rounded-2xl border border-[#e3e8e2] bg-[#f8faf8] px-3.5 py-2.5 text-xs font-semibold text-[#222a1d] outline-none focus:border-[#283322]/40 cursor-pointer"
-                >
-                  <option value="paid">Paid & Cleared</option>
-                  <option value="pending">Pending Payment</option>
-                </select>
-              </label>
-
-              {/* Modal Buttons */}
-              <div className="flex items-center justify-end gap-3 border-t border-[#eef2ee] pt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsEditorOpen(false)}
-                  className="rounded-full px-4 sm:px-5 py-2 text-xs font-semibold text-[#222a1d]/50 hover:bg-[#f1f4f1] cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-full bg-[#283322] px-6 sm:px-7 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#34422c] transition-all cursor-pointer active:scale-95"
-                >
-                  {editingExpense ? "Update Expense" : "Save to Ledger"}
-                </button>
-              </div>
-
-            </form>
           </div>
         </div>
       )}
