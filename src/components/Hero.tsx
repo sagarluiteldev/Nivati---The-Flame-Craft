@@ -106,9 +106,9 @@ export default function Hero() {
         className="absolute top-[40%] left-[25%] w-12 h-auto opacity-70 pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
 
-      {/* Big Crisp Hero Image - Desktop (Starts cleanly below header, fills down to 100vh bottom) */}
+      {/* Big Crisp Hero Image - Desktop (Framed with top, right, bottom padding for a balanced luxury look) */}
       <div 
-        className="absolute right-0 top-20 md:top-24 bottom-0 w-[50vw] overflow-hidden z-0 hidden lg:block"
+        className="absolute right-4 sm:right-6 lg:right-8 xl:right-12 top-28 lg:top-32 bottom-6 lg:bottom-8 xl:bottom-10 w-[45vw] xl:w-[44vw] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-black/10 border border-black/5 z-0 hidden lg:block"
       >
         {/* Instant SSR Base Image (Zero render delay for LCP) */}
         <Image 
@@ -232,8 +232,8 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Mobile View Image container (Clean, top-to-bottom full bleed, NO fading overlays) */}
-        <div className="relative w-screen left-1/2 right-1/2 -translate-x-1/2 h-[45vh] mt-4 z-0 block lg:hidden">
+        {/* Mobile View Image container (Framed with padding and rounded corners) */}
+        <div className="relative w-full h-[380px] sm:h-[440px] my-3 rounded-2xl overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden">
           <div className="relative h-full w-full overflow-hidden">
             {/* Instant SSR Base Image (Zero render delay for Mobile LCP) */}
             <Image 
