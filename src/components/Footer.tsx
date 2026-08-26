@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
-const Facebook = ({ className, bgFill = "#FAFAFA", iconFill = "#1d5200" }: { className?: string; bgFill?: string; iconFill?: string }) => (
+const Facebook = ({ className, bgFill = "#FAFAFA", iconFill = "#5a6c37" }: { className?: string; bgFill?: string; iconFill?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="12" fill={bgFill} />
     <path
@@ -15,7 +15,7 @@ const Facebook = ({ className, bgFill = "#FAFAFA", iconFill = "#1d5200" }: { cla
   </svg>
 );
 
-const Instagram = ({ className, bgFill = "#FAFAFA", iconFill = "#1d5200" }: { className?: string; bgFill?: string; iconFill?: string }) => (
+const Instagram = ({ className, bgFill = "#FAFAFA", iconFill = "#5a6c37" }: { className?: string; bgFill?: string; iconFill?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="12" fill={bgFill} />
     <path
@@ -27,7 +27,7 @@ const Instagram = ({ className, bgFill = "#FAFAFA", iconFill = "#1d5200" }: { cl
   </svg>
 );
 
-const TikTok = ({ className, bgFill = "#FAFAFA", iconFill = "#1d5200" }: { className?: string; bgFill?: string; iconFill?: string }) => (
+const TikTok = ({ className, bgFill = "#FAFAFA", iconFill = "#5a6c37" }: { className?: string; bgFill?: string; iconFill?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="12" cy="12" r="12" fill={bgFill} />
     <path

@@ -223,7 +223,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.85 }}
             transition={{ delay: 1.5, duration: 1 }}
-            className="hidden lg:flex pt-6 border-t border-olive/15 justify-center lg:justify-start items-center gap-6"
+            className="hidden lg:flex pt-2 justify-center lg:justify-start items-center gap-6"
           >
             <div className="flex flex-col lg:flex-row gap-2 lg:gap-6">
               <span className="text-[11px] uppercase tracking-[0.3em] text-olive font-bold">Handmade with Love</span>
@@ -296,7 +296,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.85 }}
           transition={{ delay: 1.5, duration: 1 }}
-          className="flex lg:hidden pt-4 border-t border-olive/15 justify-center items-center w-4/5 mx-auto mb-8"
+          className="flex lg:hidden pt-2 justify-center items-center w-4/5 mx-auto mb-8"
         >
           <div className="flex flex-col items-center gap-2 text-center">
             <span className="text-[10px] uppercase tracking-[0.3em] text-olive font-bold">Handmade with Love</span>
