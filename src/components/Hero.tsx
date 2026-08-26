@@ -106,8 +106,11 @@ export default function Hero() {
         className="absolute top-[40%] left-[25%] w-12 h-auto opacity-70 pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
 
-      {/* Big Crisp Hero Image - Desktop (0 border radius) */}
-      <div 
+      {/* Big Crisp Hero Image - Desktop (0 border radius with smooth entrance animation) */}
+      <motion.div 
+        initial={{ opacity: 0, x: 25, scale: 0.98 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
         className="absolute right-4 sm:right-6 lg:right-8 xl:right-12 top-28 lg:top-32 bottom-6 lg:bottom-8 xl:bottom-10 w-[45vw] xl:w-[44vw] rounded-none overflow-hidden shadow-2xl shadow-black/10 border border-black/5 z-0 hidden lg:block"
       >
         {/* Instant SSR Base Image (Zero render delay for LCP) */}
@@ -142,7 +145,7 @@ export default function Hero() {
             />
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
 
       <div className="w-full max-w-440 mx-auto pl-6 sm:pl-10 md:pl-14 lg:pl-16 xl:pl-20 pr-6 lg:pr-8 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-8 items-center relative z-10">
         <div className="flex flex-col gap-6 lg:gap-8 text-center lg:text-left max-w-2xl lg:max-w-none">
@@ -232,8 +235,13 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Mobile View Image container (0 border radius) */}
-        <div className="relative w-full h-95 sm:h-110 my-3 rounded-none overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden">
+        {/* Mobile View Image container (0 border radius with smooth entrance animation) */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+          className="relative w-full h-95 sm:h-110 my-3 rounded-none overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden"
+        >
           <div className="relative h-full w-full overflow-hidden">
             {/* Instant SSR Base Image (Zero render delay for Mobile LCP) */}
             <Image 
@@ -268,7 +276,7 @@ export default function Hero() {
               )}
             </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
 
         {/* Mobile only buttons */}
         <motion.div 
