@@ -66,7 +66,7 @@ export default function Hero() {
     <section 
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className="relative min-h-[90vh] lg:min-h-[95vh] flex items-center pt-24 lg:pt-32 pb-20 lg:pb-0 overflow-hidden bg-creme select-none"
+      className="relative min-h-[90vh] lg:h-screen lg:min-h-0 flex items-center pt-20 md:pt-24 pb-16 lg:pb-0 overflow-hidden bg-creme select-none"
     >
       {/* Texture Overlay - Desktop Only */}
       <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[url('/images/paper-fibers.png')] hidden lg:block" />
@@ -106,9 +106,9 @@ export default function Hero() {
         className="absolute top-[40%] left-[25%] w-12 h-auto opacity-70 pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
 
-      {/* Big Blending Hero Image - Desktop Full Bleed View */}
+      {/* Big Crisp Hero Image - Desktop (Starts cleanly below header, fills down to 100vh bottom) */}
       <div 
-        className="absolute right-0 top-0 bottom-0 w-[50vw] overflow-hidden z-0 hidden lg:block"
+        className="absolute right-0 top-20 md:top-24 bottom-0 w-[50vw] overflow-hidden z-0 hidden lg:block"
       >
         {/* Instant SSR Base Image (Zero render delay for LCP) */}
         <Image 
@@ -142,29 +142,6 @@ export default function Hero() {
             />
           )}
         </AnimatePresence>
-
-        {/* Soft edge blend overlays to blend with creme background */}
-        {/* Left-to-Right Blend (Subtle, long gradient transition) */}
-        <div 
-          className="absolute inset-y-0 left-0 w-[45%] z-10 pointer-events-none" 
-          style={{
-            background: 'linear-gradient(to right, #FAFAFA 0%, rgba(250, 250, 250, 0.98) 12%, rgba(250, 250, 250, 0.85) 30%, rgba(250, 250, 250, 0.5) 60%, rgba(250, 250, 250, 0.18) 82%, rgba(250, 250, 250, 0) 100%)'
-          }}
-        />
-        {/* Top-to-Bottom Blend (Prevents harsh top boundaries) */}
-        <div 
-          className="absolute inset-x-0 top-0 h-[20%] z-10 pointer-events-none" 
-          style={{
-            background: 'linear-gradient(to bottom, #FAFAFA 0%, rgba(250, 250, 250, 0.7) 35%, rgba(250, 250, 250, 0.25) 70%, rgba(250, 250, 250, 0) 100%)'
-          }}
-        />
-        {/* Bottom-to-Top Blend (Prevents harsh bottom boundaries) */}
-        <div 
-          className="absolute inset-x-0 bottom-0 h-[20%] z-10 pointer-events-none" 
-          style={{
-            background: 'linear-gradient(to top, #FAFAFA 0%, rgba(250, 250, 250, 0.7) 35%, rgba(250, 250, 250, 0.25) 70%, rgba(250, 250, 250, 0) 100%)'
-          }}
-        />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
@@ -229,13 +206,13 @@ export default function Hero() {
           >
             <Link 
               href="/shop"
-              className="px-8 py-4 bg-olive text-creme rounded-full transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-95 text-center font-medium tracking-wide"
+              className="px-8 py-4 bg-olive text-creme rounded-full transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(29,82,0,0.3)] active:scale-95 text-center font-medium tracking-wide"
             >
               Shop Collection
             </Link>
             <Link 
               href="#workshops"
-              className="px-8 py-4 border border-olive/30 text-olive rounded-full tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.1)] active:scale-95 font-light text-center"
+              className="px-8 py-4 border border-olive/30 text-olive rounded-full tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(29,82,0,0.1)] active:scale-95 font-light text-center"
             >
               Learn the Craft
             </Link>
@@ -255,7 +232,7 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Mobile View Image container */}
+        {/* Mobile View Image container (Clean, top-to-bottom full bleed, NO fading overlays) */}
         <div className="relative w-screen left-1/2 right-1/2 -translate-x-1/2 h-[45vh] mt-4 z-0 block lg:hidden">
           <div className="relative h-full w-full overflow-hidden">
             {/* Instant SSR Base Image (Zero render delay for Mobile LCP) */}
@@ -290,20 +267,6 @@ export default function Hero() {
                 />
               )}
             </AnimatePresence>
-            
-            {/* Soft vertical blends for mobile (Subtle, long gradient transition) */}
-            <div 
-              className="absolute inset-x-0 top-0 h-[30%] z-10 pointer-events-none" 
-              style={{
-                background: 'linear-gradient(to bottom, #FAFAFA 0%, rgba(250, 250, 250, 0.95) 15%, rgba(250, 250, 250, 0.7) 45%, rgba(250, 250, 250, 0.25) 75%, rgba(250, 250, 250, 0) 100%)'
-              }}
-            />
-            <div 
-              className="absolute inset-x-0 bottom-0 h-[30%] z-10 pointer-events-none" 
-              style={{
-                background: 'linear-gradient(to top, #FAFAFA 0%, rgba(250, 250, 250, 0.95) 15%, rgba(250, 250, 250, 0.7) 45%, rgba(250, 250, 250, 0.25) 75%, rgba(250, 250, 250, 0) 100%)'
-              }}
-            />
           </div>
         </div>
 

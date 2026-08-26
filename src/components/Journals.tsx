@@ -112,34 +112,37 @@ export default function Journals() {
                 {currentReviews.map((review, idx) => (
                   <div
                     key={idx}
-                    className="bg-olive border border-olive/20 rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-olive/10 hover:border-sage/40 transition-all duration-300"
+                    style={{
+                      background: "linear-gradient(to right, #1d5200 0%, #2c580e 25%, #3c5f1c 50%, #4b6629 75%, #5a6c37 100%)",
+                    }}
+                    className="border border-white/15 rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-olive/15 hover:border-white/30 transition-all duration-300"
                   >
                     <div>
                       {/* Rating Stars & Badge */}
                       <div className="flex items-center justify-between mb-4 sm:mb-6">
                         <div className="flex gap-1">
                           {[...Array(review.rating)].map((_, i) => (
-                            <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-sage text-sage" />
+                            <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-creme text-creme" />
                           ))}
                         </div>
-                        <span className="text-[11px] sm:text-xs font-light text-creme/70 uppercase tracking-wider flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-sage" />
+                        <span className="text-[11px] sm:text-xs font-medium text-creme/90 uppercase tracking-wider flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-full border border-white/15">
+                          <span className="w-1.5 h-1.5 rounded-full bg-creme" />
                           {review.badge}
                         </span>
                       </div>
 
                       {/* Quote */}
-                      <blockquote className="font-serif text-base sm:text-lg md:text-xl text-creme/95 leading-relaxed mb-6 sm:mb-8">
+                      <blockquote className="font-serif text-base sm:text-lg md:text-xl text-creme leading-relaxed mb-6 sm:mb-8">
                         &quot;{review.quote}&quot;
                       </blockquote>
                     </div>
 
                     {/* Reviewer & Scent Tag */}
-                    <div className="pt-4 sm:pt-6 border-t border-creme/15 flex items-center justify-between">
+                    <div className="pt-4 sm:pt-6 border-t border-creme/20 flex items-center justify-between">
                       <div>
-                        <div className="font-serif text-base sm:text-lg text-creme font-medium">{review.name}</div>
+                        <div className="font-serif text-base sm:text-lg text-creme font-semibold">{review.name}</div>
                       </div>
-                      <span className="inline-block px-3 py-1 bg-creme/10 border border-creme/20 rounded-full text-xs font-sans text-creme/90">
+                      <span className="inline-block px-3 py-1 bg-white/15 border border-white/20 rounded-full text-xs font-sans text-creme font-medium">
                         {review.scent}
                       </span>
                     </div>

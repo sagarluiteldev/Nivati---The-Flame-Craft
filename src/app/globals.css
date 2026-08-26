@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-olive: var(--theme-olive, #3b4132);
+  --color-olive: var(--theme-olive, #1d5200);
   --color-creme: var(--theme-creme, #FAFAFA);
   --color-white: #FAFAFA;
-  --color-sage: #a2ad9c;
+  --color-sage: var(--theme-sage, #5a6c37);
   --color-terracotta: #d3a795;
 
   --font-serif:
@@ -20,7 +20,8 @@
 }
 
 :root {
-  --theme-olive: #3b4132;
+  --theme-olive: #1d5200;
+  --theme-sage: #5a6c37;
   --theme-creme: #FAFAFA;
 }
 
