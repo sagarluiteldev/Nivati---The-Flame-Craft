@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeftIcon as ArrowLeft } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon as ArrowLeft, ShoppingBagIcon as ShoppingBag } from "@heroicons/react/24/outline";
 import { products } from "@/lib/data";
+import { useAppContext } from "@/context/AppContext";
 
 interface Props {
   currentProductId: string;
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export default function CrossSell({ currentProductId, category }: Props) {
+  const { addToCart } = useAppContext();
+
   // Find related products in the same category, excluding the current one, limit to 4
   const recommendations = products
     .filter(p => {
@@ -57,6 +60,26 @@ export default function CrossSell({ currentProductId, category }: Props) {
                 className="object-cover transition-transform duration-1000 group-hover:scale-105"
                 style={{ transform: "translateZ(0)" }}
               />
+
+              {/* Quick Add to Cart Round Icon Button - Bottom Right */}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  addToCart({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    quantity: 1,
+                    image: product.img
+                  });
+                }}
+                className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 z-30 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/95 hover:bg-olive text-black hover:text-creme backdrop-blur-md flex items-center justify-center shadow-lg shadow-black/15 hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-black/10"
+                aria-label={`Add ${product.title} to cart`}
+                title="Add to cart"
+              >
+                <ShoppingBag className="w-5 h-5 md:w-5.5 md:h-5.5" />
+              </button>
             </div>
             <div>
               <span className="text-xs uppercase tracking-widest text-neutral-500 mb-2 block">{Array.isArray(product.category) ? product.category.join(" / ") : product.category}</span>
