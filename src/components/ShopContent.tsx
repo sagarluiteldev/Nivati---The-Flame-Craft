@@ -154,7 +154,7 @@ export default function ShopContent({ products }: ShopContentProps) {
                       Quick View
                     </button>
 
-                    {/* Quick Add to Cart Icon Button - Bottom Right */}
+                    {/* Quick Add to Cart Round Icon Button - Bottom Right */}
                     <button
                       onClick={(e) => {
                         e.preventDefault();
@@ -167,11 +167,11 @@ export default function ShopContent({ products }: ShopContentProps) {
                           image: product.img
                         });
                       }}
-                      className="absolute bottom-3 right-3 md:bottom-4 md:right-4 z-30 w-9 h-9 md:w-10 md:h-10 rounded-lg bg-creme/95 hover:bg-olive text-black hover:text-creme backdrop-blur-md flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-black/10"
+                      className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 z-30 w-10 h-10 md:w-11 md:h-11 rounded-full bg-creme/95 hover:bg-olive text-black hover:text-creme backdrop-blur-md flex items-center justify-center shadow-lg shadow-black/15 hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-black/10"
                       aria-label={`Add ${product.title} to cart`}
                       title="Add to cart"
                     >
-                      <ShoppingBag className="w-4 h-4 md:w-4.5 md:h-4.5" />
+                      <ShoppingBag className="w-5 h-5 md:w-5.5 md:h-5.5" />
                     </button>
 
                     {/* Scent Note Hover Micro-Animation */}
