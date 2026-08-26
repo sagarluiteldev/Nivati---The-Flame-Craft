@@ -80,8 +80,8 @@ export default function Navbar() {
       {isQuizOpen && <ScentQuiz isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />}
 
       <motion.header
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-          isScrolled || isMobileMenuOpen ? "bg-creme/95 backdrop-blur-md shadow-sm" : "bg-transparent"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-creme border-b border-olive/10 ${
+          isScrolled || isMobileMenuOpen ? "shadow-md bg-creme/98 backdrop-blur-md" : "shadow-xs"
         }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}

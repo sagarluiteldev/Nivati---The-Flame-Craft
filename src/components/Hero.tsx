@@ -144,8 +144,8 @@ export default function Hero() {
         </AnimatePresence>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
-        <div className="flex flex-col gap-8 lg:gap-10 text-center lg:text-left">
+      <div className="w-full max-w-[1760px] mx-auto pl-6 sm:pl-10 md:pl-14 lg:pl-16 xl:pl-20 pr-6 lg:pr-8 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-8 items-center relative z-10">
+        <div className="flex flex-col gap-6 lg:gap-8 text-center lg:text-left max-w-2xl lg:max-w-none">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -153,8 +153,8 @@ export default function Hero() {
             className="relative"
           >
             {/* Editorial Heading Design */}
-            <h1 className="font-serif text-olive leading-none">
-              <span className="text-6xl md:text-8xl lg:text-[11rem] block tracking-tighter mix-blend-multiply">
+            <h1 className="font-serif text-olive leading-[0.88]">
+              <span className="text-7xl sm:text-8xl md:text-9xl lg:text-[12rem] xl:text-[13.5rem] block tracking-tighter mix-blend-multiply">
                 N
                 <span className="relative inline-block">
                   ı
@@ -175,7 +175,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 1 }}
-                className="text-lg md:text-2xl lg:text-4xl font-lora not-italic font-normal relative inline-block mt-2 lg:-mt-8 lg:ml-2 text-olive/85 whitespace-nowrap"
+                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-lora not-italic font-normal relative inline-block mt-2 lg:-mt-8 lg:ml-3 text-olive/85 whitespace-nowrap"
               >
                 The Flame Craft
               </motion.span>
@@ -183,7 +183,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Interactive Slogan Reveal */}
-          <div className="h-8 lg:h-12 overflow-hidden relative">
+          <div className="h-10 lg:h-14 overflow-hidden relative">
             <AnimatePresence mode="wait">
               <motion.p 
                 key={sloganIndex}
@@ -191,7 +191,7 @@ export default function Hero() {
                 animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
                 exit={{ y: -20, opacity: 0, filter: "blur(5px)" }}
                 transition={{ duration: 0.8, ease: "circOut" }}
-                className="text-lg lg:text-2xl text-olive/90 font-sans font-normal tracking-widest uppercase"
+                className="text-xl sm:text-2xl lg:text-3xl text-olive/90 font-sans font-light tracking-widest uppercase"
               >
                 {slogans[sloganIndex]}
               </motion.p>
@@ -199,20 +199,20 @@ export default function Hero() {
           </div>
 
           <motion.div 
-            className="hidden lg:flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-2 lg:pt-4"
+            className="hidden lg:flex flex-col sm:flex-row justify-center lg:justify-start gap-5 pt-2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 1 }}
           >
             <Link 
               href="/shop"
-              className="px-8 py-4 bg-olive text-creme rounded-full transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(29,82,0,0.3)] active:scale-95 text-center font-medium tracking-wide"
+              className="px-9 py-4.5 bg-olive text-creme rounded-full transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(29,82,0,0.35)] active:scale-95 text-center font-medium tracking-wide text-base"
             >
               Shop Collection
             </Link>
             <Link 
               href="#workshops"
-              className="px-8 py-4 border border-olive/30 text-olive rounded-full tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(29,82,0,0.1)] active:scale-95 font-light text-center"
+              className="px-9 py-4.5 border border-olive/30 text-olive rounded-full tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(29,82,0,0.1)] active:scale-95 font-light text-center text-base"
             >
               Learn the Craft
             </Link>
@@ -223,11 +223,11 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.85 }}
             transition={{ delay: 1.5, duration: 1 }}
-            className="hidden lg:flex pt-6 lg:pt-8 border-t border-olive/15 justify-center lg:justify-start items-center gap-6"
+            className="hidden lg:flex pt-6 border-t border-olive/15 justify-center lg:justify-start items-center gap-6"
           >
             <div className="flex flex-col lg:flex-row gap-2 lg:gap-6">
-              <span className="text-[10px] uppercase tracking-[0.3em] text-olive font-bold">Handmade with Love</span>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-olive font-bold">Pure Soy Wax</span>
+              <span className="text-[11px] uppercase tracking-[0.3em] text-olive font-bold">Handmade with Love</span>
+              <span className="text-[11px] uppercase tracking-[0.3em] text-olive font-bold">Pure Soy Wax</span>
             </div>
           </motion.div>
         </div>
