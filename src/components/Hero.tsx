@@ -144,7 +144,7 @@ export default function Hero() {
         </AnimatePresence>
       </div>
 
-      <div className="w-full max-w-[1760px] mx-auto pl-6 sm:pl-10 md:pl-14 lg:pl-16 xl:pl-20 pr-6 lg:pr-8 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-8 items-center relative z-10">
+      <div className="w-full max-w-440 mx-auto pl-6 sm:pl-10 md:pl-14 lg:pl-16 xl:pl-20 pr-6 lg:pr-8 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-8 items-center relative z-10">
         <div className="flex flex-col gap-6 lg:gap-8 text-center lg:text-left max-w-2xl lg:max-w-none">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -233,7 +233,7 @@ export default function Hero() {
         </div>
 
         {/* Mobile View Image container (0 border radius) */}
-        <div className="relative w-full h-[380px] sm:h-[440px] my-3 rounded-none overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden">
+        <div className="relative w-full h-95 sm:h-110 my-3 rounded-none overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden">
           <div className="relative h-full w-full overflow-hidden">
             {/* Instant SSR Base Image (Zero render delay for Mobile LCP) */}
             <Image 

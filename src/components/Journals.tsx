@@ -99,7 +99,7 @@ export default function Journals() {
           </button>
 
           {/* Cards Display Area */}
-          <div className="overflow-hidden min-h-[440px] md:min-h-[500px] lg:min-h-[540px] px-1 py-1 flex items-center">
+          <div className="overflow-hidden min-h-110 md:min-h-125 lg:min-h-135 px-1 py-1 flex items-center">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={index + (isMobile ? "-m" : "-d")}
@@ -117,7 +117,7 @@ export default function Journals() {
                         ? "linear-gradient(to top right, #1d5200 0%, #5a6c37 100%)"
                         : "linear-gradient(to top left, #1d5200 0%, #5a6c37 100%)",
                     }}
-                    className="min-h-[440px] sm:min-h-[480px] md:min-h-[520px] lg:min-h-[550px] border border-white/15 rounded-none p-8 sm:p-10 md:p-12 lg:p-14 flex flex-col justify-between shadow-2xl shadow-black/15 hover:border-white/30 transition-all duration-300"
+                    className="min-h-110 sm:min-h-120 md:min-h-130 lg:min-h-137.5 border border-white/15 rounded-none p-8 sm:p-10 md:p-12 lg:p-14 flex flex-col justify-between shadow-2xl shadow-black/15 hover:border-white/30 transition-all duration-300"
                   >
                     <div>
                       {/* Rating Stars & Badge */}
