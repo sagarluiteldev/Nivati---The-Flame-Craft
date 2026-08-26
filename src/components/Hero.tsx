@@ -240,7 +240,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-          className="relative w-full h-95 sm:h-110 my-3 rounded-none overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden"
+          className="relative w-full h-115 sm:h-130 mt-4 mb-6 rounded-none overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden"
         >
           <div className="relative h-full w-full overflow-hidden">
             {/* Instant SSR Base Image (Zero render delay for Mobile LCP) */}
@@ -280,7 +280,7 @@ export default function Hero() {
 
         {/* Mobile only buttons */}
         <motion.div 
-          className="flex lg:hidden flex-col sm:flex-row justify-center gap-4 -mt-4 mb-6"
+          className="flex lg:hidden flex-col sm:flex-row justify-center gap-4 mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 1 }}
