@@ -209,13 +209,13 @@ export default function Hero() {
           >
             <Link 
               href="/shop"
-              className="px-9 py-4.5 bg-olive text-creme rounded-full transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(29,82,0,0.35)] active:scale-95 text-center font-medium tracking-wide text-base"
+              className="px-9 py-4.5 bg-olive text-creme rounded-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(29,82,0,0.35)] active:scale-95 text-center font-medium tracking-wide text-base"
             >
               Shop Collection
             </Link>
             <Link 
               href="#workshops"
-              className="px-9 py-4.5 border border-neutral-400 text-neutral-900 rounded-full tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-neutral-900 hover:text-creme hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 font-medium text-center text-base"
+              className="px-9 py-4.5 border border-neutral-400 text-neutral-900 rounded-lg tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-neutral-900 hover:text-creme hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 font-medium text-center text-base"
             >
               Learn the Craft
             </Link>
@@ -287,13 +287,13 @@ export default function Hero() {
         >
           <Link 
             href="/shop"
-            className="px-8 py-4 bg-olive text-creme rounded-full text-center font-medium tracking-wide"
+            className="px-8 py-4 bg-olive text-creme rounded-lg text-center font-medium tracking-wide"
           >
             Shop Collection
           </Link>
           <Link 
             href="#workshops"
-            className="px-8 py-4 border border-neutral-400 text-neutral-900 rounded-full tracking-wide font-medium text-center"
+            className="px-8 py-4 border border-neutral-400 text-neutral-900 rounded-lg tracking-wide font-medium text-center"
           >
             Learn the Craft
           </Link>

@@ -121,7 +121,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-225 bg-creme/95 rounded-4xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[85vh] backdrop-blur-md"
+            className="relative w-full max-w-225 bg-creme/95 rounded-none shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[85vh] backdrop-blur-md"
           >
             <button
               onClick={onClose}
@@ -187,7 +187,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
                         <button
                           key={fragrance}
                           onClick={() => setSelectedFragrance(fragrance)}
-                          className={`px-4 py-2 rounded-full text-[11px] transition-all border ${
+                          className={`px-4 py-2 rounded-lg text-[11px] transition-all border ${
                             selectedFragrance === fragrance
                               ? 'bg-olive text-creme border-olive shadow-md'
                               : 'bg-transparent text-olive/60 border-olive/10 hover:border-olive/30 hover:bg-olive/5'
@@ -206,7 +206,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
                       value={specialMessage}
                       onChange={(e) => setSpecialMessage(e.target.value)}
                       placeholder="Special messages, notes, custom colors, fragrances..."
-                      className="w-full bg-olive/5 border border-olive/10 rounded-2xl p-6 text-olive focus:outline-none focus:border-sage transition-all placeholder:text-olive/20 resize-none text-sm leading-relaxed"
+                      className="w-full bg-olive/5 border border-olive/10 rounded-lg p-6 text-olive focus:outline-none focus:border-sage transition-all placeholder:text-olive/20 resize-none text-sm leading-relaxed"
                       rows={2}
                     />
                   </div>
@@ -214,7 +214,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
               ) : (
                 /* Non-personalizable details */
                 (product.scentNotes.top !== "Unscented" && product.scentNotes.top !== "Customize your own") && (
-                  <div className="mb-10 p-6 bg-olive/5 rounded-2xl border border-olive/10">
+                  <div className="mb-10 p-6 bg-olive/5 rounded-lg border border-olive/10">
                     <h4 className="font-serif text-lg text-olive mb-4">Product Details</h4>
                     <ul className="space-y-3 text-sm font-light text-olive/80">
                       <li className="flex gap-4">
@@ -235,24 +235,24 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
               )}
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4 mt-auto">
-                <div className="flex items-center justify-between border border-olive/20 rounded-full bg-transparent p-1 min-w-30">
+                <div className="flex items-center justify-between border border-olive/20 rounded-lg bg-transparent p-1 min-w-30">
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 flex items-center justify-center text-olive hover:bg-olive/10 rounded-full transition-colors"
+                    className="w-10 h-10 flex items-center justify-center text-olive hover:bg-olive/10 rounded-lg transition-colors"
                   >
                     <Minus className="w-3 h-3" />
                   </button>
                   <span className="w-8 text-center text-base font-medium">{quantity}</span>
                   <button 
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-10 h-10 flex items-center justify-center text-olive hover:bg-olive/10 rounded-full transition-colors"
+                    className="w-10 h-10 flex items-center justify-center text-olive hover:bg-olive/10 rounded-lg transition-colors"
                   >
                     <Plus className="w-3 h-3" />
                   </button>
                 </div>
                 <button 
                   onClick={handleAddToCart}
-                  className="flex-1 bg-olive text-creme rounded-full py-4 px-8 flex items-center justify-center gap-3 transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-[0.95] font-medium tracking-widest text-[10px]"
+                  className="flex-1 bg-olive text-creme rounded-lg py-4 px-8 flex items-center justify-center gap-3 transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-[0.95] font-medium tracking-widest text-[10px]"
                 >
                   <ShoppingBag className="w-4 h-4" /> ADD TO CART
                 </button>

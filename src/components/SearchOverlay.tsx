@@ -109,15 +109,15 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
                     href={`/shop/${product.id}`} 
                     key={product.id}
                     onClick={onClose}
-                    className="flex gap-4 items-center p-4 rounded-2xl hover:bg-olive/5  transition-colors group"
+                    className="flex gap-4 items-center p-4 rounded-lg hover:bg-olive/5 transition-colors group"
                   >
-                    <div className="w-20 h-20 rounded-xl overflow-hidden bg-olive/10  relative shrink-0">
+                    <div className="w-20 h-20 rounded-none overflow-hidden bg-olive/10 relative shrink-0">
                       <Image src={product.img} alt={product.title} fill sizes="80px" loading="lazy" className="object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div>
-                      <span className="text-xs uppercase tracking-widest text-olive/50 ">{Array.isArray(product.category) ? product.category.join(", ") : product.category}</span>
-                      <h4 className="text-xl font-serif text-olive ">{product.title}</h4>
-                      <p className="text-olive/80 ">Rs {product.price}</p>
+                      <span className="text-xs uppercase tracking-widest text-olive/50">{Array.isArray(product.category) ? product.category.join(", ") : product.category}</span>
+                      <h4 className="text-xl font-serif text-olive">{product.title}</h4>
+                      <p className="text-olive/80">Rs {product.price}</p>
                     </div>
                   </Link>
                 ))}
@@ -126,13 +126,13 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
             
             {query.length === 0 && (
               <div className="mt-8 opacity-50">
-                <p className="text-sm uppercase tracking-widest text-olive  mb-4">Trending Searches</p>
+                <p className="text-sm uppercase tracking-widest text-olive mb-4">Trending Searches</p>
                 <div className="flex flex-wrap gap-2">
                   {["Signature Candles", "Kits", "Fig", "Matcha"].map(term => (
                     <button 
                       key={term}
                       onClick={() => setQuery(term)}
-                      className="px-4 py-2 rounded-full border border-olive/20  text-olive  hover:bg-olive hover:text-creme   transition-colors text-sm"
+                      className="px-4 py-2 rounded-lg border border-olive/20 text-olive hover:bg-olive hover:text-creme transition-colors text-sm"
                     >
                       {term}
                     </button>

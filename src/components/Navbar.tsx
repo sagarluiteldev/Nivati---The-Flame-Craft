@@ -116,30 +116,30 @@ export default function Navbar() {
               </Link>
               
               {/* Mega Menu Dropdown */}
-              <div className="absolute top-full -left-12 w-200 bg-creme shadow-2xl rounded-2xl p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 grid grid-cols-4 gap-6 translate-y-4 group-hover:translate-y-0 border border-olive/10 z-50">
+              <div className="absolute top-full -left-12 w-200 bg-creme shadow-2xl rounded-none p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 grid grid-cols-4 gap-6 translate-y-4 group-hover:translate-y-0 border border-olive/10 z-50">
                 <Link href="/shop?category=Signature+Candles" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="aspect-square bg-olive/5 rounded-xl overflow-hidden mb-3 relative">
+                  <div className="aspect-square bg-olive/5 rounded-none overflow-hidden mb-3 relative">
                      <Image src="/images/IMG_4142.jpg" alt="Signature Candles" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-neutral-900 text-lg mb-1 normal-case tracking-normal font-medium">Signature</h4>
                   <p className="text-xs text-neutral-500 normal-case tracking-normal font-normal">Classic scents</p>
                 </Link>
                 <Link href="/shop?category=Mould+Candles" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="aspect-square bg-olive/5 rounded-xl overflow-hidden mb-3 relative">
+                  <div className="aspect-square bg-olive/5 rounded-none overflow-hidden mb-3 relative">
                      <Image src="/images/IMG_4315.jpg" alt="Shaped Candles" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-neutral-900 text-lg mb-1 normal-case tracking-normal font-medium">Shaped</h4>
                   <p className="text-xs text-neutral-500 normal-case tracking-normal font-normal">Artisan crafted</p>
                 </Link>
                 <Link href="/shop?category=Candle+Making+Kit" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="aspect-square bg-olive/5 rounded-xl overflow-hidden mb-3 relative">
+                  <div className="aspect-square bg-olive/5 rounded-none overflow-hidden mb-3 relative">
                      <Image src="/images/IMG_4201.jpg" alt="DIY Kits" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-neutral-900 text-lg mb-1 normal-case tracking-normal font-medium">DIY Kits</h4>
                   <p className="text-xs text-neutral-500 normal-case tracking-normal font-normal">Pour your own</p>
                 </Link>
                 <Link href="/shop?category=Candle+Making+Materials" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="aspect-square bg-olive/5 rounded-xl overflow-hidden mb-3 relative">
+                  <div className="aspect-square bg-olive/5 rounded-none overflow-hidden mb-3 relative">
                      <Image src="/images/IMG_4187.PNG" alt="Raw Materials" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-neutral-900 text-lg mb-1 normal-case tracking-normal font-medium">Materials</h4>
@@ -184,7 +184,7 @@ export default function Navbar() {
               href="https://wa.me/9842003249?text=Hi,%20I%20would%20like%20to%20know%20more%20about%20the%20online%20candle%20making%20workshops"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 bg-olive text-creme rounded-full text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-95"
+              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 bg-olive text-creme rounded-lg text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-95"
             >
               Join a Class
             </a>
@@ -231,7 +231,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full inline-flex items-center justify-center px-8 py-4 bg-olive text-creme rounded-full text-lg tracking-wide hover:bg-olive/90 transition-colors"
+                className="w-full inline-flex items-center justify-center px-8 py-4 bg-olive text-creme rounded-lg text-lg tracking-wide hover:bg-olive/90 transition-colors"
               >
                 Join a Class
               </a>

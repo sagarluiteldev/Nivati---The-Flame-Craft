@@ -445,7 +445,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                                   handleSelectOption(lastMsg.field, option.value, option.text);
                                 }
                               }}
-                              className="py-3 px-4 md:py-4 md:px-6 bg-olive/5 border border-olive/10 hover:border-olive hover:bg-olive text-olive hover:text-creme rounded-xl text-sm md:text-base tracking-wide transition-all cursor-pointer text-left flex items-center justify-between group"
+                              className="py-3 px-4 md:py-4 md:px-6 bg-olive/5 border border-olive/10 hover:border-olive hover:bg-olive text-olive hover:text-creme rounded-lg text-sm md:text-base tracking-wide transition-all cursor-pointer text-left flex items-center justify-between group"
                             >
                               <div className="flex items-center gap-3">
                                 {IconComponent && (
@@ -470,16 +470,15 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex-1 flex flex-col items-center justify-center text-center max-w-md mx-auto py-12"
+                  className="flex-1 flex flex-col items-center justify-center p-8 text-center"
                 >
-                  <div className="relative w-32 h-32 mb-8">
-                    {/* Multi-layered concentric rings */}
+                  <div className="relative w-28 h-28 md:w-32 md:h-32 mb-8 flex items-center justify-center">
                     <div className="absolute inset-0 border border-olive/20 rounded-full animate-ping [animation-duration:2.5s]" />
                     <div className="absolute inset-4 border border-olive/30 rounded-full animate-ping [animation-duration:1.8s]" />
                     <div className="absolute inset-2 border-2 border-dashed border-olive/40 rounded-full animate-spin [animation-duration:8s]" />
                     <div className="absolute inset-6 border border-olive/20 rounded-full animate-spin [animation-duration:4s] [animation-direction:reverse]" />
                     <div className="absolute inset-8 bg-olive/10 rounded-full flex items-center justify-center overflow-hidden">
-                      <img src="/images/logo.png" alt="Niva logo" className="w-10 h-10 object-contain opacity-85 animate-pulse" />
+                      <img src="/images/logo.png" alt="Niva logo" className="w-7 h-7 object-contain animate-bounce" />
                     </div>
                   </div>
                   <h3 className="text-xl font-serif text-olive mb-2 uppercase tracking-widest animate-pulse">Analyzing Scent DNA</h3>
@@ -496,10 +495,10 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                   className="flex-1 flex flex-col md:flex-row gap-6 md:gap-10 items-center justify-start md:justify-center w-full min-h-0 overflow-y-auto py-2 pr-1 scrollbar-hide"
                 >
                   {/* Left Side: Primary Recommendation Card */}
-                  <div className="bg-olive/5 border border-olive/10 rounded-3xl p-5 md:p-6 w-full md:max-w-xl relative overflow-hidden flex flex-col items-center text-center shadow-xl shrink-0">
+                  <div className="bg-olive/5 border border-olive/10 rounded-lg p-5 md:p-6 w-full md:max-w-xl relative overflow-hidden flex flex-col items-center text-center shadow-xl shrink-0">
                     <div className="absolute top-0 right-0 w-48 h-48 bg-olive/10 rounded-full blur-[80px] -z-10" />
                     
-                    <span className="px-3.5 py-0.5 bg-olive text-creme text-[10px] font-semibold rounded-full uppercase tracking-wider mb-3">
+                    <span className="px-3.5 py-0.5 bg-olive text-creme text-[10px] font-semibold rounded-lg uppercase tracking-wider mb-3">
                       Niva&apos;s Choice
                     </span>
 
@@ -509,7 +508,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                       onClick={onClose}
                       className="block group/img mb-3.5 select-none cursor-pointer"
                     >
-                      <div className="w-40 h-40 md:w-56 md:h-56 rounded-2xl overflow-hidden bg-white/20 border border-olive/10 relative shadow-md group-hover/img:scale-105 transition-all duration-300">
+                      <div className="w-40 h-40 md:w-56 md:h-56 rounded-lg overflow-hidden bg-white/20 border border-olive/10 relative shadow-md group-hover/img:scale-105 transition-all duration-300">
                         <Image 
                           src={primaryProduct.img} 
                           alt={primaryProduct.title} 
@@ -538,24 +537,24 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                     {/* Notes display */}
                     <div className="flex flex-wrap justify-center gap-1.5 mb-3.5">
                       {primaryProduct.scentNotes.top !== "Unscented" && (
-                        <span className="text-[9px] md:text-xs px-2 py-0.5 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
+                        <span className="text-[9px] md:text-xs px-2 py-0.5 bg-olive/5 border border-olive/10 rounded-lg text-olive/65 font-medium">
                           Top: {primaryProduct.scentNotes.top.split(',')[0]}
                         </span>
                       )}
                       {primaryProduct.scentNotes.mid !== "Unscented" && (
-                        <span className="text-[9px] md:text-xs px-2 py-0.5 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
+                        <span className="text-[9px] md:text-xs px-2 py-0.5 bg-olive/5 border border-olive/10 rounded-lg text-olive/65 font-medium">
                           Mid: {primaryProduct.scentNotes.mid.split(',')[0]}
                         </span>
                       )}
                       {primaryProduct.scentNotes.base !== "Unscented" && (
-                        <span className="text-[9px] md:text-xs px-2 py-0.5 bg-olive/5 border border-olive/10 rounded-md text-olive/65 font-medium">
+                        <span className="text-[9px] md:text-xs px-2 py-0.5 bg-olive/5 border border-olive/10 rounded-lg text-olive/65 font-medium">
                           Base: {primaryProduct.scentNotes.base.split(',')[0]}
                         </span>
                       )}
                     </div>
 
                     {/* AI Rationale Text Box (Sized smaller and centered) */}
-                    <div className="p-3 bg-olive/10 border border-olive/25 rounded-2xl flex items-start gap-3 text-left max-w-lg mb-4 w-full">
+                    <div className="p-3 bg-olive/10 border border-olive/25 rounded-lg flex items-start gap-3 text-left max-w-lg mb-4 w-full">
                       <div className="w-7 h-7 rounded-full bg-olive/20 border border-olive/15 flex items-center justify-center shrink-0 overflow-hidden">
                         <img src="/images/logo.png" alt="Niva" className="w-4 h-4 object-contain opacity-80" />
                       </div>
@@ -568,7 +567,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                     <div className="flex gap-3 w-full max-w-md">
                       <button
                         onClick={() => handleAddToCart(primaryProduct)}
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 bg-olive text-creme px-4 py-2.5 rounded-full font-medium transition-all hover:scale-105 active:scale-95 shadow-md select-none cursor-pointer text-xs md:text-sm"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 bg-olive text-creme px-4 py-2.5 rounded-lg font-medium transition-all hover:scale-105 active:scale-95 shadow-md select-none cursor-pointer text-xs md:text-sm"
                       >
                         <ShoppingBag className="w-4 h-4" /> 
                         {cartSuccess ? "Added!" : "Add to Cart"}
@@ -576,7 +575,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                       <Link 
                         href={`/shop/${primaryProduct.id}`}
                         onClick={onClose}
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 border border-olive/20 hover:border-olive text-olive px-4 py-2.5 rounded-full transition-all hover:scale-105 active:scale-95 select-none text-center text-xs md:text-sm hover:bg-olive/5"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 border border-olive/20 hover:border-olive text-olive px-4 py-2.5 rounded-lg transition-all hover:scale-105 active:scale-95 select-none text-center text-xs md:text-sm hover:bg-olive/5"
                       >
                         Shop Scent <ArrowRight className="w-4 h-4" />
                       </Link>
@@ -595,10 +594,10 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                             key={item.id}
                             href={`/shop/${item.id}`}
                             onClick={onClose}
-                            className="bg-olive/5 border border-olive/10 hover:border-olive/30 rounded-2xl p-3.5 md:p-4 flex gap-4 items-center transition-all hover:-translate-y-1 cursor-pointer select-none group"
+                            className="bg-olive/5 border border-olive/10 hover:border-olive/30 rounded-lg p-3.5 md:p-4 flex gap-4 items-center transition-all hover:-translate-y-1 cursor-pointer select-none group"
                           >
                             {/* Bigger image for secondary products */}
-                            <div className="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden bg-white/20 border border-olive/10 relative shrink-0">
+                            <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden bg-white/20 border border-olive/10 relative shrink-0">
                               <Image 
                                 src={item.img} 
                                 alt={item.title} 
@@ -626,7 +625,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                     {/* Restart Quiz button */}
                     <button 
                       onClick={handleReset} 
-                      className="py-2.5 px-6 mt-6 border border-olive/10 hover:bg-olive/5 rounded-2xl text-xs font-sans tracking-widest uppercase text-olive/50 hover:text-olive transition-all flex items-center justify-center gap-2 cursor-pointer w-full"
+                      className="py-2.5 px-6 mt-6 border border-olive/10 hover:bg-olive/5 rounded-lg text-xs font-sans tracking-widest uppercase text-olive/50 hover:text-olive transition-all flex items-center justify-center gap-2 cursor-pointer w-full"
                     >
                       <ArrowPath className="w-3.5 h-3.5" /> Start Over
                     </button>

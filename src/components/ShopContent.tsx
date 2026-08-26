@@ -52,7 +52,7 @@ export default function ShopContent({ products }: ShopContentProps) {
         <div className="relative mb-6 md:mb-8 z-40">
           <button 
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="inline-flex items-center gap-3 px-6 py-3 bg-olive/5 border border-olive/10 text-olive rounded-full text-sm font-medium hover:bg-olive/10 transition-all select-none cursor-pointer"
+            className="inline-flex items-center gap-3 px-6 py-3 bg-olive/5 border border-olive/10 text-olive rounded-lg text-sm font-medium hover:bg-olive/10 transition-all select-none cursor-pointer"
           >
             <span>Category: <strong className="text-olive font-semibold">{activeCategory}</strong></span>
             <svg 
@@ -73,7 +73,7 @@ export default function ShopContent({ products }: ShopContentProps) {
                 onClick={() => setIsDropdownOpen(false)}
               />
               <div 
-                className="absolute left-0 mt-2 w-64 bg-creme border border-olive/10 rounded-2xl shadow-xl z-40 p-2 flex flex-col gap-1"
+                className="absolute left-0 mt-2 w-64 bg-creme border border-olive/10 rounded-lg shadow-xl z-40 p-2 flex flex-col gap-1"
               >
                 {categories.map((cat, i) => (
                   <button 
@@ -88,7 +88,7 @@ export default function ShopContent({ products }: ShopContentProps) {
                       router.push(`/shop?${params.toString()}`, { scroll: false });
                       setIsDropdownOpen(false);
                     }}
-                    className={`text-left px-4 py-2.5 rounded-xl text-sm transition-all flex items-center justify-between cursor-pointer ${
+                    className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all flex items-center justify-between cursor-pointer ${
                       activeCategory === cat 
                         ? 'bg-olive text-creme font-medium' 
                         : 'text-olive/80 hover:bg-olive/5'
@@ -147,7 +147,7 @@ export default function ShopContent({ products }: ShopContentProps) {
                         setQuickViewProduct(product);
                         setIsQuickViewOpen(true);
                       }}
-                      className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-creme/90 backdrop-blur-md text-olive px-6 py-2.5 rounded-full font-medium tracking-wide shadow-lg hover:bg-creme hover:scale-105 cursor-pointer"
+                      className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-creme/90 backdrop-blur-md text-olive px-6 py-2.5 rounded-lg font-medium tracking-wide shadow-lg hover:bg-creme hover:scale-105 cursor-pointer"
                     >
                       Quick View
                     </button>

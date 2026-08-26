@@ -151,7 +151,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                       <button
                         key={fragrance}
                         onClick={() => setSelectedFragrance(fragrance)}
-                        className={`px-5 py-2.5 rounded-full text-sm transition-all border ${
+                        className={`px-5 py-2.5 rounded-lg text-sm transition-all border ${
                           selectedFragrance === fragrance
                             ? 'bg-olive text-creme border-olive shadow-md'
                             : 'bg-transparent text-olive/70 border-olive/10 hover:border-olive/30 hover:bg-olive/5'
@@ -170,7 +170,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     value={specialMessage}
                     onChange={(e) => setSpecialMessage(e.target.value)}
                     placeholder="Special messages, notes, custom colors, fragrances..."
-                    className="w-full bg-olive/5 border border-olive/10 rounded-2xl p-6 text-olive md:text-lg focus:outline-none focus:border-sage transition-colors placeholder:text-olive/20 resize-none"
+                    className="w-full bg-olive/5 border border-olive/10 rounded-lg p-6 text-olive md:text-lg focus:outline-none focus:border-sage transition-colors placeholder:text-olive/20 resize-none"
                     rows={3}
                   />
                 </div>
@@ -200,17 +200,17 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
             {/* Add to Cart Area */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 md:gap-6">
-              <div className="flex items-center justify-between border border-olive/20 rounded-full bg-transparent p-1 min-w-35">
+              <div className="flex items-center justify-between border border-olive/20 rounded-lg bg-transparent p-1 min-w-35">
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-olive hover:bg-olive/10 rounded-full transition-colors"
+                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-olive hover:bg-olive/10 rounded-lg transition-colors"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
                 <span className="w-10 text-center text-lg font-medium">{quantity}</span>
                 <button 
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-olive hover:bg-olive/10 rounded-full transition-colors"
+                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-olive hover:bg-olive/10 rounded-lg transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -218,7 +218,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               
               <button 
                 onClick={handleAddToCart}
-                className="w-full sm:flex-1 bg-olive text-creme py-4 md:py-5 rounded-full flex items-center justify-center gap-2 hover:bg-olive/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-olive/10"
+                className="w-full sm:flex-1 bg-olive text-creme py-4 md:py-5 rounded-lg flex items-center justify-center gap-2 hover:bg-olive/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-olive/10"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span>Add to Cart - Rs {(product.price * quantity).toFixed(0)}</span>

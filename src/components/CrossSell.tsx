@@ -70,7 +70,7 @@ export default function CrossSell({ currentProductId, category }: Props) {
       </div>
       
       <div className="mt-8 flex justify-center md:hidden">
-        <Link href="/shop" className="inline-flex px-8 py-4 border border-neutral-300 rounded-full text-sm uppercase tracking-widest text-neutral-900 transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 hover:bg-neutral-900 hover:text-creme active:scale-[0.95] items-center gap-2 font-medium">
+        <Link href="/shop" className="inline-flex px-8 py-4 border border-neutral-300 rounded-lg text-sm uppercase tracking-widest text-neutral-900 transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 hover:bg-neutral-900 hover:text-creme active:scale-[0.95] items-center gap-2 font-medium">
           View All <ArrowLeft className="w-4 h-4 rotate-180" />
         </Link>
       </div>
