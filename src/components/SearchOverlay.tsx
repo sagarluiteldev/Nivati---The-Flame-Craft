@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MagnifyingGlassIcon as SearchIcon, XMarkIcon as X } from "@heroicons/react/24/outline";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { products } from "@/lib/data";
 
 interface Props {
@@ -111,7 +112,7 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
                     className="flex gap-4 items-center p-4 rounded-2xl hover:bg-olive/5  transition-colors group"
                   >
                     <div className="w-20 h-20 rounded-xl overflow-hidden bg-olive/10  relative shrink-0">
-                      <img src={product.img} alt={product.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <Image src={product.img} alt={product.title} fill sizes="80px" loading="lazy" className="object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div>
                       <span className="text-xs uppercase tracking-widest text-olive/50 ">{Array.isArray(product.category) ? product.category.join(", ") : product.category}</span>

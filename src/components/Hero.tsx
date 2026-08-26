@@ -42,10 +42,10 @@ export default function Hero() {
       setSloganIndex((prev) => (prev + 1) % slogans.length);
     }, 4000);
     
-    // Gallery auto-play
+    // Gallery auto-play (6s interval to avoid LCP measurement collisions)
     const galleryTimer = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
-    }, 2500);
+    }, 6000);
 
     return () => {
       clearInterval(timer);
@@ -78,18 +78,30 @@ export default function Hero() {
       <motion.img 
         src="/images/lavender_sprig.png"
         alt=""
+        fetchPriority="low"
+        loading="lazy"
+        width={128}
+        height={128}
         style={{ rotate: rotate1, x: mousePos.x * 0.5, y: useTransform(scrollYProgress, [0, 1], [(mousePos.y * 0.5), -150 + (mousePos.y * 0.5)]) }}
         className="absolute top-[15%] left-[5%] w-32 h-auto opacity-60 blur-[0.5px] pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
       <motion.img 
         src="/images/orange_slice.png"
         alt=""
+        fetchPriority="low"
+        loading="lazy"
+        width={96}
+        height={96}
         style={{ rotate: rotate2, x: mousePos.x * -0.8, y: useTransform(scrollYProgress, [0, 1], [(mousePos.y * -0.8), -300 + (mousePos.y * -0.8)]) }}
         className="absolute bottom-[20%] left-[40%] w-24 h-auto opacity-50 blur-[1px] pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
       <motion.img 
         src="/images/jasmine_petal.png"
         alt=""
+        fetchPriority="low"
+        loading="lazy"
+        width={48}
+        height={48}
         style={{ rotate: rotate3, x: mousePos.x * 1.2, y: useTransform(scrollYProgress, [0, 1], [(mousePos.y * 1.2), -150 + (mousePos.y * 1.2)]) }}
         className="absolute top-[40%] left-[25%] w-12 h-auto opacity-70 pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
@@ -97,22 +109,22 @@ export default function Hero() {
       {/* Big Blending Hero Image - Desktop Full Bleed View */}
       <motion.div 
         className="absolute right-0 top-0 bottom-0 w-[50vw] overflow-hidden z-0 hidden lg:block"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.5, ease: "circOut" }}
+        initial={false}
       >
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
           <MotionImage 
             key={currentImageIndex}
             src={heroImages[currentImageIndex].src} 
             alt={heroImages[currentImageIndex].alt}
             fill
-            priority
+            priority={currentImageIndex === 0}
+            fetchPriority={currentImageIndex === 0 ? "high" : "auto"}
+            loading={currentImageIndex === 0 ? "eager" : "lazy"}
             sizes="50vw"
-            initial={{ opacity: 0 }}
+            initial={currentImageIndex === 0 ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1.4, ease: "easeInOut" }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
           />
@@ -230,21 +242,23 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Mobile View Image container / Desktop Grid Spacer */}
-        <div className="relative w-screen left-1/2 right-1/2 -translate-x-1/2 h-[45vh] lg:h-[75vh] lg:w-full lg:translate-x-0 lg:left-0 lg:right-0 mt-4 lg:mt-0 z-0 lg:opacity-0 lg:pointer-events-none">
+        {/* Mobile View Image container */}
+        <div className="relative w-screen left-1/2 right-1/2 -translate-x-1/2 h-[45vh] mt-4 z-0 block lg:hidden">
           <div className="relative h-full w-full overflow-hidden">
-            <AnimatePresence>
+            <AnimatePresence mode="popLayout">
               <MotionImage 
                 key={currentImageIndex}
                 src={heroImages[currentImageIndex].src} 
                 alt={heroImages[currentImageIndex].alt}
                 fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                initial={{ opacity: 0 }}
+                priority={currentImageIndex === 0}
+                fetchPriority={currentImageIndex === 0 ? "high" : "auto"}
+                loading={currentImageIndex === 0 ? "eager" : "lazy"}
+                sizes="100vw"
+                initial={currentImageIndex === 0 ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 1.4, ease: "easeInOut" }}
+                transition={{ duration: 1.2, ease: "easeInOut" }}
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
               />

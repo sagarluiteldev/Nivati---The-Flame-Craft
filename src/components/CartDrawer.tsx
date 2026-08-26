@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { XMarkIcon as X, MinusIcon as Minus, PlusIcon as Plus, ShoppingBagIcon as ShoppingBag } from "@heroicons/react/24/outline";
+import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 
 export default function CartDrawer() {
@@ -60,8 +61,8 @@ export default function CartDrawer() {
               ) : (
                 cart.map((item) => (
                   <div key={item.id} className="flex gap-4">
-                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-olive/5 shrink-0">
-                      <img src={item.image} alt={item.title} className="w-full h-full object-cover mix-blend-multiply" />
+                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-olive/5 shrink-0 relative">
+                      <Image src={item.image} alt={item.title} fill sizes="96px" loading="lazy" className="object-cover mix-blend-multiply" />
                     </div>
                     
                     <div className="flex-1 flex flex-col justify-between">

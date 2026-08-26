@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useState } from "react";
+import Image from "next/image";
 import { ShoppingBagIcon as ShoppingBag } from "@heroicons/react/24/outline";
 import { Product } from "@/lib/data";
 import { useAppContext } from "@/context/AppContext";
@@ -39,7 +40,7 @@ export default function StickyBuyBar({ product }: Props) {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="hidden md:flex items-center gap-4">
-          <img src={product.img} alt={product.title} className="w-12 h-12 rounded-lg object-cover bg-olive/5" />
+          <Image src={product.img} alt={product.title} width={48} height={48} loading="lazy" className="w-12 h-12 rounded-lg object-cover bg-olive/5" />
           <div>
             <h4 className="font-serif text-olive  text-lg">{product.title}</h4>
             <p className="text-olive/70  text-sm">Rs {product.price}</p>

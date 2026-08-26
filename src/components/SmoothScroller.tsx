@@ -11,6 +11,10 @@ export default function SmoothScroller() {
   useEffect(() => {
     if (isAdmin) return;
 
+    // Use native hardware-accelerated momentum scrolling on touch/mobile devices
+    const isTouch = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
+    if (isTouch) return;
+
     const lenis = new Lenis({
       duration: 1.0,
       lerp: 0.1,

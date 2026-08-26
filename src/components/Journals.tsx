@@ -82,7 +82,7 @@ export default function Journals() {
         {/* Section Header */}
         <div className="text-center mb-10 md:mb-16">
           <h2 className="text-3xl md:text-5xl font-serif text-olive mb-3 md:mb-4">Customer Journals</h2>
-          <p className="font-sans font-light text-olive/70 max-w-xl mx-auto text-sm md:text-base px-2">
+          <p className="font-sans font-normal text-olive/90 max-w-xl mx-auto text-sm md:text-base px-2">
             Stories and experiences from our community of makers and luxury candle enthusiasts.
           </p>
         </div>
@@ -171,16 +171,20 @@ export default function Journals() {
           </button>
 
           {/* Pagination Dots */}
-          <div className="flex justify-center items-center gap-2">
+          <div className="flex justify-center items-center gap-1">
             {[...Array(totalPages)].map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setIndex(idx)}
-                className={`transition-all duration-300 rounded-full cursor-pointer ${
-                  idx === index ? "w-6 sm:w-8 h-2 bg-olive" : "w-2 h-2 bg-olive/20 hover:bg-olive/40"
-                }`}
                 aria-label={`Go to slide ${idx + 1}`}
-              />
+                className="p-2 flex items-center justify-center cursor-pointer min-w-6 min-h-6"
+              >
+                <span
+                  className={`transition-all duration-300 rounded-full block ${
+                    idx === index ? "w-6 sm:w-8 h-2 bg-olive" : "w-2 h-2 bg-olive/20 hover:bg-olive/40"
+                  }`}
+                />
+              </button>
             ))}
           </div>
 

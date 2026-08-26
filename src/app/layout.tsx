@@ -1,25 +1,30 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Cormorant_Garamond, Lora } from "next/font/google";
+import dynamic from "next/dynamic";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
-import CartDrawer from "@/components/CartDrawer";
 import SmoothScroller from "@/components/SmoothScroller";
+
+const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 const lora = Lora({
   variable: "--font-lora",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const viewport: Viewport = {

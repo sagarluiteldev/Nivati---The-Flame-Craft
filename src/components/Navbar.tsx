@@ -4,11 +4,14 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-
 import { ShoppingBagIcon as ShoppingBag, Bars3Icon as Menu, XMarkIcon as X } from "@heroicons/react/24/outline";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useAppContext } from "@/context/AppContext";
-import ScentQuiz from "@/components/ScentQuiz";
-import SearchOverlay from "@/components/SearchOverlay";
 import { MagnifyingGlassIcon as SearchIcon } from "@heroicons/react/24/outline";
+
+const ScentQuiz = dynamic(() => import("@/components/ScentQuiz"), { ssr: false });
+const SearchOverlay = dynamic(() => import("@/components/SearchOverlay"), { ssr: false });
 
 export default function Navbar() {
   const { scrollY } = useScroll();
@@ -73,8 +76,8 @@ export default function Navbar() {
 
   return (
     <>
-      <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-      <ScentQuiz isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />
+      {isSearchOpen && <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />}
+      {isQuizOpen && <ScentQuiz isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />}
 
       <motion.header
         className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
@@ -95,9 +98,12 @@ export default function Navbar() {
               }
             }}
           >
-            <img 
+            <Image 
               src="/images/logo.png" 
               alt="Nivati Logo" 
+              width={72}
+              height={72}
+              priority
               className="h-15 w-15 md:h-18 md:w-18 object-contain transition-all" 
             />
           </Link>
@@ -113,28 +119,28 @@ export default function Navbar() {
               <div className="absolute top-full -left-12 w-200 bg-creme  shadow-2xl rounded-2xl p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 grid grid-cols-4 gap-6 translate-y-4 group-hover:translate-y-0 border border-olive/10  z-50">
                 <Link href="/shop?category=Signature+Candles" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
-                     <img src="/images/IMG_4142.jpg" alt="Signature Candles" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
+                     <Image src="/images/IMG_4142.jpg" alt="Signature Candles" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">Signature</h4>
                   <p className="text-xs text-olive/60  normal-case tracking-normal">Classic scents</p>
                 </Link>
                 <Link href="/shop?category=Mould+Candles" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
-                     <img src="/images/IMG_4315.jpg" alt="Shaped Candles" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
+                     <Image src="/images/IMG_4315.jpg" alt="Shaped Candles" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">Shaped</h4>
                   <p className="text-xs text-olive/60  normal-case tracking-normal">Artisan crafted</p>
                 </Link>
                 <Link href="/shop?category=Candle+Making+Kit" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
-                     <img src="/images/IMG_4201.jpg" alt="DIY Kits" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
+                     <Image src="/images/IMG_4201.jpg" alt="DIY Kits" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">DIY Kits</h4>
                   <p className="text-xs text-olive/60  normal-case tracking-normal">Pour your own</p>
                 </Link>
                 <Link href="/shop?category=Candle+Making+Materials" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
-                     <img src="/images/IMG_4187.PNG" alt="Raw Materials" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
+                     <Image src="/images/IMG_4187.PNG" alt="Raw Materials" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
                   <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">Materials</h4>
                   <p className="text-xs text-olive/60  normal-case tracking-normal">Crafting supplies</p>

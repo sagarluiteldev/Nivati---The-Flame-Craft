@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-// Link import removed as it was unused
+import Image from "next/image";
 
 export default function Workshops() {
   return (
@@ -19,10 +19,13 @@ export default function Workshops() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1 }}
           >
-            <img 
+            <Image 
               src="/images/master_the_flame.jpg" 
               alt="Artisan pouring lavender candle wax during a workshop"
-              className="absolute inset-0 w-full h-full object-cover"
+              fill
+              loading="lazy"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
             />
           </motion.div>
 

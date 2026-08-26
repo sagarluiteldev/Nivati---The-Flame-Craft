@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeftIcon as ArrowLeft } from "@heroicons/react/24/outline";
 import { products } from "@/lib/data";
 
@@ -47,10 +48,13 @@ export default function CrossSell({ currentProductId, category }: Props) {
           <Link href={`/shop/${product.id}`} key={product.id} className="group block">
             <div className="aspect-square rounded-2xl md:rounded-3xl overflow-hidden bg-olive/5  relative mb-6">
               <div className="absolute inset-0 bg-olive/10 mix-blend-multiply z-10 transition-opacity duration-500 group-hover:opacity-0" style={{ transform: "translateZ(0)" }} />
-              <img 
+              <Image 
                 src={product.img} 
                 alt={product.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                fill
+                sizes="(max-width: 768px) 100vw, 25vw"
+                loading="lazy"
+                className="object-cover transition-transform duration-1000 group-hover:scale-105"
                 style={{ transform: "translateZ(0)" }}
               />
             </div>

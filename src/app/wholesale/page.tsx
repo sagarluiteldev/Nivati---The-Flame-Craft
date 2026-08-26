@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -15,10 +16,12 @@ export default function WholesalePage() {
       <div className="grow max-w-4xl mx-auto px-6 py-12 md:py-20 w-full">
         <div className="text-center mb-16">
           <div className="w-20 h-20 rounded-full overflow-hidden mb-6 mx-auto shadow-md bg-olive/5 relative">
-            <img 
+            <Image 
               src="/images/logo.png" 
               alt="Nivati Logo" 
-              className="absolute inset-0 w-full h-full object-cover mix-blend-multiply" 
+              fill
+              sizes="80px"
+              className="object-cover mix-blend-multiply" 
               style={{ transform: "translateZ(0)" }}
             />
           </div>

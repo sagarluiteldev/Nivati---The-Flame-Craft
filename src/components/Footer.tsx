@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 const Facebook = ({ className, bgFill = "#FAFAFA", iconFill = "#3b4132" }: { className?: string; bgFill?: string; iconFill?: string }) => (
@@ -158,9 +159,9 @@ export default function Footer() {
             >
               <motion.div
                 variants={candleVariants(0.1)}
-                className="w-[20vw] h-[20vw] md:w-28 md:h-28 lg:w-44 lg:h-44 xl:w-56 xl:h-56 rotate-[-15deg]"
+                className="w-[20vw] h-[20vw] md:w-28 md:h-28 lg:w-44 lg:h-44 xl:w-56 xl:h-56 rotate-[-15deg] relative"
               >
-                <img src="/images/footer_1.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+                <Image src="/images/footer_1.png" alt="Nivati candle craft" width={224} height={224} loading="lazy" className="w-full h-full object-contain filter drop-shadow-xl" />
               </motion.div>
             </motion.div>
           </div>
@@ -173,9 +174,9 @@ export default function Footer() {
             >
               <motion.div
                 variants={candleVariants(0.22)}
-                className="w-[16vw] h-[16vw] md:w-24 md:h-24 lg:w-36 lg:h-36 xl:w-48 xl:h-48 rotate-12"
+                className="w-[16vw] h-[16vw] md:w-24 md:h-24 lg:w-36 lg:h-36 xl:w-48 xl:h-48 rotate-12 relative"
               >
-                <img src="/images/footer_2.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+                <Image src="/images/footer_2.png" alt="Nivati candle craft" width={192} height={192} loading="lazy" className="w-full h-full object-contain filter drop-shadow-xl" />
               </motion.div>
             </motion.div>
           </div>
@@ -188,9 +189,9 @@ export default function Footer() {
             >
               <motion.div
                 variants={candleVariants(0.32)}
-                className="w-[16vw] h-[16vw] md:w-24 md:h-24 lg:w-36 lg:h-36 xl:w-48 xl:h-48 rotate-[-10deg]"
+                className="w-[16vw] h-[16vw] md:w-24 md:h-24 lg:w-36 lg:h-36 xl:w-48 xl:h-48 rotate-[-10deg] relative"
               >
-                <img src="/images/footer_3.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+                <Image src="/images/footer_3.png" alt="Nivati candle craft" width={192} height={192} loading="lazy" className="w-full h-full object-contain filter drop-shadow-xl" />
               </motion.div>
             </motion.div>
           </div>
@@ -203,9 +204,9 @@ export default function Footer() {
             >
               <motion.div
                 variants={candleVariants(0.44)}
-                className="w-[20vw] h-[20vw] md:w-28 md:h-28 lg:w-44 lg:h-44 xl:w-56 xl:h-56 rotate-18"
+                className="w-[20vw] h-[20vw] md:w-28 md:h-28 lg:w-44 lg:h-44 xl:w-56 xl:h-56 rotate-18 relative"
               >
-                <img src="/images/footer_4.png" alt="" className="w-full h-full object-contain filter drop-shadow-xl" />
+                <Image src="/images/footer_4.png" alt="Nivati candle craft" width={224} height={224} loading="lazy" className="w-full h-full object-contain filter drop-shadow-xl" />
               </motion.div>
             </motion.div>
           </div>
@@ -218,7 +219,7 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
             <div className="md:col-span-2">
               <div className="mb-4">
-                <img src="/images/logo.png" alt="Nivati Logo" className="h-16 w-16 md:h-20 md:w-20 object-contain brightness-0 invert opacity-95" />
+                <Image src="/images/logo.png" alt="Nivati Logo" width={80} height={80} loading="lazy" className="h-16 w-16 md:h-20 md:w-20 object-contain brightness-0 invert opacity-95" />
               </div>
               <p className="text-creme/75 font-sans font-light max-w-sm leading-relaxed mb-6 text-sm md:text-base">
                 Empowering your sanctuary with hand-poured scents and mindful crafting. Find your glow.
@@ -257,7 +258,7 @@ export default function Footer() {
             {/* Shop & Support side by side on mobile */}
             <div className="grid grid-cols-2 md:contents gap-6">
               <div>
-                <h4 className="font-serif text-creme text-lg md:text-xl mb-3 md:mb-4">Shop</h4>
+                <h3 className="font-serif text-creme text-lg md:text-xl mb-3 md:mb-4">Shop</h3>
                 <ul className="flex flex-col gap-2 md:gap-3 font-light text-creme/75 text-sm md:text-base">
                   <li><Link href="/shop?category=Signature Candles" className="hover:text-white transition-colors">Signature Candles</Link></li>
                   <li><Link href="/shop?category=Candle Making Kit" className="hover:text-white transition-colors">DIY Kits</Link></li>
@@ -267,7 +268,7 @@ export default function Footer() {
               </div>
 
               <div>
-                <h4 className="font-serif text-creme text-lg md:text-xl mb-3 md:mb-4">Support</h4>
+                <h3 className="font-serif text-creme text-lg md:text-xl mb-3 md:mb-4">Support</h3>
                 <ul className="flex flex-col gap-2 md:gap-3 font-light text-creme/75 text-sm md:text-base">
                   <li><Link href="/shipping-policy" className="hover:text-white transition-colors">Shipping Policy</Link></li>
                   <li><Link href="/wholesale" className="hover:text-white transition-colors">Wholesale & Bulk</Link></li>

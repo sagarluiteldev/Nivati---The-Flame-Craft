@@ -2,6 +2,9 @@
 
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useRef } from "react";
+import Image from "next/image";
+
+const MotionImage = motion.create(Image);
 
 export default function Process() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -118,9 +121,12 @@ function ProcessStep({ step, idx, imageYEven, imageYOdd }: ProcessStepProps) {
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <div className="absolute inset-0 bg-sage/10 mix-blend-multiply z-10 pointer-events-none" style={{ transform: "translateZ(0)" }} />
-          <motion.img 
+          <MotionImage 
             src={step.image} 
             alt={step.title}
+            fill
+            loading="lazy"
+            sizes="(max-width: 1024px) 100vw, 50vw"
             style={{ y: idx % 2 === 0 ? imageYEven : imageYOdd }}
             className="absolute w-full h-[130%] -top-[15%] left-0 object-cover"
           />
