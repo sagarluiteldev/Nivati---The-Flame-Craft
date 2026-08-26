@@ -4,11 +4,12 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ArrowLeftIcon as ArrowLeft } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon as ArrowLeft, ShoppingBagIcon as ShoppingBag } from "@heroicons/react/24/outline";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import QuickViewModal from "@/components/QuickViewModal";
 import { Product } from "@/lib/data";
+import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
 
 interface ShopContentProps {
@@ -22,6 +23,7 @@ export default function ShopContent({ products }: ShopContentProps) {
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { addToCart } = useAppContext();
 
   const categories = ["All", "Signature Candles", "Concrete Jar Candles", "Basic Jar Candles", "Mould Candles", "Premium Jar Candles", "Gel&Soy Jar", "Mini Jar", "Concrete Pots & More", "Candle Making Kit", "Candle Making Materials"];
 
@@ -152,6 +154,26 @@ export default function ShopContent({ products }: ShopContentProps) {
                       Quick View
                     </button>
 
+                    {/* Quick Add to Cart Icon Button - Bottom Right */}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        addToCart({
+                          id: product.id,
+                          title: product.title,
+                          price: product.price,
+                          quantity: 1,
+                          image: product.img
+                        });
+                      }}
+                      className="absolute bottom-3 right-3 md:bottom-4 md:right-4 z-30 w-9 h-9 md:w-10 md:h-10 rounded-lg bg-creme/95 hover:bg-olive text-black hover:text-creme backdrop-blur-md flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-black/10"
+                      aria-label={`Add ${product.title} to cart`}
+                      title="Add to cart"
+                    >
+                      <ShoppingBag className="w-4 h-4 md:w-4.5 md:h-4.5" />
+                    </button>
+
                     {/* Scent Note Hover Micro-Animation */}
                     <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20 flex flex-col gap-2 items-end opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
                       {product.scentNotes && product.scentNotes.top !== "Unscented" && product.scentNotes.top !== "Customize your own" && (
@@ -171,9 +193,6 @@ export default function ShopContent({ products }: ShopContentProps) {
                     <div>
                       <h3 className="text-sm md:text-lg font-serif text-black mb-1 group-hover:text-black/70 transition-colors line-clamp-2 leading-tight">{product.title}</h3>
                       <p className="text-black/70 font-sans font-normal text-xs md:text-sm">Rs {product.price}</p>
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-black/5 text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black hover:text-creme hover:scale-105 shrink-0 ml-2">
-                      <ArrowLeft className="w-4 h-4 rotate-135" />
                     </div>
                   </div>
                 </Link>
