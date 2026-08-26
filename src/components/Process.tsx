@@ -4,8 +4,6 @@ import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
 
-const MotionImage = motion.create(Image);
-
 export default function Process() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -15,10 +13,6 @@ export default function Process() {
 
   // Global subtle parallax for the background or floating bits
   const yParallax = useTransform(scrollYProgress, [0, 1], [0, -100]);
-
-  // Subtle image parallax maps (global so they move continuously across the whole section)
-  const imageYEven = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
-  const imageYOdd = useTransform(scrollYProgress, [0, 1], ["10%", "-10%"]);
 
   const steps = [
     {
@@ -74,8 +68,6 @@ export default function Process() {
               key={idx} 
               step={step} 
               idx={idx} 
-              imageYEven={imageYEven} 
-              imageYOdd={imageYOdd} 
             />
           ))}
         </div>
@@ -92,18 +84,23 @@ interface ProcessStepProps {
     image: string;
   };
   idx: number;
-  imageYEven: MotionValue<string>;
-  imageYOdd: MotionValue<string>;
 }
 
-function ProcessStep({ step, idx, imageYEven, imageYOdd }: ProcessStepProps) {
+function ProcessStep({ step, idx }: ProcessStepProps) {
   const stepRef = useRef<HTMLDivElement>(null);
   
-  // Local scroll progress for this specific step
+  // Local scroll progress for this specific step entering and exiting viewport
   const { scrollYProgress } = useScroll({
     target: stepRef,
-    offset: ["start 95%", "center 50%"]
+    offset: ["start end", "end start"]
   });
+
+  // Safe inner parallax translation bounded strictly inside the placeholder frame
+  const imageY = useTransform(
+    scrollYProgress, 
+    [0, 1], 
+    idx % 2 === 0 ? ["-7%", "7%"] : ["7%", "-7%"]
+  );
 
   const totalChars = step.title.replace(/\s/g, "").length;
   let charCounter = 0;
@@ -114,30 +111,34 @@ function ProcessStep({ step, idx, imageYEven, imageYOdd }: ProcessStepProps) {
         <motion.div 
           className="relative w-full aspect-4/5 rounded-none overflow-hidden shadow-xl"
           style={{ 
-            opacity: useTransform(scrollYProgress, [0, 0.4], [0, 1]),
-            scale: useTransform(scrollYProgress, [0, 0.4], [0.95, 1])
+            opacity: useTransform(scrollYProgress, [0, 0.25], [0, 1]),
+            scale: useTransform(scrollYProgress, [0, 0.25], [0.96, 1])
           }}
-          whileHover={{ scale: 1.02 }}
+          whileHover={{ scale: 1.01 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <div className="absolute inset-0 bg-black/5 mix-blend-multiply z-10 pointer-events-none" style={{ transform: "translateZ(0)" }} />
-          <MotionImage 
-            src={step.image} 
-            alt={step.title}
-            fill
-            loading="lazy"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            style={{ y: idx % 2 === 0 ? imageYEven : imageYOdd }}
-            className="absolute w-full h-[130%] -top-[15%] left-0 object-cover"
-          />
+          <motion.div 
+            style={{ y: imageY }}
+            className="relative w-full h-[120%] -top-[10%] left-0"
+          >
+            <Image 
+              src={step.image} 
+              alt={step.title}
+              fill
+              loading="lazy"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </motion.div>
         </motion.div>
       </div>
 
       <div className="w-full lg:w-1/2 flex flex-col justify-center">
         <motion.span 
           style={{ 
-            opacity: useTransform(scrollYProgress, [0, 0.4], [0, 0.3]),
-            x: useTransform(scrollYProgress, [0, 0.4], [idx % 2 === 1 ? -40 : 40, 0])
+            opacity: useTransform(scrollYProgress, [0, 0.3], [0, 0.3]),
+            x: useTransform(scrollYProgress, [0, 0.3], [idx % 2 === 1 ? -40 : 40, 0])
           }}
           className="text-black/40 text-6xl md:text-8xl font-serif leading-none mb-4 tracking-tighter"
         >
@@ -165,8 +166,8 @@ function ProcessStep({ step, idx, imageYEven, imageYOdd }: ProcessStepProps) {
         
         <motion.p 
           style={{ 
-            opacity: useTransform(scrollYProgress, [0.3, 0.8], [0, 1]),
-            y: useTransform(scrollYProgress, [0.3, 0.8], [20, 0])
+            opacity: useTransform(scrollYProgress, [0.15, 0.45], [0, 1]),
+            y: useTransform(scrollYProgress, [0.15, 0.45], [20, 0])
           }}
           className="text-lg md:text-xl text-black/85 font-sans font-normal leading-relaxed"
         >
