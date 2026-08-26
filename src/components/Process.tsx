@@ -89,7 +89,7 @@ interface ProcessStepProps {
 function ProcessStep({ step, idx }: ProcessStepProps) {
   const stepRef = useRef<HTMLDivElement>(null);
   
-  // Local scroll progress for this specific step entering and exiting viewport
+  // Local scroll progress for inner image parallax
   const { scrollYProgress } = useScroll({
     target: stepRef,
     offset: ["start end", "end start"]
@@ -109,13 +109,12 @@ function ProcessStep({ step, idx }: ProcessStepProps) {
     <div ref={stepRef} className={`flex items-center flex-col lg:flex-row gap-12 lg:gap-24 ${idx % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
       <div className="w-full lg:w-1/2">
         <motion.div 
-          className="relative w-full aspect-4/5 rounded-none overflow-hidden shadow-xl"
-          style={{ 
-            opacity: useTransform(scrollYProgress, [0, 0.25], [0, 1]),
-            scale: useTransform(scrollYProgress, [0, 0.25], [0.96, 1])
-          }}
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           whileHover={{ scale: 1.01 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="relative w-full aspect-4/5 rounded-none overflow-hidden shadow-xl"
         >
           <div className="absolute inset-0 bg-black/5 mix-blend-multiply z-10 pointer-events-none" style={{ transform: "translateZ(0)" }} />
           <motion.div 
@@ -136,10 +135,10 @@ function ProcessStep({ step, idx }: ProcessStepProps) {
 
       <div className="w-full lg:w-1/2 flex flex-col justify-center">
         <motion.span 
-          style={{ 
-            opacity: useTransform(scrollYProgress, [0, 0.3], [0, 0.3]),
-            x: useTransform(scrollYProgress, [0, 0.3], [idx % 2 === 1 ? -40 : 40, 0])
-          }}
+          initial={{ opacity: 0, x: idx % 2 === 1 ? -30 : 30 }}
+          whileInView={{ opacity: 0.4, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           className="text-black/40 text-6xl md:text-8xl font-serif leading-none mb-4 tracking-tighter"
         >
           {step.number}
@@ -165,10 +164,10 @@ function ProcessStep({ step, idx }: ProcessStepProps) {
         </h3>
         
         <motion.p 
-          style={{ 
-            opacity: useTransform(scrollYProgress, [0.15, 0.45], [0, 1]),
-            y: useTransform(scrollYProgress, [0.15, 0.45], [20, 0])
-          }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           className="text-lg md:text-xl text-black/85 font-sans font-normal leading-relaxed"
         >
           {step.description}
