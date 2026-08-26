@@ -144,22 +144,22 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
 
             {/* Content Section */}
             <div className="flex-1 md:w-1/2 p-8 lg:p-12 overflow-y-auto scrollbar-hide flex flex-col">
-              <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-olive/30 mb-3 block">
+              <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-black/40 mb-3 block">
                 {Array.isArray(product.category) ? product.category.join(" / ") : product.category}
               </span>
-              <h2 className="text-3xl lg:text-4xl font-serif text-olive mb-4 leading-tight">
+              <h2 className="text-3xl lg:text-4xl font-serif text-black mb-4 leading-tight">
                 {product.title}
               </h2>
-              <p className="text-xl font-serif text-olive/80 mb-10">
+              <p className="text-xl font-serif text-black/80 mb-10">
                 Rs {product.price}
               </p>
               
               {/* Personalization UI */}
               {showPersonalization ? (
-                <div className="space-y-10 border-t border-olive/10 pt-10 mb-10">
+                <div className="space-y-10 border-t border-black/10 pt-10 mb-10">
                   {/* Color Selection */}
                   <div>
-                    <label className="text-[10px] uppercase tracking-widest text-olive/40 block mb-6 px-1">Choose Jar Color</label>
+                    <label className="text-[10px] uppercase tracking-widest text-black/50 block mb-6 px-1">Choose Jar Color</label>
                     <div className="flex flex-wrap gap-4">
                       {COLORS.map((color) => (
                         <button
@@ -181,7 +181,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
 
                   {/* Fragrance Selection */}
                   <div>
-                    <label className="text-[10px] uppercase tracking-widest text-olive/40 block mb-6 px-1">Select Scent</label>
+                    <label className="text-[10px] uppercase tracking-widest text-black/50 block mb-6 px-1">Select Scent</label>
                     <div className="flex flex-wrap gap-2">
                       {FRAGRANCES.map((fragrance) => (
                         <button
@@ -190,7 +190,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
                           className={`px-4 py-2 rounded-lg text-[11px] transition-all border ${
                             selectedFragrance === fragrance
                               ? 'bg-olive text-creme border-olive shadow-md'
-                              : 'bg-transparent text-olive/60 border-olive/10 hover:border-olive/30 hover:bg-olive/5'
+                              : 'bg-transparent text-black/70 border-black/10 hover:border-black/30 hover:bg-black/5'
                           }`}
                         >
                           {fragrance}
@@ -201,12 +201,12 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
 
                   {/* Special Message */}
                   <div>
-                    <label className="text-[10px] uppercase tracking-widest text-olive/40 block mb-6 px-1">Special Message</label>
+                    <label className="text-[10px] uppercase tracking-widest text-black/50 block mb-6 px-1">Special Message</label>
                     <textarea
                       value={specialMessage}
                       onChange={(e) => setSpecialMessage(e.target.value)}
                       placeholder="Special messages, notes, custom colors, fragrances..."
-                      className="w-full bg-olive/5 border border-olive/10 rounded-lg p-6 text-olive focus:outline-none focus:border-sage transition-all placeholder:text-olive/20 resize-none text-sm leading-relaxed"
+                      className="w-full bg-black/5 border border-black/10 rounded-lg p-6 text-black focus:outline-none focus:border-olive transition-all placeholder:text-black/30 resize-none text-sm leading-relaxed"
                       rows={2}
                     />
                   </div>
@@ -214,19 +214,19 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
               ) : (
                 /* Non-personalizable details */
                 (product.scentNotes.top !== "Unscented" && product.scentNotes.top !== "Customize your own") && (
-                  <div className="mb-10 p-6 bg-olive/5 rounded-lg border border-olive/10">
-                    <h4 className="font-serif text-lg text-olive mb-4">Product Details</h4>
-                    <ul className="space-y-3 text-sm font-light text-olive/80">
+                  <div className="mb-10 p-6 bg-black/5 rounded-lg border border-black/10">
+                    <h4 className="font-serif text-lg text-black mb-4">Product Details</h4>
+                    <ul className="space-y-3 text-sm font-light text-black/85">
                       <li className="flex gap-4">
-                        <span className="w-12 font-medium text-olive/40 uppercase tracking-widest text-[10px]">Top:</span> 
+                        <span className="w-12 font-medium text-black/50 uppercase tracking-widest text-[10px]">Top:</span> 
                         {product.scentNotes.top}
                       </li>
                       <li className="flex gap-4">
-                        <span className="w-12 font-medium text-olive/40 uppercase tracking-widest text-[10px]">Mid:</span> 
+                        <span className="w-12 font-medium text-black/50 uppercase tracking-widest text-[10px]">Mid:</span> 
                         {product.scentNotes.mid}
                       </li>
                       <li className="flex gap-4">
-                        <span className="w-12 font-medium text-olive/40 uppercase tracking-widest text-[10px]">Base:</span> 
+                        <span className="w-12 font-medium text-black/50 uppercase tracking-widest text-[10px]">Base:</span> 
                         {product.scentNotes.base}
                       </li>
                     </ul>
@@ -235,17 +235,17 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
               )}
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4 mt-auto">
-                <div className="flex items-center justify-between border border-olive/20 rounded-lg bg-transparent p-1 min-w-30">
+                <div className="flex items-center justify-between border border-black/20 rounded-lg bg-transparent p-1 min-w-30">
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 flex items-center justify-center text-olive hover:bg-olive/10 rounded-lg transition-colors"
+                    className="w-10 h-10 flex items-center justify-center text-black hover:bg-black/10 rounded-lg transition-colors"
                   >
                     <Minus className="w-3 h-3" />
                   </button>
-                  <span className="w-8 text-center text-base font-medium">{quantity}</span>
+                  <span className="w-8 text-center text-base font-medium text-black">{quantity}</span>
                   <button 
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-10 h-10 flex items-center justify-center text-olive hover:bg-olive/10 rounded-lg transition-colors"
+                    className="w-10 h-10 flex items-center justify-center text-black hover:bg-black/10 rounded-lg transition-colors"
                   >
                     <Plus className="w-3 h-3" />
                   </button>

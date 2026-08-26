@@ -103,24 +103,24 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                    {product.tag}
                  </span>
               )}
-              <span className="text-olive/60 text-sm uppercase tracking-widest">
+              <span className="text-black/60 text-sm uppercase tracking-widest">
                 {Array.isArray(product.category) ? product.category.join(" / ") : product.category}
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-olive mb-4 leading-tight">{product.title}</h1>
-            <p className="text-2xl text-olive/80 mb-8 font-serif">Rs {product.price}</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-black mb-4 leading-tight">{product.title}</h1>
+            <p className="text-2xl text-black/80 mb-8 font-serif">Rs {product.price}</p>
             
-            <p className="text-lg leading-relaxed text-olive/80 mb-10 font-light max-w-lg">
+            <p className="text-lg leading-relaxed text-black/85 mb-10 font-light max-w-lg">
               {product.description}
             </p>
 
             {/* Personalization UI */}
             {showPersonalization ? (
-              <div className="space-y-10 border-y border-olive/10 py-10 mb-10">
+              <div className="space-y-10 border-y border-black/10 py-10 mb-10">
                 {/* Color Selection */}
                 <div>
-                  <label className="text-xs uppercase tracking-widest text-olive/40 block mb-6 px-1">Choose Jar Color</label>
+                  <label className="text-xs uppercase tracking-widest text-black/50 block mb-6 px-1">Choose Jar Color</label>
                   <div className="flex flex-wrap gap-4">
                     {COLORS.map((color) => (
                       <button
@@ -135,7 +135,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                           className="w-full h-full rounded-full shadow-inner"
                           style={{ background: color.hex }}
                         />
-                        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-olive/40 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-black/50 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                           {color.name}
                         </span>
                       </button>
@@ -145,7 +145,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
                 {/* Fragrance Selection */}
                 <div>
-                  <label className="text-xs uppercase tracking-widest text-olive/40 block mb-6 px-1">Select Fragrance</label>
+                  <label className="text-xs uppercase tracking-widest text-black/50 block mb-6 px-1">Select Fragrance</label>
                   <div className="flex flex-wrap gap-2 md:gap-3">
                     {FRAGRANCES.map((fragrance) => (
                       <button
@@ -154,7 +154,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                         className={`px-5 py-2.5 rounded-lg text-sm transition-all border ${
                           selectedFragrance === fragrance
                             ? 'bg-olive text-creme border-olive shadow-md'
-                            : 'bg-transparent text-olive/70 border-olive/10 hover:border-olive/30 hover:bg-olive/5'
+                            : 'bg-transparent text-black/70 border-black/10 hover:border-black/30 hover:bg-black/5'
                         }`}
                       >
                         {fragrance}
@@ -165,12 +165,12 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
                 {/* Special Message */}
                 <div>
-                  <label className="text-xs uppercase tracking-widest text-olive/40 block mb-6 px-1">Special Message / Notes</label>
+                  <label className="text-xs uppercase tracking-widest text-black/50 block mb-6 px-1">Special Message / Notes</label>
                   <textarea
                     value={specialMessage}
                     onChange={(e) => setSpecialMessage(e.target.value)}
                     placeholder="Special messages, notes, custom colors, fragrances..."
-                    className="w-full bg-olive/5 border border-olive/10 rounded-lg p-6 text-olive md:text-lg focus:outline-none focus:border-sage transition-colors placeholder:text-olive/20 resize-none"
+                    className="w-full bg-black/5 border border-black/10 rounded-lg p-6 text-black md:text-lg focus:outline-none focus:border-olive transition-colors placeholder:text-black/30 resize-none"
                     rows={3}
                   />
                 </div>
@@ -178,19 +178,19 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             ) : (
               /* Non-personalizable details */
               (product.scentNotes.top !== "Unscented" && product.scentNotes.top !== "Customize your own") && (
-                <div className="mb-10 p-8 bg-olive/5 rounded-none border border-olive/10">
-                  <h4 className="font-serif text-xl text-olive mb-6">Product Details</h4>
-                  <ul className="space-y-4 text-sm md:text-base font-light text-olive/80">
-                    <li className="flex gap-4 border-b border-olive/5 pb-3">
-                      <span className="w-20 font-medium text-olive/50 uppercase tracking-widest text-[10px]">Top:</span> 
+                <div className="mb-10 p-8 bg-black/5 rounded-none border border-black/10">
+                  <h4 className="font-serif text-xl text-black mb-6">Product Details</h4>
+                  <ul className="space-y-4 text-sm md:text-base font-light text-black/85">
+                    <li className="flex gap-4 border-b border-black/5 pb-3">
+                      <span className="w-20 font-medium text-black/50 uppercase tracking-widest text-[10px]">Top:</span> 
                       <span className="font-medium">{product.scentNotes.top}</span>
                     </li>
-                    <li className="flex gap-4 border-b border-olive/5 pb-3">
-                      <span className="w-20 font-medium text-olive/50 uppercase tracking-widest text-[10px]">Mid:</span> 
+                    <li className="flex gap-4 border-b border-black/5 pb-3">
+                      <span className="w-20 font-medium text-black/50 uppercase tracking-widest text-[10px]">Mid:</span> 
                       <span className="font-medium">{product.scentNotes.mid}</span>
                     </li>
                     <li className="flex gap-4 pb-3">
-                      <span className="w-20 font-medium text-olive/50 uppercase tracking-widest text-[10px]">Base:</span> 
+                      <span className="w-20 font-medium text-black/50 uppercase tracking-widest text-[10px]">Base:</span> 
                       <span className="font-medium">{product.scentNotes.base}</span>
                     </li>
                   </ul>
@@ -200,17 +200,17 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
             {/* Add to Cart Area */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 md:gap-6">
-              <div className="flex items-center justify-between border border-olive/20 rounded-lg bg-transparent p-1 min-w-35">
+              <div className="flex items-center justify-between border border-black/20 rounded-lg bg-transparent p-1 min-w-35">
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-olive hover:bg-olive/10 rounded-lg transition-colors"
+                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-black hover:bg-black/10 rounded-lg transition-colors"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
-                <span className="w-10 text-center text-lg font-medium">{quantity}</span>
+                <span className="w-10 text-center text-lg font-medium text-black">{quantity}</span>
                 <button 
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-olive hover:bg-olive/10 rounded-lg transition-colors"
+                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-black hover:bg-black/10 rounded-lg transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -218,7 +218,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               
               <button 
                 onClick={handleAddToCart}
-                className="w-full sm:flex-1 bg-olive text-creme py-4 md:py-5 rounded-lg flex items-center justify-center gap-2 hover:bg-olive/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-olive/10"
+                className="w-full sm:flex-1 bg-olive text-creme py-4 md:py-5 rounded-lg flex items-center justify-center gap-2 hover:bg-olive/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-olive/10 font-medium"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span>Add to Cart - Rs {(product.price * quantity).toFixed(0)}</span>

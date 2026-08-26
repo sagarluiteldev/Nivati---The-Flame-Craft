@@ -41,10 +41,10 @@ export default function ShopContent({ products }: ShopContentProps) {
       <div className="grow max-w-7xl mx-auto px-6 w-full pt-4 pb-12 md:pt-6 md:pb-24">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-8 gap-4 md:gap-6">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2 text-olive/60 hover:text-olive transition-colors mb-3 md:mb-4 text-sm">
+            <Link href="/" className="inline-flex items-center gap-2 text-black/60 hover:text-black transition-colors mb-3 md:mb-4 text-sm">
               <ArrowLeft className="w-4 h-4" /> Back to Home
             </Link>
-            <h1 className="text-3xl md:text-6xl font-serif text-olive ">All Collections</h1>
+            <h1 className="text-3xl md:text-6xl font-serif text-black">All Collections</h1>
           </div>
         </div>
 
@@ -52,11 +52,11 @@ export default function ShopContent({ products }: ShopContentProps) {
         <div className="relative mb-6 md:mb-8 z-40">
           <button 
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="inline-flex items-center gap-3 px-6 py-3 bg-olive/5 border border-olive/10 text-olive rounded-lg text-sm font-medium hover:bg-olive/10 transition-all select-none cursor-pointer"
+            className="inline-flex items-center gap-3 px-6 py-3 bg-black/5 border border-black/10 text-black rounded-lg text-sm font-medium hover:bg-black/10 transition-all select-none cursor-pointer"
           >
-            <span>Category: <strong className="text-olive font-semibold">{activeCategory}</strong></span>
+            <span>Category: <strong className="text-black font-semibold">{activeCategory}</strong></span>
             <svg 
-              className={`w-4 h-4 text-olive/60 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} 
+              className={`w-4 h-4 text-black/60 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} 
               fill="none" 
               viewBox="0 0 24 24" 
               stroke="currentColor"
@@ -73,7 +73,7 @@ export default function ShopContent({ products }: ShopContentProps) {
                 onClick={() => setIsDropdownOpen(false)}
               />
               <div 
-                className="absolute left-0 mt-2 w-64 bg-creme border border-olive/10 rounded-lg shadow-xl z-40 p-2 flex flex-col gap-1"
+                className="absolute left-0 mt-2 w-64 bg-creme border border-black/10 rounded-lg shadow-xl z-40 p-2 flex flex-col gap-1"
               >
                 {categories.map((cat, i) => (
                   <button 
@@ -91,7 +91,7 @@ export default function ShopContent({ products }: ShopContentProps) {
                     className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all flex items-center justify-between cursor-pointer ${
                       activeCategory === cat 
                         ? 'bg-olive text-creme font-medium' 
-                        : 'text-olive/80 hover:bg-olive/5'
+                        : 'text-black/80 hover:bg-black/5'
                     }`}
                   >
                     <span>{cat}</span>
@@ -133,7 +133,7 @@ export default function ShopContent({ products }: ShopContentProps) {
                     
                     <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20 flex gap-2">
                       {product.tag && (
-                        <span className="px-3 py-1 bg-creme text-olive text-xs font-medium tracking-wide rounded-full">
+                        <span className="px-3 py-1 bg-creme text-black text-xs font-medium tracking-wide rounded-full">
                           {product.tag}
                         </span>
                       )}
@@ -147,7 +147,7 @@ export default function ShopContent({ products }: ShopContentProps) {
                         setQuickViewProduct(product);
                         setIsQuickViewOpen(true);
                       }}
-                      className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-creme/90 backdrop-blur-md text-olive px-6 py-2.5 rounded-lg font-medium tracking-wide shadow-lg hover:bg-creme hover:scale-105 cursor-pointer"
+                      className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-creme/90 backdrop-blur-md text-black px-6 py-2.5 rounded-lg font-medium tracking-wide shadow-lg hover:bg-creme hover:scale-105 cursor-pointer"
                     >
                       Quick View
                     </button>
@@ -156,10 +156,10 @@ export default function ShopContent({ products }: ShopContentProps) {
                     <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20 flex flex-col gap-2 items-end opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
                       {product.scentNotes && product.scentNotes.top !== "Unscented" && product.scentNotes.top !== "Customize your own" && (
                         <>
-                          <span className="px-3 py-1 bg-creme/90 backdrop-blur-sm text-olive text-xs font-medium rounded-full shadow-sm delay-75">
+                          <span className="px-3 py-1 bg-creme/90 backdrop-blur-sm text-black text-xs font-medium rounded-full shadow-sm delay-75">
                             Top: {product.scentNotes.top.split(',')[0]}
                           </span>
-                          <span className="px-3 py-1 bg-creme/90 backdrop-blur-sm text-olive text-xs font-medium rounded-full shadow-sm delay-150">
+                          <span className="px-3 py-1 bg-creme/90 backdrop-blur-sm text-black text-xs font-medium rounded-full shadow-sm delay-150">
                             Mid: {product.scentNotes.mid.split(',')[0]}
                           </span>
                         </>
@@ -169,10 +169,10 @@ export default function ShopContent({ products }: ShopContentProps) {
 
                   <div className="pt-1 pb-2 px-1 md:px-2 flex justify-between items-start">
                     <div>
-                      <h3 className="text-sm md:text-lg font-serif text-olive mb-1 group-hover:text-olive/80 transition-colors line-clamp-2 leading-tight">{product.title}</h3>
-                      <p className="text-olive/70 font-sans font-light text-xs md:text-sm">Rs {product.price}</p>
+                      <h3 className="text-sm md:text-lg font-serif text-black mb-1 group-hover:text-black/70 transition-colors line-clamp-2 leading-tight">{product.title}</h3>
+                      <p className="text-black/70 font-sans font-normal text-xs md:text-sm">Rs {product.price}</p>
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-olive/5 text-olive flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-olive hover:text-creme hover:scale-105 shrink-0 ml-2">
+                    <div className="w-8 h-8 rounded-full bg-black/5 text-black flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-black hover:text-creme hover:scale-105 shrink-0 ml-2">
                       <ArrowLeft className="w-4 h-4 rotate-135" />
                     </div>
                   </div>

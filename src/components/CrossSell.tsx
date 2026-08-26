@@ -38,7 +38,7 @@ export default function CrossSell({ currentProductId, category }: Props) {
           <h2 className="text-3xl md:text-5xl font-serif text-neutral-900 mb-4">You May Also Like</h2>
           <p className="text-neutral-600">Explore more from our {Array.isArray(category) ? category[0].toLowerCase() : category.toLowerCase()} collection.</p>
         </div>
-        <Link href="/shop" className="hidden md:inline-flex text-sm uppercase tracking-widest text-neutral-900 hover:text-olive transition-colors items-center gap-2 font-medium">
+        <Link href="/shop" className="hidden md:inline-flex text-sm uppercase tracking-widest text-neutral-900 hover:text-black transition-colors items-center gap-2 font-medium">
           View All <ArrowLeft className="w-4 h-4 rotate-180" />
         </Link>
       </div>
@@ -61,7 +61,7 @@ export default function CrossSell({ currentProductId, category }: Props) {
             <div>
               <span className="text-xs uppercase tracking-widest text-neutral-500 mb-2 block">{Array.isArray(product.category) ? product.category.join(" / ") : product.category}</span>
               <div className="flex justify-between items-center">
-                <h3 className="text-xl font-serif text-neutral-900 group-hover:text-olive transition-colors">{product.title}</h3>
+                <h3 className="text-xl font-serif text-neutral-900 group-hover:text-black/70 transition-colors">{product.title}</h3>
                 <span className="text-neutral-800 font-medium">Rs {product.price}</span>
               </div>
             </div>

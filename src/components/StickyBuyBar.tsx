@@ -42,14 +42,14 @@ export default function StickyBuyBar({ product }: Props) {
         <div className="hidden md:flex items-center gap-4">
           <Image src={product.img} alt={product.title} width={48} height={48} loading="lazy" className="w-12 h-12 rounded-lg object-cover bg-olive/5" />
           <div>
-            <h4 className="font-serif text-olive  text-lg">{product.title}</h4>
-            <p className="text-olive/70  text-sm">Rs {product.price}</p>
+            <h4 className="font-serif text-black text-lg">{product.title}</h4>
+            <p className="text-black/70 text-sm">Rs {product.price}</p>
           </div>
         </div>
         
         <div className="flex items-center gap-4 w-full md:w-auto">
-          <p className="md:hidden font-serif text-olive  text-lg flex-1">{product.title}</p>
-          <div className="hidden sm:block text-olive  font-medium text-lg mr-2">
+          <p className="md:hidden font-serif text-black text-lg flex-1">{product.title}</p>
+          <div className="hidden sm:block text-black font-medium text-lg mr-2">
             Rs {product.price}
           </div>
           <button 
