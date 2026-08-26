@@ -189,7 +189,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
                           onClick={() => setSelectedFragrance(fragrance)}
                           className={`px-4 py-2 rounded-lg text-[11px] transition-all border ${
                             selectedFragrance === fragrance
-                              ? 'btn-mesh text-creme border-transparent shadow-md font-medium'
+                              ? 'bg-olive text-creme border-olive shadow-md font-medium'
                               : 'bg-transparent text-black/70 border-black/10 hover:border-black/30 hover:bg-black/5'
                           }`}
                         >
@@ -252,7 +252,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
                 </div>
                 <button 
                   onClick={handleAddToCart}
-                  className="flex-1 btn-mesh text-creme rounded-lg py-4 px-8 flex items-center justify-center gap-3 transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 shadow-lg active:scale-[0.95] font-medium tracking-widest text-[10px]"
+                  className="flex-1 bg-olive text-creme rounded-lg py-4 px-8 flex items-center justify-center gap-3 transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-[0.95] font-medium tracking-widest text-[10px]"
                 >
                   <ShoppingBag className="w-4 h-4" /> ADD TO CART
                 </button>

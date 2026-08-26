@@ -44,41 +44,32 @@ h6 {
   @apply font-serif;
 }
 
-/* 100% Pure CSS Mesh Gradient & Organic Grain Texture */
+/* Pure CSS Mesh Gradient & Grain — transformed to match primary brand olive (#5a6c37) */
 .bg-mesh-grain {
-  background-color: #1f5851;
-  background-image: 
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
-    radial-gradient(ellipse at 12% 15%, #479348 0%, rgba(71, 147, 72, 0) 55%),
-    radial-gradient(ellipse at 92% 88%, #80d67b 0%, #4a975f 28%, rgba(74, 151, 95, 0) 65%),
-    radial-gradient(ellipse at 88% 45%, #34b189 0%, rgba(52, 177, 137, 0) 50%),
-    radial-gradient(ellipse at 15% 55%, #3a7b51 0%, rgba(58, 123, 81, 0) 45%),
-    radial-gradient(ellipse at 50% 50%, #327b60 0%, rgba(50, 123, 96, 0) 60%),
-    linear-gradient(135deg, #1f5851 0%, #1e574e 45%, #1d665d 100%);
-  background-size: 160px 160px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
-  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
-  background-position: center;
+  position: relative;
+  background-color: #445427;
+  background-image:
+    linear-gradient(160deg, transparent 25%, rgba(109, 131, 67, 0.4) 60%, rgba(138, 163, 88, 0.55) 100%),
+    linear-gradient(70deg, transparent 35%, rgba(90, 108, 55, 0.3) 70%, rgba(72, 92, 43, 0.25) 100%),
+    linear-gradient(135deg, #32401a 0%, #445427 25%, #5a6c37 50%, #6d8343 75%, #80994f 100%);
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.btn-mesh {
-  background-color: #1f5851;
-  background-image: 
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
-    radial-gradient(ellipse at 12% 15%, #479348 0%, rgba(71, 147, 72, 0) 55%),
-    radial-gradient(ellipse at 92% 88%, #80d67b 0%, #4a975f 28%, rgba(74, 151, 95, 0) 65%),
-    radial-gradient(ellipse at 88% 45%, #34b189 0%, rgba(52, 177, 137, 0) 50%),
-    radial-gradient(ellipse at 15% 55%, #3a7b51 0%, rgba(58, 123, 81, 0) 45%),
-    radial-gradient(ellipse at 50% 50%, #327b60 0%, rgba(50, 123, 96, 0) 60%),
-    linear-gradient(135deg, #1f5851 0%, #1e574e 45%, #1d665d 100%);
-  background-size: 160px 160px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
-  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
-  color: #FAFAFA !important;
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+.bg-mesh-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .btn-mesh:hover {
-  filter: brightness(1.08);
-  box-shadow: 0 10px 25px -5px rgba(31, 88, 81, 0.45);
+  filter: brightness(1.1);
+  box-shadow: 0 10px 25px -5px rgba(30, 87, 78, 0.45);
 }
 
 /* Prevent auto-zoom on iOS Safari and mobile browsers when focusing inputs / selects */

@@ -209,7 +209,7 @@ export default function Hero() {
           >
             <Link 
               href="/shop"
-              className="px-9 py-4.5 btn-mesh text-creme rounded-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-95 text-center font-medium tracking-wide text-base shadow-lg"
+              className="px-9 py-4.5 bg-olive text-creme rounded-lg transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-olive/90 active:scale-95 text-center font-medium tracking-wide text-base shadow-lg shadow-olive/10"
             >
               Shop Collection
             </Link>
@@ -287,7 +287,7 @@ export default function Hero() {
         >
           <Link 
             href="/shop"
-            className="px-8 py-4 btn-mesh text-creme rounded-lg text-center font-medium tracking-wide shadow-md"
+            className="px-8 py-4 bg-olive text-creme rounded-lg text-center font-medium tracking-wide shadow-md"
           >
             Shop Collection
           </Link>

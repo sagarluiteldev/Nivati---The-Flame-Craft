@@ -92,10 +92,10 @@ export default function Journals() {
           {/* Desktop Left Arrow Button */}
           <button
             onClick={handlePrev}
-            className="hidden md:flex absolute -left-6 lg:-left-12 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-black/20 bg-white/95 text-black hover:bg-black hover:text-white items-center justify-center transition-all duration-300 shadow-md cursor-pointer"
+            className="hidden md:flex absolute -left-10 lg:-left-16 top-1/2 -translate-y-1/2 z-20 text-black/70 hover:text-black hover:scale-125 active:scale-95 items-center justify-center transition-all duration-300 p-2 cursor-pointer"
             aria-label="Previous reviews"
           >
-            <ChevronLeftIcon className="w-6 h-6" />
+            <ChevronLeftIcon className="w-8 h-8" />
           </button>
 
           {/* Cards Display Area */}
@@ -112,20 +112,16 @@ export default function Journals() {
                 {currentReviews.map((review, idx) => (
                   <div
                     key={idx}
-                    className="min-h-90 sm:min-h-96 md:min-h-104 lg:min-h-110 bg-mesh-grain border border-white/15 rounded-none p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-black/10 hover:border-white/35 transition-all duration-300"
+                    className="min-h-90 sm:min-h-96 md:min-h-104 lg:min-h-110 bg-mesh-grain border border-white/15 rounded-none p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-black/10 hover:border-white/35 transition-all duration-300 relative overflow-hidden"
                   >
-                    <div>
-                      {/* Rating Stars & Badge */}
-                      <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <div className="relative z-10">
+                      {/* Rating Stars */}
+                      <div className="flex items-center mb-4 sm:mb-6">
                         <div className="flex gap-1">
                           {[...Array(review.rating)].map((_, i) => (
                             <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-creme text-creme" />
                           ))}
                         </div>
-                        <span className="text-[11px] sm:text-xs font-medium text-creme/90 uppercase tracking-wider flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-full border border-white/15">
-                          <span className="w-1.5 h-1.5 rounded-full bg-creme" />
-                          {review.badge}
-                        </span>
                       </div>
 
                       {/* Quote */}
@@ -135,7 +131,7 @@ export default function Journals() {
                     </div>
 
                     {/* Reviewer & Scent Tag */}
-                    <div className="pt-4 sm:pt-6 border-t border-creme/20 flex items-center justify-between">
+                    <div className="pt-2 sm:pt-4 flex items-center justify-between relative z-10">
                       <div>
                         <div className="font-serif text-base sm:text-lg text-creme font-semibold">{review.name}</div>
                       </div>
@@ -152,10 +148,10 @@ export default function Journals() {
           {/* Desktop Right Arrow Button */}
           <button
             onClick={handleNext}
-            className="hidden md:flex absolute -right-6 lg:-right-12 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-black/20 bg-white/95 text-black hover:bg-black hover:text-white items-center justify-center transition-all duration-300 shadow-md cursor-pointer"
+            className="hidden md:flex absolute -right-10 lg:-right-16 top-1/2 -translate-y-1/2 z-20 text-black/70 hover:text-black hover:scale-125 active:scale-95 items-center justify-center transition-all duration-300 p-2 cursor-pointer"
             aria-label="Next reviews"
           >
-            <ChevronRightIcon className="w-6 h-6" />
+            <ChevronRightIcon className="w-8 h-8" />
           </button>
         </div>
 
@@ -164,10 +160,10 @@ export default function Journals() {
           {/* Mobile Previous Button */}
           <button
             onClick={handlePrev}
-            className="flex md:hidden w-10 h-10 rounded-full border border-black/20 bg-white/95 text-black active:bg-black active:text-white items-center justify-center transition-all shadow-xs shrink-0 cursor-pointer"
+            className="flex md:hidden text-black/70 active:text-black items-center justify-center transition-all p-2 shrink-0 cursor-pointer"
             aria-label="Previous review"
           >
-            <ChevronLeftIcon className="w-5 h-5" />
+            <ChevronLeftIcon className="w-6 h-6" />
           </button>
 
           {/* Pagination Dots */}
@@ -191,10 +187,10 @@ export default function Journals() {
           {/* Mobile Next Button */}
           <button
             onClick={handleNext}
-            className="flex md:hidden w-10 h-10 rounded-full border border-black/20 bg-white/95 text-black active:bg-black active:text-white items-center justify-center transition-all shadow-xs shrink-0 cursor-pointer"
+            className="flex md:hidden text-black/70 active:text-black items-center justify-center transition-all p-2 shrink-0 cursor-pointer"
             aria-label="Next review"
           >
-            <ChevronRightIcon className="w-5 h-5" />
+            <ChevronRightIcon className="w-6 h-6" />
           </button>
         </div>
       </div>

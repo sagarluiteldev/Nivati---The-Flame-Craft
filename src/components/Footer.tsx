@@ -215,9 +215,9 @@ export default function Footer() {
 
       {/* Main Green Footer Box */}
       <div 
-        className="max-w-7xl mx-auto bg-mesh-grain text-creme rounded-none px-6 sm:px-10 md:px-14 lg:px-16 pt-12 md:pt-16 pb-8 md:pb-12 shadow-2xl border border-white/10"
+        className="max-w-7xl mx-auto bg-mesh-grain text-creme rounded-none px-6 sm:px-10 md:px-14 lg:px-16 pt-12 md:pt-16 pb-8 md:pb-12 shadow-2xl border border-white/10 relative overflow-hidden"
       >
-        <div>
+        <div className="relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
             <div className="md:col-span-2">
               <div className="mb-4">

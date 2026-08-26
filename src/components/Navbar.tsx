@@ -184,7 +184,7 @@ export default function Navbar() {
               href="https://wa.me/9842003249?text=Hi,%20I%20would%20like%20to%20know%20more%20about%20the%20online%20candle%20making%20workshops"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 btn-mesh text-creme rounded-lg text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-95 shadow-md"
+              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 bg-olive text-creme rounded-lg text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-olive/90 active:scale-95 shadow-md"
             >
               Join a Class
             </a>
@@ -231,7 +231,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full inline-flex items-center justify-center px-8 py-4 btn-mesh text-creme rounded-lg text-lg tracking-wide shadow-md"
+                className="w-full inline-flex items-center justify-center px-8 py-4 bg-olive text-creme rounded-lg text-lg tracking-wide hover:bg-olive/90 shadow-md"
               >
                 Join a Class
               </a>

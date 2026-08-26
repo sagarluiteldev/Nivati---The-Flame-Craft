@@ -85,9 +85,9 @@ export default function Experience() {
               className="relative group p-8 md:p-10 rounded-none bg-mesh-grain border border-white/15 text-creme hover:border-white/35 shadow-xl shadow-black/10 transition-all duration-300 overflow-hidden flex flex-col justify-between"
             >
               <div>
-                {/* Icon Container */}
-                <div className="w-14 h-14 rounded-full bg-white/15 border border-white/20 flex items-center justify-center mb-8 text-creme group-hover:scale-105 group-hover:bg-white group-hover:text-neutral-900 transition-all duration-300 ease-out backdrop-blur-xs">
-                  <feature.icon className="w-6 h-6" />
+                {/* Icon */}
+                <div className="mb-6 text-creme relative z-10">
+                  <feature.icon className="w-8 h-8 group-hover:scale-110 transition-transform duration-300 ease-out" />
                 </div>
 
                 {/* Content */}

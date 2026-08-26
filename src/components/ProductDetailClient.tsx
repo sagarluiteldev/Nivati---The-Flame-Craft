@@ -153,7 +153,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                         onClick={() => setSelectedFragrance(fragrance)}
                         className={`px-5 py-2.5 rounded-lg text-sm transition-all border ${
                           selectedFragrance === fragrance
-                            ? 'btn-mesh text-creme border-transparent shadow-md font-medium'
+                            ? 'bg-olive text-creme border-olive shadow-md font-medium'
                             : 'bg-transparent text-black/70 border-black/10 hover:border-black/30 hover:bg-black/5'
                         }`}
                       >
@@ -218,7 +218,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               
               <button 
                 onClick={handleAddToCart}
-                className="w-full sm:flex-1 btn-mesh text-creme py-4 md:py-5 rounded-lg flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg font-medium"
+                className="w-full sm:flex-1 bg-olive text-creme py-4 md:py-5 rounded-lg flex items-center justify-center gap-2 hover:bg-olive/90 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-olive/10 font-medium"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span>Add to Cart - Rs {(product.price * quantity).toFixed(0)}</span>

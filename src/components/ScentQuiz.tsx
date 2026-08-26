@@ -567,7 +567,7 @@ export default function ScentQuiz({ isOpen, onClose }: ScentQuizProps) {
                     <div className="flex gap-3 w-full max-w-md">
                       <button
                         onClick={() => handleAddToCart(primaryProduct)}
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 btn-mesh text-creme px-4 py-2.5 rounded-lg font-medium transition-all hover:scale-105 active:scale-95 shadow-md select-none cursor-pointer text-xs md:text-sm"
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 bg-olive text-creme px-4 py-2.5 rounded-lg font-medium transition-all hover:scale-105 active:scale-95 shadow-md select-none cursor-pointer text-xs md:text-sm"
                       >
                         <ShoppingBag className="w-4 h-4" /> 
                         {cartSuccess ? "Added!" : "Add to Cart"}
