@@ -63,6 +63,7 @@ export default function CrossSell({ currentProductId, category }: Props) {
 
               {/* Quick Add to Cart Round Icon Button - Bottom Right */}
               <button
+                type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -74,7 +75,8 @@ export default function CrossSell({ currentProductId, category }: Props) {
                     image: product.img
                   });
                 }}
-                className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 z-30 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/95 hover:bg-olive text-black hover:text-creme backdrop-blur-md flex items-center justify-center shadow-lg shadow-black/15 hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-black/10"
+                style={{ bottom: "16px", right: "16px" }}
+                className="absolute bottom-4 right-4 z-30 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/95 hover:bg-olive text-black hover:text-creme backdrop-blur-md flex items-center justify-center shadow-lg shadow-black/20 hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-black/10"
                 aria-label={`Add ${product.title} to cart`}
                 title="Add to cart"
               >
