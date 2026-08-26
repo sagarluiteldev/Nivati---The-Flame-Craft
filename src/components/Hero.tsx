@@ -68,8 +68,8 @@ export default function Hero() {
       onMouseMove={handleMouseMove}
       className="relative min-h-[90vh] lg:min-h-[95vh] flex items-center pt-24 lg:pt-32 pb-20 lg:pb-0 overflow-hidden bg-creme select-none"
     >
-      {/* Texture Overlay */}
-      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[url('/images/paper-fibers.png')]" />
+      {/* Texture Overlay - Desktop Only */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[url('/images/paper-fibers.png')] hidden lg:block" />
       
       {/* Background abstract shapes */}
       <div className="absolute top-0 right-0 w-full lg:w-[60%] h-full bg-sage/5 rounded-l-none lg:rounded-l-[200px] -z-10 hidden lg:block" />
@@ -107,27 +107,40 @@ export default function Hero() {
       />
 
       {/* Big Blending Hero Image - Desktop Full Bleed View */}
-      <motion.div 
+      <div 
         className="absolute right-0 top-0 bottom-0 w-[50vw] overflow-hidden z-0 hidden lg:block"
-        initial={false}
       >
+        {/* Instant SSR Base Image (Zero render delay for LCP) */}
+        <Image 
+          src={heroImages[0].src} 
+          alt={heroImages[0].alt}
+          fill
+          priority
+          fetchPriority="high"
+          loading="eager"
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: heroImages[0].position || "center" }}
+        />
+
+        {/* Dynamic Carousel Slide (Only renders when rotating past slide 0) */}
         <AnimatePresence mode="popLayout">
-          <MotionImage 
-            key={currentImageIndex}
-            src={heroImages[currentImageIndex].src} 
-            alt={heroImages[currentImageIndex].alt}
-            fill
-            priority={currentImageIndex === 0}
-            fetchPriority={currentImageIndex === 0 ? "high" : "auto"}
-            loading={currentImageIndex === 0 ? "eager" : "lazy"}
-            sizes="50vw"
-            initial={currentImageIndex === 0 ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
-          />
+          {currentImageIndex > 0 && (
+            <MotionImage 
+              key={currentImageIndex}
+              src={heroImages[currentImageIndex].src} 
+              alt={heroImages[currentImageIndex].alt}
+              fill
+              loading="lazy"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full object-cover z-5"
+              style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
+            />
+          )}
         </AnimatePresence>
 
         {/* Soft edge blend overlays to blend with creme background */}
@@ -152,7 +165,7 @@ export default function Hero() {
             background: 'linear-gradient(to top, #FAFAFA 0%, rgba(250, 250, 250, 0.7) 35%, rgba(250, 250, 250, 0.25) 70%, rgba(250, 250, 250, 0) 100%)'
           }}
         />
-      </motion.div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
         <div className="flex flex-col gap-8 lg:gap-10 text-center lg:text-left">
@@ -185,7 +198,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 1 }}
-                className="text-lg md:text-2xl lg:text-4xl font-lora not-italic font-normal relative inline-block mt-2 lg:-mt-8 lg:ml-2 text-sage whitespace-nowrap"
+                className="text-lg md:text-2xl lg:text-4xl font-lora not-italic font-normal relative inline-block mt-2 lg:-mt-8 lg:ml-2 text-olive/85 whitespace-nowrap"
               >
                 The Flame Craft
               </motion.span>
@@ -201,7 +214,7 @@ export default function Hero() {
                 animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
                 exit={{ y: -20, opacity: 0, filter: "blur(5px)" }}
                 transition={{ duration: 0.8, ease: "circOut" }}
-                className="text-lg lg:text-2xl text-olive/70 font-sans font-light tracking-widest uppercase"
+                className="text-lg lg:text-2xl text-olive/90 font-sans font-normal tracking-widest uppercase"
               >
                 {slogans[sloganIndex]}
               </motion.p>
@@ -231,9 +244,9 @@ export default function Hero() {
           {/* Luxury Badge */}
           <motion.div 
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.4 }}
+            animate={{ opacity: 0.85 }}
             transition={{ delay: 1.5, duration: 1 }}
-            className="hidden lg:flex pt-6 lg:pt-8 border-t border-olive/10 justify-center lg:justify-start items-center gap-6"
+            className="hidden lg:flex pt-6 lg:pt-8 border-t border-olive/15 justify-center lg:justify-start items-center gap-6"
           >
             <div className="flex flex-col lg:flex-row gap-2 lg:gap-6">
               <span className="text-[10px] uppercase tracking-[0.3em] text-olive font-bold">Handmade with Love</span>
@@ -245,23 +258,37 @@ export default function Hero() {
         {/* Mobile View Image container */}
         <div className="relative w-screen left-1/2 right-1/2 -translate-x-1/2 h-[45vh] mt-4 z-0 block lg:hidden">
           <div className="relative h-full w-full overflow-hidden">
+            {/* Instant SSR Base Image (Zero render delay for Mobile LCP) */}
+            <Image 
+              src={heroImages[0].src} 
+              alt={heroImages[0].alt}
+              fill
+              priority
+              fetchPriority="high"
+              loading="eager"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ objectPosition: heroImages[0].position || "center" }}
+            />
+
+            {/* Dynamic Carousel Slide (Only renders when rotating past slide 0) */}
             <AnimatePresence mode="popLayout">
-              <MotionImage 
-                key={currentImageIndex}
-                src={heroImages[currentImageIndex].src} 
-                alt={heroImages[currentImageIndex].alt}
-                fill
-                priority={currentImageIndex === 0}
-                fetchPriority={currentImageIndex === 0 ? "high" : "auto"}
-                loading={currentImageIndex === 0 ? "eager" : "lazy"}
-                sizes="100vw"
-                initial={currentImageIndex === 0 ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.2, ease: "easeInOut" }}
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
-              />
+              {currentImageIndex > 0 && (
+                <MotionImage 
+                  key={currentImageIndex}
+                  src={heroImages[currentImageIndex].src} 
+                  alt={heroImages[currentImageIndex].alt}
+                  fill
+                  loading="lazy"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                  className="absolute inset-0 w-full h-full object-cover z-5"
+                  style={{ objectPosition: heroImages[currentImageIndex].position || "center" }}
+                />
+              )}
             </AnimatePresence>
             
             {/* Soft vertical blends for mobile (Subtle, long gradient transition) */}
@@ -304,9 +331,9 @@ export default function Hero() {
         {/* Mobile only Luxury Badge */}
         <motion.div 
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.4 }}
+          animate={{ opacity: 0.85 }}
           transition={{ delay: 1.5, duration: 1 }}
-          className="flex lg:hidden pt-4 border-t border-olive/10 justify-center items-center w-4/5 mx-auto mb-8"
+          className="flex lg:hidden pt-4 border-t border-olive/15 justify-center items-center w-4/5 mx-auto mb-8"
         >
           <div className="flex flex-col items-center gap-2 text-center">
             <span className="text-[10px] uppercase tracking-[0.3em] text-olive font-bold">Handmade with Love</span>

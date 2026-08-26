@@ -1,11 +1,13 @@
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Experience from "@/components/Experience";
 import Collections from "@/components/Collections";
-import Workshops from "@/components/Workshops";
-import Journals from "@/components/Journals";
-import Process from "@/components/Process";
 import Footer from "@/components/Footer";
+
+const Workshops = dynamic(() => import("@/components/Workshops"));
+const Journals = dynamic(() => import("@/components/Journals"));
+const Process = dynamic(() => import("@/components/Process"));
 
 export default function Home() {
   return (
