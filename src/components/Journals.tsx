@@ -112,12 +112,7 @@ export default function Journals() {
                 {currentReviews.map((review, idx) => (
                   <div
                     key={idx}
-                    style={{
-                      background: idx % 2 === 0
-                        ? "linear-gradient(to top right, #1d5200 0%, #5a6c37 100%)"
-                        : "linear-gradient(to top left, #1d5200 0%, #5a6c37 100%)",
-                    }}
-                    className="min-h-90 sm:min-h-96 md:min-h-104 lg:min-h-110 border border-white/15 rounded-none p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-black/10 hover:border-white/30 transition-all duration-300"
+                    className="min-h-90 sm:min-h-96 md:min-h-104 lg:min-h-110 bg-mesh-grain border border-white/15 rounded-none p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-black/10 hover:border-white/35 transition-all duration-300"
                   >
                     <div>
                       {/* Rating Stars & Badge */}

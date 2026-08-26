@@ -44,6 +44,43 @@ h6 {
   @apply font-serif;
 }
 
+/* 100% Pure CSS Mesh Gradient & Organic Grain Texture */
+.bg-mesh-grain {
+  background-color: #1f5851;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 12% 15%, #479348 0%, rgba(71, 147, 72, 0) 55%),
+    radial-gradient(ellipse at 92% 88%, #80d67b 0%, #4a975f 28%, rgba(74, 151, 95, 0) 65%),
+    radial-gradient(ellipse at 88% 45%, #34b189 0%, rgba(52, 177, 137, 0) 50%),
+    radial-gradient(ellipse at 15% 55%, #3a7b51 0%, rgba(58, 123, 81, 0) 45%),
+    radial-gradient(ellipse at 50% 50%, #327b60 0%, rgba(50, 123, 96, 0) 60%),
+    linear-gradient(135deg, #1f5851 0%, #1e574e 45%, #1d665d 100%);
+  background-size: 160px 160px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-position: center;
+}
+
+.btn-mesh {
+  background-color: #1f5851;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 12% 15%, #479348 0%, rgba(71, 147, 72, 0) 55%),
+    radial-gradient(ellipse at 92% 88%, #80d67b 0%, #4a975f 28%, rgba(74, 151, 95, 0) 65%),
+    radial-gradient(ellipse at 88% 45%, #34b189 0%, rgba(52, 177, 137, 0) 50%),
+    radial-gradient(ellipse at 15% 55%, #3a7b51 0%, rgba(58, 123, 81, 0) 45%),
+    radial-gradient(ellipse at 50% 50%, #327b60 0%, rgba(50, 123, 96, 0) 60%),
+    linear-gradient(135deg, #1f5851 0%, #1e574e 45%, #1d665d 100%);
+  background-size: 160px 160px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+  color: #FAFAFA !important;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.btn-mesh:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 10px 25px -5px rgba(31, 88, 81, 0.45);
+}
+
 /* Prevent auto-zoom on iOS Safari and mobile browsers when focusing inputs / selects */
 @media screen and (max-width: 768px) {
   input,

@@ -82,21 +82,20 @@ export default function Experience() {
               key={idx} 
               variants={item}
               whileHover={{ y: -5, transition: { duration: 0.25, ease: "easeOut" } }}
-              className="relative group p-8 md:p-10 rounded-none bg-linear-to-br from-olive/5 to-transparent border border-olive/10 hover:border-olive/20 hover:shadow-xl hover:shadow-olive/5 transition-colors duration-300 overflow-hidden"
+              className="relative group p-8 md:p-10 rounded-none bg-mesh-grain border border-white/15 text-creme hover:border-white/35 shadow-xl shadow-black/10 transition-all duration-300 overflow-hidden flex flex-col justify-between"
             >
-              {/* Icon Container */}
-              <div className="w-14 h-14 rounded-full bg-white/80 border border-olive/10 flex items-center justify-center mb-8 text-olive group-hover:scale-105 group-hover:bg-olive group-hover:text-white transition-all duration-300 ease-out">
-                <feature.icon className="w-6 h-6" />
-              </div>
+              <div>
+                {/* Icon Container */}
+                <div className="w-14 h-14 rounded-full bg-white/15 border border-white/20 flex items-center justify-center mb-8 text-creme group-hover:scale-105 group-hover:bg-white group-hover:text-neutral-900 transition-all duration-300 ease-out backdrop-blur-xs">
+                  <feature.icon className="w-6 h-6" />
+                </div>
 
-              {/* Content */}
-              <h3 className="text-2xl font-serif text-neutral-900 mb-4 relative z-10">{feature.title}</h3>
-              <p className="text-neutral-600 font-sans font-normal leading-relaxed relative z-10">
-                {feature.description}
-              </p>
-              
-              {/* Subtle bottom glow line on hover */}
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-sage to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* Content */}
+                <h3 className="text-2xl font-serif text-creme mb-4 relative z-10 font-normal">{feature.title}</h3>
+                <p className="text-creme/90 font-sans font-light leading-relaxed relative z-10 text-sm sm:text-base">
+                  {feature.description}
+                </p>
+              </div>
             </motion.div>
           ))}
         </motion.div>
