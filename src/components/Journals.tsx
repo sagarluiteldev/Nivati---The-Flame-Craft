@@ -77,12 +77,12 @@ export default function Journals() {
   const currentReviews = reviews.slice(index * itemsPerPage, index * itemsPerPage + itemsPerPage);
 
   return (
-    <section className="py-20 md:py-32 min-h-[90vh] lg:min-h-screen flex flex-col justify-center bg-creme text-black overflow-hidden" id="journals">
+    <section className="py-16 md:py-24 bg-creme text-black overflow-hidden" id="journals">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full">
         {/* Section Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif text-black mb-3 md:mb-4">Customer Journals</h2>
-          <p className="font-sans font-normal text-black/80 max-w-xl mx-auto text-sm md:text-base lg:text-lg px-2">
+        <div className="text-center mb-10 md:mb-14">
+          <h2 className="text-3xl md:text-5xl font-serif text-black mb-3 md:mb-4">Customer Journals</h2>
+          <p className="font-sans font-normal text-black/80 max-w-xl mx-auto text-sm md:text-base px-2">
             Stories and experiences from our community of makers and luxury candle enthusiasts.
           </p>
         </div>
@@ -99,7 +99,7 @@ export default function Journals() {
           </button>
 
           {/* Cards Display Area */}
-          <div className="overflow-hidden min-h-110 md:min-h-125 lg:min-h-135 px-1 py-1 flex items-center">
+          <div className="overflow-hidden min-h-90 md:min-h-100 lg:min-h-108 px-1 py-1 flex items-center">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={index + (isMobile ? "-m" : "-d")}
@@ -107,7 +107,7 @@ export default function Journals() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 w-full"
+                className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 w-full"
               >
                 {currentReviews.map((review, idx) => (
                   <div
@@ -117,34 +117,34 @@ export default function Journals() {
                         ? "linear-gradient(to top right, #1d5200 0%, #5a6c37 100%)"
                         : "linear-gradient(to top left, #1d5200 0%, #5a6c37 100%)",
                     }}
-                    className="min-h-110 sm:min-h-120 md:min-h-130 lg:min-h-137.5 border border-white/15 rounded-none p-8 sm:p-10 md:p-12 lg:p-14 flex flex-col justify-between shadow-2xl shadow-black/15 hover:border-white/30 transition-all duration-300"
+                    className="min-h-90 sm:min-h-96 md:min-h-104 lg:min-h-110 border border-white/15 rounded-none p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-black/10 hover:border-white/30 transition-all duration-300"
                   >
                     <div>
                       {/* Rating Stars & Badge */}
-                      <div className="flex items-center justify-between mb-6 sm:mb-8">
-                        <div className="flex gap-1.5">
+                      <div className="flex items-center justify-between mb-4 sm:mb-6">
+                        <div className="flex gap-1">
                           {[...Array(review.rating)].map((_, i) => (
-                            <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 fill-creme text-creme" />
+                            <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-creme text-creme" />
                           ))}
                         </div>
-                        <span className="text-xs sm:text-sm font-medium text-creme/90 uppercase tracking-wider flex items-center gap-2 bg-white/10 px-3.5 py-1.5 rounded-full border border-white/15">
-                          <span className="w-2 h-2 rounded-full bg-creme" />
+                        <span className="text-[11px] sm:text-xs font-medium text-creme/90 uppercase tracking-wider flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-full border border-white/15">
+                          <span className="w-1.5 h-1.5 rounded-full bg-creme" />
                           {review.badge}
                         </span>
                       </div>
 
                       {/* Quote */}
-                      <blockquote className="font-serif text-lg sm:text-xl md:text-2xl lg:text-3xl text-creme leading-relaxed mb-6 sm:mb-8 font-normal">
+                      <blockquote className="font-serif text-base sm:text-lg md:text-xl lg:text-2xl text-creme leading-relaxed mb-4 sm:mb-6 font-normal">
                         &quot;{review.quote}&quot;
                       </blockquote>
                     </div>
 
                     {/* Reviewer & Scent Tag */}
-                    <div className="pt-6 sm:pt-8 border-t border-creme/20 flex items-center justify-between">
+                    <div className="pt-4 sm:pt-6 border-t border-creme/20 flex items-center justify-between">
                       <div>
-                        <div className="font-serif text-lg sm:text-xl text-creme font-semibold">{review.name}</div>
+                        <div className="font-serif text-base sm:text-lg text-creme font-semibold">{review.name}</div>
                       </div>
-                      <span className="inline-block px-4 py-1.5 bg-white/15 border border-white/20 rounded-full text-xs sm:text-sm font-sans text-creme font-medium">
+                      <span className="inline-block px-3 py-1 bg-white/15 border border-white/20 rounded-full text-xs font-sans text-creme font-medium">
                         {review.scent}
                       </span>
                     </div>
