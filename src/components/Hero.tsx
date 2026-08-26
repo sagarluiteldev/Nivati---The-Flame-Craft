@@ -185,16 +185,16 @@ export default function Hero() {
             </h1>
           </motion.div>
 
-          {/* Interactive Slogan Reveal */}
-          <div className="h-10 lg:h-14 overflow-hidden relative">
+          {/* Interactive Slogan Reveal (40% smaller, single line guaranteed) */}
+          <div className="h-7 sm:h-8 lg:h-9 overflow-hidden relative flex items-center justify-center lg:justify-start">
             <AnimatePresence mode="wait">
               <motion.p 
                 key={sloganIndex}
-                initial={{ y: 20, opacity: 0, filter: "blur(5px)" }}
+                initial={{ y: 15, opacity: 0, filter: "blur(4px)" }}
                 animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                exit={{ y: -20, opacity: 0, filter: "blur(5px)" }}
-                transition={{ duration: 0.8, ease: "circOut" }}
-                className="text-xl sm:text-2xl lg:text-3xl text-neutral-700 font-sans font-light tracking-widest uppercase"
+                exit={{ y: -15, opacity: 0, filter: "blur(4px)" }}
+                transition={{ duration: 0.7, ease: "circOut" }}
+                className="text-xs sm:text-sm md:text-base lg:text-lg text-neutral-700 font-sans font-light tracking-[0.2em] sm:tracking-[0.25em] uppercase whitespace-nowrap"
               >
                 {slogans[sloganIndex]}
               </motion.p>
