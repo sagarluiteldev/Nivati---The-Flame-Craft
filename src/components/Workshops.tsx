@@ -36,10 +36,10 @@ export default function Workshops() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1, delay: 0.2 }}
           >
-            <h2 className="text-4xl md:text-5xl font-serif text-olive leading-tight">
+            <h2 className="text-4xl md:text-5xl font-serif text-black leading-tight">
               Master the Flame.
             </h2>
-            <p className="text-lg text-olive/80 font-sans font-light leading-relaxed">
+            <p className="text-lg text-black/85 font-sans font-normal leading-relaxed">
               Join our interactive online workshops and learn the art of candle making from the comfort of your home. From understanding scent notes and proper blending to mastering the perfect pour and wick setting.
             </p>
             
@@ -50,9 +50,9 @@ export default function Workshops() {
                 "Learn troubleshooting techniques",
                 "Complete starter kit mailed to you"
               ].map((item, idx) => (
-                <li key={idx} className="flex items-center gap-3 text-olive border-b border-olive/10 pb-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-sage" />
-                  <span className="font-light">{item}</span>
+                <li key={idx} className="flex items-center gap-3 text-black border-b border-black/10 pb-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                  <span className="font-normal">{item}</span>
                 </li>
               ))}
             </ul>

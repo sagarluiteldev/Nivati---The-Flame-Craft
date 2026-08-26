@@ -27,7 +27,8 @@
 
 html,
 body {
-  @apply bg-creme text-olive antialiased font-sans;
+  @apply bg-creme text-neutral-900 antialiased font-sans;
+  color: #1a1a1a;
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;

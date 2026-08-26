@@ -175,7 +175,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 1 }}
-                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-lora not-italic font-normal relative inline-block mt-2 lg:-mt-8 lg:ml-3 text-olive/85 whitespace-nowrap"
+                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-lora not-italic font-normal relative inline-block mt-2 lg:-mt-8 lg:ml-3 text-neutral-800 whitespace-nowrap"
               >
                 The Flame Craft
               </motion.span>
@@ -191,7 +191,7 @@ export default function Hero() {
                 animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
                 exit={{ y: -20, opacity: 0, filter: "blur(5px)" }}
                 transition={{ duration: 0.8, ease: "circOut" }}
-                className="text-xl sm:text-2xl lg:text-3xl text-olive/90 font-sans font-light tracking-widest uppercase"
+                className="text-xl sm:text-2xl lg:text-3xl text-neutral-700 font-sans font-light tracking-widest uppercase"
               >
                 {slogans[sloganIndex]}
               </motion.p>
@@ -212,7 +212,7 @@ export default function Hero() {
             </Link>
             <Link 
               href="#workshops"
-              className="px-9 py-4.5 border border-olive/30 text-olive rounded-full tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(29,82,0,0.1)] active:scale-95 font-light text-center text-base"
+              className="px-9 py-4.5 border border-neutral-400 text-neutral-900 rounded-full tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-neutral-900 hover:text-creme hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95 font-medium text-center text-base"
             >
               Learn the Craft
             </Link>
@@ -226,8 +226,8 @@ export default function Hero() {
             className="hidden lg:flex pt-2 justify-center lg:justify-start items-center gap-6"
           >
             <div className="flex flex-col lg:flex-row gap-2 lg:gap-6">
-              <span className="text-[11px] uppercase tracking-[0.3em] text-olive font-bold">Handmade with Love</span>
-              <span className="text-[11px] uppercase tracking-[0.3em] text-olive font-bold">Pure Soy Wax</span>
+              <span className="text-[11px] uppercase tracking-[0.3em] text-neutral-700 font-bold">Handmade with Love</span>
+              <span className="text-[11px] uppercase tracking-[0.3em] text-neutral-700 font-bold">Pure Soy Wax</span>
             </div>
           </motion.div>
         </div>
@@ -285,7 +285,7 @@ export default function Hero() {
           </Link>
           <Link 
             href="#workshops"
-            className="px-8 py-4 border border-olive/30 text-olive rounded-full tracking-wide font-light text-center"
+            className="px-8 py-4 border border-neutral-400 text-neutral-900 rounded-full tracking-wide font-medium text-center"
           >
             Learn the Craft
           </Link>
@@ -299,8 +299,8 @@ export default function Hero() {
           className="flex lg:hidden pt-2 justify-center items-center w-4/5 mx-auto mb-8"
         >
           <div className="flex flex-col items-center gap-2 text-center">
-            <span className="text-[10px] uppercase tracking-[0.3em] text-olive font-bold">Handmade with Love</span>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-olive font-bold">Pure Soy Wax</span>
+            <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-700 font-bold">Handmade with Love</span>
+            <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-700 font-bold">Pure Soy Wax</span>
           </div>
         </motion.div>
       </div>

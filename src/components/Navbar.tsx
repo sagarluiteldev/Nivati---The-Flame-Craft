@@ -108,7 +108,7 @@ export default function Navbar() {
             />
           </Link>
           
-          <nav className="hidden md:flex items-center gap-8 text-sm uppercase tracking-widest text-olive/80 relative">
+          <nav className="hidden md:flex items-center gap-8 text-sm uppercase tracking-widest text-neutral-800 relative font-medium">
             <div className="relative group py-6">
               <Link href="/shop" className="hover:text-olive transition-colors peer flex items-center gap-1">
                 Shop 
@@ -116,34 +116,34 @@ export default function Navbar() {
               </Link>
               
               {/* Mega Menu Dropdown */}
-              <div className="absolute top-full -left-12 w-200 bg-creme  shadow-2xl rounded-2xl p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 grid grid-cols-4 gap-6 translate-y-4 group-hover:translate-y-0 border border-olive/10  z-50">
+              <div className="absolute top-full -left-12 w-200 bg-creme shadow-2xl rounded-2xl p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 grid grid-cols-4 gap-6 translate-y-4 group-hover:translate-y-0 border border-olive/10 z-50">
                 <Link href="/shop?category=Signature+Candles" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
+                  <div className="aspect-square bg-olive/5 rounded-xl overflow-hidden mb-3 relative">
                      <Image src="/images/IMG_4142.jpg" alt="Signature Candles" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
-                  <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">Signature</h4>
-                  <p className="text-xs text-olive/60  normal-case tracking-normal">Classic scents</p>
+                  <h4 className="font-serif text-neutral-900 text-lg mb-1 normal-case tracking-normal font-medium">Signature</h4>
+                  <p className="text-xs text-neutral-500 normal-case tracking-normal font-normal">Classic scents</p>
                 </Link>
                 <Link href="/shop?category=Mould+Candles" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
+                  <div className="aspect-square bg-olive/5 rounded-xl overflow-hidden mb-3 relative">
                      <Image src="/images/IMG_4315.jpg" alt="Shaped Candles" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
-                  <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">Shaped</h4>
-                  <p className="text-xs text-olive/60  normal-case tracking-normal">Artisan crafted</p>
+                  <h4 className="font-serif text-neutral-900 text-lg mb-1 normal-case tracking-normal font-medium">Shaped</h4>
+                  <p className="text-xs text-neutral-500 normal-case tracking-normal font-normal">Artisan crafted</p>
                 </Link>
                 <Link href="/shop?category=Candle+Making+Kit" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
+                  <div className="aspect-square bg-olive/5 rounded-xl overflow-hidden mb-3 relative">
                      <Image src="/images/IMG_4201.jpg" alt="DIY Kits" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
-                  <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">DIY Kits</h4>
-                  <p className="text-xs text-olive/60  normal-case tracking-normal">Pour your own</p>
+                  <h4 className="font-serif text-neutral-900 text-lg mb-1 normal-case tracking-normal font-medium">DIY Kits</h4>
+                  <p className="text-xs text-neutral-500 normal-case tracking-normal font-normal">Pour your own</p>
                 </Link>
                 <Link href="/shop?category=Candle+Making+Materials" className="group/item block" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className="aspect-square bg-olive/5  rounded-xl overflow-hidden mb-3 relative">
+                  <div className="aspect-square bg-olive/5 rounded-xl overflow-hidden mb-3 relative">
                      <Image src="/images/IMG_4187.PNG" alt="Raw Materials" fill loading="lazy" sizes="160px" className="absolute inset-0 w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-500 mix-blend-multiply" />
                   </div>
-                  <h4 className="font-serif text-olive  text-lg mb-1 normal-case tracking-normal">Materials</h4>
-                  <p className="text-xs text-olive/60  normal-case tracking-normal">Crafting supplies</p>
+                  <h4 className="font-serif text-neutral-900 text-lg mb-1 normal-case tracking-normal font-medium">Materials</h4>
+                  <p className="text-xs text-neutral-500 normal-case tracking-normal font-normal">Crafting supplies</p>
                 </Link>
               </div>
             </div>
@@ -156,20 +156,20 @@ export default function Navbar() {
           <div className="flex items-center gap-4 md:gap-6 z-50">
             <button 
               onClick={() => setIsSearchOpen(true)}
-              className="text-olive hover:opacity-70 transition-opacity"
+              className="text-neutral-800 hover:text-olive transition-colors"
               aria-label="Search"
             >
               <SearchIcon className="w-5 h-5" />
             </button>
             <button 
               onClick={() => setIsQuizOpen(true)}
-              className="hidden lg:inline-flex items-center gap-2 text-xs uppercase tracking-widest text-olive hover:text-olive/70 transition-colors"
+              className="hidden lg:inline-flex items-center gap-2 text-xs uppercase tracking-widest text-neutral-800 hover:text-olive transition-colors font-medium"
             >
               Scent Quiz
             </button>
 
             <button 
-              className="text-olive hover:opacity-70 transition-opacity relative" 
+              className="text-neutral-800 hover:text-olive transition-colors relative" 
               aria-label="Cart"
               onClick={() => setIsCartOpen(true)}
             >
@@ -189,7 +189,7 @@ export default function Navbar() {
               Join a Class
             </a>
             <button 
-              className="md:hidden text-olive p-1"
+              className="md:hidden text-neutral-900 p-1"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle menu"
             >
@@ -209,17 +209,17 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-45 bg-creme pt-20 px-6 md:hidden flex flex-col"
           >
-            <nav className="flex flex-col items-center text-center gap-6 text-2xl font-serif text-olive mt-8">
-              <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)}>Shop Candles</Link>
-              <Link href="/shop?category=Candle Making Kit" onClick={() => setIsMobileMenuOpen(false)}>DIY Kits</Link>
-              <Link href="/#workshops" onClick={() => setIsMobileMenuOpen(false)}>Workshops</Link>
-              <Link href="/#story" onClick={() => setIsMobileMenuOpen(false)}>Our Story</Link>
+            <nav className="flex flex-col items-center text-center gap-6 text-2xl font-serif text-neutral-900 mt-8">
+              <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-olive transition-colors">Shop Candles</Link>
+              <Link href="/shop?category=Candle Making Kit" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-olive transition-colors">DIY Kits</Link>
+              <Link href="/#workshops" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-olive transition-colors">Workshops</Link>
+              <Link href="/#story" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-olive transition-colors">Our Story</Link>
               <button 
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   setIsQuizOpen(true);
                 }}
-                className="hover:opacity-75 transition-opacity font-serif text-olive cursor-pointer"
+                className="hover:text-olive transition-colors font-serif text-neutral-900 cursor-pointer"
               >
                 Scent Quiz
               </button>

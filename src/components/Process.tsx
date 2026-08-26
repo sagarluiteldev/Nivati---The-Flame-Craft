@@ -53,7 +53,7 @@ export default function Process() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            className="text-3xl md:text-5xl font-serif text-olive mb-4"
+            className="text-3xl md:text-5xl font-serif text-black mb-4"
           >
             The Maker&apos;s Process
           </motion.h2>
@@ -62,7 +62,7 @@ export default function Process() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-sans font-light text-olive/70 max-w-xl mx-auto"
+            className="font-sans font-normal text-black/80 max-w-xl mx-auto"
           >
             From raw earth to flickering flame. Discover how we bring intention into every jar.
           </motion.p>
@@ -120,7 +120,7 @@ function ProcessStep({ step, idx, imageYEven, imageYOdd }: ProcessStepProps) {
           whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="absolute inset-0 bg-sage/10 mix-blend-multiply z-10 pointer-events-none" style={{ transform: "translateZ(0)" }} />
+          <div className="absolute inset-0 bg-black/5 mix-blend-multiply z-10 pointer-events-none" style={{ transform: "translateZ(0)" }} />
           <MotionImage 
             src={step.image} 
             alt={step.title}
@@ -139,12 +139,12 @@ function ProcessStep({ step, idx, imageYEven, imageYOdd }: ProcessStepProps) {
             opacity: useTransform(scrollYProgress, [0, 0.4], [0, 0.3]),
             x: useTransform(scrollYProgress, [0, 0.4], [idx % 2 === 1 ? -40 : 40, 0])
           }}
-          className="text-sage text-6xl md:text-8xl font-serif leading-none mb-4 tracking-tighter"
+          className="text-black/40 text-6xl md:text-8xl font-serif leading-none mb-4 tracking-tighter"
         >
           {step.number}
         </motion.span>
         
-        <h3 className="text-3xl md:text-5xl font-serif text-olive mb-6 flex flex-wrap perspective-1000">
+        <h3 className="text-3xl md:text-5xl font-serif text-black mb-6 flex flex-wrap perspective-1000">
           {step.title.split(" ").map((word: string, wordIdx: number) => (
             <span key={wordIdx} className="mr-3 overflow-hidden flex">
               {word.split("").map((char: string, charIdx: number) => {
@@ -168,7 +168,7 @@ function ProcessStep({ step, idx, imageYEven, imageYOdd }: ProcessStepProps) {
             opacity: useTransform(scrollYProgress, [0.3, 0.8], [0, 1]),
             y: useTransform(scrollYProgress, [0.3, 0.8], [20, 0])
           }}
-          className="text-lg md:text-xl text-olive/80 font-sans font-light leading-relaxed"
+          className="text-lg md:text-xl text-black/85 font-sans font-normal leading-relaxed"
         >
           {step.description}
         </motion.p>

@@ -87,8 +87,8 @@ export default function Collections() {
             transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
             className="max-w-xl"
           >
-            <h2 className="text-3xl md:text-5xl font-serif text-olive mb-4">Curated Collections</h2>
-            <p className="text-olive/70 font-sans font-light text-base md:text-lg">
+            <h2 className="text-3xl md:text-5xl font-serif text-black mb-4">Curated Collections</h2>
+            <p className="text-black/80 font-sans font-normal text-base md:text-lg">
               Explore our range of hand-poured artisan candles and dedicated crafting supplies.
             </p>
           </motion.div>
@@ -100,7 +100,7 @@ export default function Collections() {
           >
             <Link 
               href="/shop"
-              className="group flex items-center gap-2 text-olive font-medium tracking-wide border-b border-olive pb-1 hover:text-sage hover:border-sage transition-colors"
+              className="group flex items-center gap-2 text-black font-medium tracking-wide border-b border-black pb-1 hover:text-black/70 hover:border-black/70 transition-colors"
             >
               View All Collections
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -124,7 +124,7 @@ export default function Collections() {
                 className="group flex flex-col focus:outline-none"
               >
                 {/* Image Container */}
-                <div className="relative aspect-4/5 w-full rounded-2xl md:rounded-3xl overflow-hidden bg-olive/5 mb-4 border border-olive/10 shadow-xs transition-all duration-500 group-hover:shadow-lg group-hover:border-olive/25">
+                <div className="relative aspect-4/5 w-full rounded-2xl md:rounded-3xl overflow-hidden bg-black/5 mb-4 border border-black/10 shadow-xs transition-all duration-500 group-hover:shadow-lg group-hover:border-black/25">
                   <Image 
                     src={col.image} 
                     alt={col.title}
@@ -137,12 +137,12 @@ export default function Collections() {
                 {/* Text below Image */}
                 <div className="flex flex-col gap-1.5 px-1">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-xl md:text-2xl font-serif text-olive group-hover:text-olive/80 transition-colors">
+                    <h3 className="text-xl md:text-2xl font-serif text-black group-hover:text-black/70 transition-colors">
                       {col.title}
                     </h3>
-                    <ArrowRight className="w-4.5 h-4.5 text-olive/40 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 shrink-0" />
+                    <ArrowRight className="w-4.5 h-4.5 text-black/40 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 shrink-0" />
                   </div>
-                  <p className="text-olive/70 font-sans font-light text-sm md:text-base leading-relaxed">
+                  <p className="text-black/75 font-sans font-normal text-sm md:text-base leading-relaxed">
                     {col.description}
                   </p>
                 </div>

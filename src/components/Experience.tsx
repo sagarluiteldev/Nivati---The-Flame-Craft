@@ -57,7 +57,7 @@ export default function Experience() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="text-3xl md:text-5xl font-serif text-olive mb-6"
+            className="text-3xl md:text-5xl font-serif text-neutral-900 mb-6"
           >
             The Nivati Experience
           </motion.h2>
@@ -66,7 +66,7 @@ export default function Experience() {
             whileInView={{ width: "4rem", opacity: 1 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="h-0.5 bg-sage mx-auto" 
+            className="h-0.5 bg-olive mx-auto" 
           />
         </div>
 
@@ -85,13 +85,13 @@ export default function Experience() {
               className="relative group p-8 md:p-10 rounded-2xl md:rounded-3xl bg-linear-to-br from-olive/5 to-transparent border border-olive/10 hover:border-olive/20 hover:shadow-xl hover:shadow-olive/5 transition-colors duration-300 overflow-hidden"
             >
               {/* Icon Container */}
-              <div className="w-14 h-14 rounded-full bg-white/80 border border-olive/10 flex items-center justify-center mb-8 text-sage group-hover:scale-105 group-hover:bg-sage group-hover:text-white transition-all duration-300 ease-out">
+              <div className="w-14 h-14 rounded-full bg-white/80 border border-olive/10 flex items-center justify-center mb-8 text-olive group-hover:scale-105 group-hover:bg-olive group-hover:text-white transition-all duration-300 ease-out">
                 <feature.icon className="w-6 h-6" />
               </div>
 
               {/* Content */}
-              <h3 className="text-2xl font-serif text-olive mb-4 relative z-10">{feature.title}</h3>
-              <p className="text-olive/70 font-sans font-light leading-relaxed relative z-10">
+              <h3 className="text-2xl font-serif text-neutral-900 mb-4 relative z-10">{feature.title}</h3>
+              <p className="text-neutral-600 font-sans font-normal leading-relaxed relative z-10">
                 {feature.description}
               </p>
               

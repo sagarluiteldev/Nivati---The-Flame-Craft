@@ -77,12 +77,12 @@ export default function Journals() {
   const currentReviews = reviews.slice(index * itemsPerPage, index * itemsPerPage + itemsPerPage);
 
   return (
-    <section className="py-16 md:py-28 bg-creme text-olive overflow-hidden" id="journals">
+    <section className="py-16 md:py-28 bg-creme text-black overflow-hidden" id="journals">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="text-center mb-10 md:mb-16">
-          <h2 className="text-3xl md:text-5xl font-serif text-olive mb-3 md:mb-4">Customer Journals</h2>
-          <p className="font-sans font-normal text-olive/90 max-w-xl mx-auto text-sm md:text-base px-2">
+          <h2 className="text-3xl md:text-5xl font-serif text-black mb-3 md:mb-4">Customer Journals</h2>
+          <p className="font-sans font-normal text-black/80 max-w-xl mx-auto text-sm md:text-base px-2">
             Stories and experiences from our community of makers and luxury candle enthusiasts.
           </p>
         </div>
@@ -92,7 +92,7 @@ export default function Journals() {
           {/* Desktop Left Arrow Button */}
           <button
             onClick={handlePrev}
-            className="hidden md:flex absolute -left-6 lg:-left-12 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-olive/20 bg-white/90 text-olive hover:bg-olive hover:text-white items-center justify-center transition-all duration-300 shadow-md cursor-pointer"
+            className="hidden md:flex absolute -left-6 lg:-left-12 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-black/20 bg-white/95 text-black hover:bg-black hover:text-white items-center justify-center transition-all duration-300 shadow-md cursor-pointer"
             aria-label="Previous reviews"
           >
             <ChevronLeftIcon className="w-6 h-6" />
@@ -117,7 +117,7 @@ export default function Journals() {
                         ? "linear-gradient(to top right, #1d5200 0%, #5a6c37 100%)"
                         : "linear-gradient(to top left, #1d5200 0%, #5a6c37 100%)",
                     }}
-                    className="border border-white/15 rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-olive/15 hover:border-white/30 transition-all duration-300"
+                    className="border border-white/15 rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-black/10 hover:border-white/30 transition-all duration-300"
                   >
                     <div>
                       {/* Rating Stars & Badge */}
@@ -157,7 +157,7 @@ export default function Journals() {
           {/* Desktop Right Arrow Button */}
           <button
             onClick={handleNext}
-            className="hidden md:flex absolute -right-6 lg:-right-12 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-olive/20 bg-white/90 text-olive hover:bg-olive hover:text-white items-center justify-center transition-all duration-300 shadow-md cursor-pointer"
+            className="hidden md:flex absolute -right-6 lg:-right-12 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full border border-black/20 bg-white/95 text-black hover:bg-black hover:text-white items-center justify-center transition-all duration-300 shadow-md cursor-pointer"
             aria-label="Next reviews"
           >
             <ChevronRightIcon className="w-6 h-6" />
@@ -169,7 +169,7 @@ export default function Journals() {
           {/* Mobile Previous Button */}
           <button
             onClick={handlePrev}
-            className="flex md:hidden w-10 h-10 rounded-full border border-olive/20 bg-white/90 text-olive active:bg-olive active:text-white items-center justify-center transition-all shadow-xs shrink-0 cursor-pointer"
+            className="flex md:hidden w-10 h-10 rounded-full border border-black/20 bg-white/95 text-black active:bg-black active:text-white items-center justify-center transition-all shadow-xs shrink-0 cursor-pointer"
             aria-label="Previous review"
           >
             <ChevronLeftIcon className="w-5 h-5" />
@@ -186,7 +186,7 @@ export default function Journals() {
               >
                 <span
                   className={`transition-all duration-300 rounded-full block ${
-                    idx === index ? "w-6 sm:w-8 h-2 bg-olive" : "w-2 h-2 bg-olive/20 hover:bg-olive/40"
+                    idx === index ? "w-6 sm:w-8 h-2 bg-black" : "w-2 h-2 bg-black/20 hover:bg-black/40"
                   }`}
                 />
               </button>
@@ -196,7 +196,7 @@ export default function Journals() {
           {/* Mobile Next Button */}
           <button
             onClick={handleNext}
-            className="flex md:hidden w-10 h-10 rounded-full border border-olive/20 bg-white/90 text-olive active:bg-olive active:text-white items-center justify-center transition-all shadow-xs shrink-0 cursor-pointer"
+            className="flex md:hidden w-10 h-10 rounded-full border border-black/20 bg-white/95 text-black active:bg-black active:text-white items-center justify-center transition-all shadow-xs shrink-0 cursor-pointer"
             aria-label="Next review"
           >
             <ChevronRightIcon className="w-5 h-5" />
