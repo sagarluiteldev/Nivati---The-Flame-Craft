@@ -16,19 +16,16 @@ export default function Process() {
 
   const steps = [
     {
-      number: "01",
       title: "Ethically Sourced",
       description: "Our raw materials are gathered with care, ensuring sustainability and high quality. We use 100% natural soy wax and phthalate-free oils.",
       image: "/images/process_sourced.png"
     },
     {
-      number: "02",
       title: "Precision Blending",
       description: "Every fragrance is meticulously tested for the perfect balance of cold and hot throw, making sure your space is always delightfully scented.",
       image: "/images/process_making_new.jpg"
     },
     {
-      number: "03",
       title: "The Nivati Finish",
       description: "Hand-poured, hand-labeled, and cured to perfection. Each candle is a testament to the artisan's dedication to the craft.",
       image: "/images/IMG_4078.jpg"
@@ -78,7 +75,6 @@ export default function Process() {
 
 interface ProcessStepProps {
   step: {
-    number: string;
     title: string;
     description: string;
     image: string;
@@ -90,14 +86,20 @@ function ProcessStep({ step, idx }: ProcessStepProps) {
   const stepRef = useRef<HTMLDivElement>(null);
   
   // Local scroll progress for inner image parallax
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: imageProgress } = useScroll({
     target: stepRef,
     offset: ["start end", "end start"]
   });
 
+  // Fast early-trigger scroll progress for title letters
+  const { scrollYProgress: titleProgress } = useScroll({
+    target: stepRef,
+    offset: ["start 92%", "start 40%"]
+  });
+
   // Safe inner parallax translation bounded strictly inside the placeholder frame
   const imageY = useTransform(
-    scrollYProgress, 
+    imageProgress, 
     [0, 1], 
     idx % 2 === 0 ? ["-7%", "7%"] : ["7%", "-7%"]
   );
@@ -134,16 +136,6 @@ function ProcessStep({ step, idx }: ProcessStepProps) {
       </div>
 
       <div className="w-full lg:w-1/2 flex flex-col justify-center">
-        <motion.span 
-          initial={{ opacity: 0, x: idx % 2 === 1 ? -30 : 30 }}
-          whileInView={{ opacity: 0.4, x: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-black/40 text-6xl md:text-8xl font-serif leading-none mb-4 tracking-tighter"
-        >
-          {step.number}
-        </motion.span>
-        
         <h3 className="text-3xl md:text-5xl font-serif text-black mb-6 flex flex-wrap perspective-1000">
           {step.title.split(" ").map((word: string, wordIdx: number) => (
             <span key={wordIdx} className="mr-3 overflow-hidden flex">
@@ -155,7 +147,7 @@ function ProcessStep({ step, idx }: ProcessStepProps) {
                     char={char} 
                     index={index} 
                     totalChars={totalChars} 
-                    scrollYProgress={scrollYProgress} 
+                    scrollYProgress={titleProgress} 
                   />
                 );
               })}
@@ -167,7 +159,7 @@ function ProcessStep({ step, idx }: ProcessStepProps) {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
           className="text-lg md:text-xl text-black/85 font-sans font-normal leading-relaxed"
         >
           {step.description}
@@ -178,14 +170,14 @@ function ProcessStep({ step, idx }: ProcessStepProps) {
 }
 
 function AnimatedChar({ char, index, totalChars, scrollYProgress }: { char: string, index: number, totalChars: number, scrollYProgress: MotionValue<number> }) {
-  // Stagger the start times over the first 60% of the scroll animation
-  const stepSize = 0.6 / totalChars;
+  // Fast, early character reveal that finishes well before user scrolls past
+  const stepSize = 0.55 / totalChars;
   const start = index * stepSize;
-  const end = start + 0.4; // 40% duration for each character
+  const end = Math.min(start + 0.35, 1);
   
   const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
-  const y = useTransform(scrollYProgress, [start, end], [40, 0]);
-  const rotateX = useTransform(scrollYProgress, [start, end], [-90, 0]);
+  const y = useTransform(scrollYProgress, [start, end], [24, 0]);
+  const rotateX = useTransform(scrollYProgress, [start, end], [-60, 0]);
 
   return (
     <motion.span 
