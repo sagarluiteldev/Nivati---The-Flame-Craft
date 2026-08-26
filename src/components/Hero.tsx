@@ -72,7 +72,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-multiply bg-[url('/images/paper-fibers.png')] hidden lg:block" />
       
       {/* Background abstract shapes */}
-      <div className="absolute top-0 right-0 w-full lg:w-[60%] h-full bg-sage/5 rounded-l-none lg:rounded-l-[200px] -z-10 hidden lg:block" />
+      <div className="absolute top-0 right-0 w-full lg:w-[60%] h-full bg-sage/5 rounded-none -z-10 hidden lg:block" />
 
       {/* Floating Parallax Elements - Restricted to Desktop for performance and clarity */}
       <motion.img 
@@ -106,9 +106,9 @@ export default function Hero() {
         className="absolute top-[40%] left-[25%] w-12 h-auto opacity-70 pointer-events-none z-20 hidden lg:block mix-blend-multiply"
       />
 
-      {/* Big Crisp Hero Image - Desktop (Framed with top, right, bottom padding for a balanced luxury look) */}
+      {/* Big Crisp Hero Image - Desktop (0 border radius) */}
       <div 
-        className="absolute right-4 sm:right-6 lg:right-8 xl:right-12 top-28 lg:top-32 bottom-6 lg:bottom-8 xl:bottom-10 w-[45vw] xl:w-[44vw] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-black/10 border border-black/5 z-0 hidden lg:block"
+        className="absolute right-4 sm:right-6 lg:right-8 xl:right-12 top-28 lg:top-32 bottom-6 lg:bottom-8 xl:bottom-10 w-[45vw] xl:w-[44vw] rounded-none overflow-hidden shadow-2xl shadow-black/10 border border-black/5 z-0 hidden lg:block"
       >
         {/* Instant SSR Base Image (Zero render delay for LCP) */}
         <Image 
@@ -232,8 +232,8 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Mobile View Image container (Framed with padding and rounded corners) */}
-        <div className="relative w-full h-[380px] sm:h-[440px] my-3 rounded-2xl overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden">
+        {/* Mobile View Image container (0 border radius) */}
+        <div className="relative w-full h-[380px] sm:h-[440px] my-3 rounded-none overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden">
           <div className="relative h-full w-full overflow-hidden">
             {/* Instant SSR Base Image (Zero render delay for Mobile LCP) */}
             <Image 

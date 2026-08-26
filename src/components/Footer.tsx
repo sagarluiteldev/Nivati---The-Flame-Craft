@@ -214,7 +214,12 @@ export default function Footer() {
       </div>
 
       {/* Main Green Footer Box */}
-      <div className="max-w-7xl mx-3 sm:mx-6 lg:mx-auto bg-olive text-creme rounded-t-[36px] md:rounded-t-[56px] rounded-b-none px-6 sm:px-10 md:px-14 lg:px-16 pt-12 md:pt-16 pb-8 md:pb-12 shadow-2xl">
+      <div 
+        style={{
+          background: "linear-gradient(to top right, #1d5200 0%, #5a6c37 100%)"
+        }}
+        className="max-w-7xl mx-auto text-creme rounded-none px-6 sm:px-10 md:px-14 lg:px-16 pt-12 md:pt-16 pb-8 md:pb-12 shadow-2xl"
+      >
         <div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
             <div className="md:col-span-2">

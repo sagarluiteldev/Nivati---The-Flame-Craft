@@ -121,7 +121,7 @@ export default function ShopContent({ products }: ShopContentProps) {
                 transition={{ duration: 0.4 }}
               >
                 <Link href={`/shop/${product.id}`} className="block w-full">
-                  <div className="aspect-4/5 md:aspect-3/4 relative rounded-3xl overflow-hidden bg-olive/5 w-full mb-3 md:mb-4">
+                  <div className="aspect-4/5 md:aspect-3/4 relative rounded-none overflow-hidden bg-olive/5 w-full mb-3 md:mb-4">
                     <div className="absolute inset-0 bg-olive/10 mix-blend-multiply z-10 transition-opacity duration-500 group-hover:opacity-0" style={{ transform: "translateZ(0)" }} />
                     <Image 
                       src={product.img} 

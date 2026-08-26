@@ -112,7 +112,7 @@ function ProcessStep({ step, idx, imageYEven, imageYOdd }: ProcessStepProps) {
     <div ref={stepRef} className={`flex items-center flex-col lg:flex-row gap-12 lg:gap-24 ${idx % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
       <div className="w-full lg:w-1/2">
         <motion.div 
-          className="relative w-full aspect-4/5 rounded-2xl overflow-hidden shadow-xl"
+          className="relative w-full aspect-4/5 rounded-none overflow-hidden shadow-xl"
           style={{ 
             opacity: useTransform(scrollYProgress, [0, 0.4], [0, 1]),
             scale: useTransform(scrollYProgress, [0, 0.4], [0.95, 1])

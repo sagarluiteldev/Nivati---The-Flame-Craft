@@ -65,7 +65,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             transition={{ duration: 0.8 }}
             className="flex flex-col gap-4 md:sticky md:top-28"
           >
-            <div className="aspect-4/5 md:aspect-square w-full rounded-2xl md:rounded-3xl overflow-hidden bg-olive/5 relative">
+            <div className="aspect-4/5 md:aspect-square w-full rounded-none overflow-hidden bg-olive/5 relative">
               <Image 
                 src={product.gallery[activeImage]} 
                 alt={product.title} 
@@ -81,7 +81,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                    <button 
                      key={idx}
                      onClick={() => setActiveImage(idx)}
-                     className={`w-20 h-20 rounded-xl overflow-hidden bg-olive/5 border-2 transition-colors relative ${activeImage === idx ? 'border-olive' : 'border-transparent'}`}
+                     className={`w-20 h-20 rounded-none overflow-hidden bg-olive/5 border-2 transition-colors relative ${activeImage === idx ? 'border-olive' : 'border-transparent'}`}
                    >
                      <Image src={img} alt={`Gallery image ${idx+1}`} fill sizes="80px" className="w-full h-full object-cover mix-blend-multiply" />
                    </button>
@@ -178,7 +178,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             ) : (
               /* Non-personalizable details */
               (product.scentNotes.top !== "Unscented" && product.scentNotes.top !== "Customize your own") && (
-                <div className="mb-10 p-8 bg-olive/5 rounded-3xl border border-olive/10">
+                <div className="mb-10 p-8 bg-olive/5 rounded-none border border-olive/10">
                   <h4 className="font-serif text-xl text-olive mb-6">Product Details</h4>
                   <ul className="space-y-4 text-sm md:text-base font-light text-olive/80">
                     <li className="flex gap-4 border-b border-olive/5 pb-3">

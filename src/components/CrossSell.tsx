@@ -46,7 +46,7 @@ export default function CrossSell({ currentProductId, category }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {recommendations.map(product => (
           <Link href={`/shop/${product.id}`} key={product.id} className="group block">
-            <div className="aspect-square rounded-2xl md:rounded-3xl overflow-hidden bg-olive/5 relative mb-6">
+            <div className="aspect-square rounded-none overflow-hidden bg-olive/5 relative mb-6">
               <div className="absolute inset-0 bg-olive/10 mix-blend-multiply z-10 transition-opacity duration-500 group-hover:opacity-0" style={{ transform: "translateZ(0)" }} />
               <Image 
                 src={product.img} 

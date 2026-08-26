@@ -82,7 +82,7 @@ export default function Experience() {
               key={idx} 
               variants={item}
               whileHover={{ y: -5, transition: { duration: 0.25, ease: "easeOut" } }}
-              className="relative group p-8 md:p-10 rounded-2xl md:rounded-3xl bg-linear-to-br from-olive/5 to-transparent border border-olive/10 hover:border-olive/20 hover:shadow-xl hover:shadow-olive/5 transition-colors duration-300 overflow-hidden"
+              className="relative group p-8 md:p-10 rounded-none bg-linear-to-br from-olive/5 to-transparent border border-olive/10 hover:border-olive/20 hover:shadow-xl hover:shadow-olive/5 transition-colors duration-300 overflow-hidden"
             >
               {/* Icon Container */}
               <div className="w-14 h-14 rounded-full bg-white/80 border border-olive/10 flex items-center justify-center mb-8 text-olive group-hover:scale-105 group-hover:bg-olive group-hover:text-white transition-all duration-300 ease-out">

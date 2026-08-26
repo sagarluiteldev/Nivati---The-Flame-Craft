@@ -7,13 +7,13 @@ export default function Workshops() {
   return (
     <section className="py-24 bg-creme relative overflow-hidden" id="workshops">
       {/* Background shape */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-sage/10 rounded-l-full -z-10 transform translate-x-1/4" />
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-sage/10 rounded-none -z-10 transform translate-x-1/4" />
       
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           
           <motion.div 
-            className="relative h-125 w-full rounded-2xl overflow-hidden shadow-2xl"
+            className="relative h-125 w-full rounded-none overflow-hidden shadow-2xl"
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}

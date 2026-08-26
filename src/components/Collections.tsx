@@ -124,7 +124,7 @@ export default function Collections() {
                 className="group flex flex-col focus:outline-none"
               >
                 {/* Image Container */}
-                <div className="relative aspect-4/5 w-full rounded-2xl md:rounded-3xl overflow-hidden bg-black/5 mb-4 border border-black/10 shadow-xs transition-all duration-500 group-hover:shadow-lg group-hover:border-black/25">
+                <div className="relative aspect-4/5 w-full rounded-none overflow-hidden bg-black/5 mb-4 border border-black/10 shadow-xs transition-all duration-500 group-hover:shadow-lg group-hover:border-black/25">
                   <Image 
                     src={col.image} 
                     alt={col.title}

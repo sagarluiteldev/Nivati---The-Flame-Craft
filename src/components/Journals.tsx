@@ -117,7 +117,7 @@ export default function Journals() {
                         ? "linear-gradient(to top right, #1d5200 0%, #5a6c37 100%)"
                         : "linear-gradient(to top left, #1d5200 0%, #5a6c37 100%)",
                     }}
-                    className="border border-white/15 rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-black/10 hover:border-white/30 transition-all duration-300"
+                    className="border border-white/15 rounded-none p-6 sm:p-8 md:p-10 flex flex-col justify-between shadow-xl shadow-black/10 hover:border-white/30 transition-all duration-300"
                   >
                     <div>
                       {/* Rating Stars & Badge */}
