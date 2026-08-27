@@ -10,14 +10,12 @@ import { usePathname } from "next/navigation";
 import { useAppContext } from "@/context/AppContext";
 import { MagnifyingGlassIcon as SearchIcon } from "@heroicons/react/24/outline";
 
-const ScentQuiz = dynamic(() => import("@/components/ScentQuiz"), { ssr: false });
 const SearchOverlay = dynamic(() => import("@/components/SearchOverlay"), { ssr: false });
 
 export default function Navbar() {
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
   const { cart, setIsCartOpen } = useAppContext();
@@ -25,7 +23,6 @@ export default function Navbar() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsMobileMenuOpen(false);
-      setIsQuizOpen(false);
       setIsSearchOpen(false);
     }, 0);
     return () => clearTimeout(timer);
@@ -51,7 +48,6 @@ export default function Navbar() {
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
 
-    // Focus the first element on open
     firstElement.focus();
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -77,7 +73,6 @@ export default function Navbar() {
   return (
     <>
       {isSearchOpen && <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />}
-      {isQuizOpen && <ScentQuiz isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />}
 
       <motion.header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-creme border-b border-olive/10 ${
@@ -153,29 +148,23 @@ export default function Navbar() {
             <Link href="/#story" className="hover:text-olive transition-colors py-6">Our Story</Link>
           </nav>
 
-          <div className="flex items-center gap-4 md:gap-6 z-50">
+          <div className="flex items-center gap-5 md:gap-7 z-50">
             <button 
               onClick={() => setIsSearchOpen(true)}
-              className="text-neutral-800 hover:text-olive transition-colors"
+              className="text-neutral-800 hover:text-olive transition-colors p-1"
               aria-label="Search"
             >
-              <SearchIcon className="w-5 h-5" />
-            </button>
-            <button 
-              onClick={() => setIsQuizOpen(true)}
-              className="hidden lg:inline-flex items-center gap-2 text-xs uppercase tracking-widest text-neutral-800 hover:text-olive transition-colors font-medium"
-            >
-              Scent Quiz
+              <SearchIcon className="w-6 h-6" />
             </button>
 
             <button 
-              className="text-neutral-800 hover:text-olive transition-colors relative" 
+              className="text-neutral-800 hover:text-olive transition-colors relative p-1" 
               aria-label="Cart"
               onClick={() => setIsCartOpen(true)}
             >
-              <ShoppingBag className="w-5 h-5" />
+              <ShoppingBag className="w-6 h-6" />
               {cart.reduce((total, item) => total + item.quantity, 0) > 0 && (
-                <span className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-olive text-creme text-[10px] flex items-center justify-center font-bold">
+                <span className="absolute -top-1 -right-1.5 min-w-4.5 h-4.5 px-1 rounded-full bg-olive text-creme text-[10px] flex items-center justify-center font-bold">
                   {cart.reduce((total, item) => total + item.quantity, 0)}
                 </span>
               )}
@@ -184,7 +173,7 @@ export default function Navbar() {
               href="https://wa.me/9842003249?text=Hi,%20I%20would%20like%20to%20know%20more%20about%20the%20online%20candle%20making%20workshops"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 bg-olive text-creme rounded-lg text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-olive/90 active:scale-95 shadow-md"
+              className="hidden md:inline-flex items-center justify-center px-6 py-2.5 btn-mesh text-creme rounded-lg text-sm font-medium tracking-wide transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-95 shadow-md"
             >
               Join a Class
             </a>
@@ -214,24 +203,14 @@ export default function Navbar() {
               <Link href="/shop?category=Candle Making Kit" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-olive transition-colors">DIY Kits</Link>
               <Link href="/#workshops" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-olive transition-colors">Workshops</Link>
               <Link href="/#story" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-olive transition-colors">Our Story</Link>
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsQuizOpen(true);
-                }}
-                className="hover:text-olive transition-colors font-serif text-neutral-900 cursor-pointer"
-              >
-                Scent Quiz
-              </button>
             </nav>
             <div className="mt-12 pt-12 border-t border-olive/10 flex flex-col items-center gap-8">
-
               <a 
                 href="https://wa.me/9842003249?text=Hi,%20I%20would%20like%20to%20know%20more%20about%20the%20online%20candle%20making%20workshops"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full inline-flex items-center justify-center px-8 py-4 bg-olive text-creme rounded-lg text-lg tracking-wide hover:bg-olive/90 shadow-md"
+                className="w-full inline-flex items-center justify-center px-8 py-4 btn-mesh text-creme rounded-lg text-lg tracking-wide shadow-md"
               >
                 Join a Class
               </a>

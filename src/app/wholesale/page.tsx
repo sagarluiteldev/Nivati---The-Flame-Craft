@@ -81,7 +81,7 @@ export default function WholesalePage() {
               href="https://wa.me/9842003249?text=Hi,%20I%20am%20interested%20in%20placing%20a%20wholesale/bulk%20order%20with%20Nivati"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-olive text-creme px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-lg active:scale-95 text-base font-medium font-sans"
+              className="inline-flex items-center gap-2 btn-mesh text-creme px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:shadow-lg active:scale-95 text-base font-medium font-sans"
             >
               Contact via WhatsApp
             </a>

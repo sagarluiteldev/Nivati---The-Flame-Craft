@@ -54,7 +54,7 @@ export default function StickyBuyBar({ product }: Props) {
           </div>
           <button 
             onClick={handleAddToCart}
-            className="flex-1 md:flex-none bg-olive text-creme px-8 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 hover:-translate-y-1 hover:bg-olive/90 active:scale-95 font-medium tracking-wide shadow-lg shadow-olive/10"
+            className="flex-1 md:flex-none btn-mesh text-creme px-8 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-95 font-medium tracking-wide shadow-md"
           >
             <ShoppingBag className="w-4 h-4" /> Add to Cart
           </button>

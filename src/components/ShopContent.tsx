@@ -92,7 +92,7 @@ export default function ShopContent({ products }: ShopContentProps) {
                     }}
                     className={`text-left px-4 py-2.5 rounded-lg text-sm transition-all flex items-center justify-between cursor-pointer ${
                       activeCategory === cat 
-                        ? 'bg-olive text-creme font-medium' 
+                        ? 'btn-mesh text-creme font-medium' 
                         : 'text-black/80 hover:bg-black/5'
                     }`}
                   >

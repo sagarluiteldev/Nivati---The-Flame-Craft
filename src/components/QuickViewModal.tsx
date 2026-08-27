@@ -19,25 +19,39 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
   const [specialMessage, setSpecialMessage] = useState("");
   const [quantity, setQuantity] = useState(1);
 
-  // Prevent body scrolling when modal is open
+  const modalRef = useRef<HTMLDivElement>(null);
+  const contentScrollRef = useRef<HTMLDivElement>(null);
+
+  // Prevent background body & html scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+      const originalBodyPaddingRight = document.body.style.paddingRight;
+
+      // Prevent layout shift from scrollbar disappearing
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+
       // Reset states when opening a new product
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedColor(COLORS[0].name);
       setSelectedFragrance(FRAGRANCES[0]);
       setSpecialMessage("");
       setQuantity(1);
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen, product?.id]);
 
-  const modalRef = useRef<HTMLDivElement>(null);
+      return () => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        document.body.style.paddingRight = originalBodyPaddingRight;
+      };
+    }
+  }, [isOpen, product?.id]);
 
   // Focus trap for modal
   useEffect(() => {
@@ -107,43 +121,60 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div 
+          data-lenis-prevent
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 overscroll-contain"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) onClose();
+          }}
+        >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-olive/20 backdrop-blur-xl"
+            className="fixed inset-0 bg-olive/20 backdrop-blur-xl touch-none"
           />
           <motion.div
             ref={modalRef}
+            data-lenis-prevent
+            onWheel={(e) => {
+              // If user scrolls anywhere on the modal outside the content container (e.g. over the image), scroll content
+              if (contentScrollRef.current && !contentScrollRef.current.contains(e.target as Node)) {
+                contentScrollRef.current.scrollTop += e.deltaY;
+              }
+            }}
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-225 bg-creme/95 rounded-none shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[85vh] backdrop-blur-md"
+            className="relative w-full max-w-225 bg-creme/95 rounded-none shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[85vh] min-h-0 backdrop-blur-md z-10 overscroll-contain"
           >
             <button
               onClick={onClose}
-              className="absolute top-6 right-6 z-10 w-10 h-10 bg-creme/80 hover:bg-creme text-olive rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-300 hover:rotate-90 hover:scale-110 active:scale-90"
+              className="absolute top-6 right-6 z-20 w-10 h-10 bg-creme/80 hover:bg-creme text-olive rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-300 hover:rotate-90 hover:scale-110 active:scale-90"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Image Section */}
-            <div className="shrink-0 md:w-1/2 relative min-h-75 md:h-auto bg-olive/5 overflow-hidden">
+            <div className="shrink-0 md:w-1/2 relative min-h-56 sm:min-h-72 md:h-auto min-h-0 bg-olive/5 overflow-hidden">
               <motion.img
                 initial={{ scale: 1.1, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 1.2 }}
                 src={product.img}
                 alt={product.title}
-                className="absolute inset-0 w-full h-full object-cover mix-blend-multiply"
+                className="absolute inset-0 w-full h-full object-cover mix-blend-multiply pointer-events-none"
               />
             </div>
 
             {/* Content Section */}
-            <div className="flex-1 md:w-1/2 p-8 lg:p-12 overflow-y-auto scrollbar-hide flex flex-col">
+            <div 
+              ref={contentScrollRef}
+              data-lenis-prevent
+              className="flex-1 md:w-1/2 p-6 sm:p-8 lg:p-12 overflow-y-auto min-h-0 overscroll-contain flex flex-col scrollbar-hide"
+            >
               <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-black/40 mb-3 block">
                 {Array.isArray(product.category) ? product.category.join(" / ") : product.category}
               </span>
@@ -189,7 +220,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
                           onClick={() => setSelectedFragrance(fragrance)}
                           className={`px-4 py-2 rounded-lg text-[11px] transition-all border ${
                             selectedFragrance === fragrance
-                              ? 'bg-olive text-creme border-olive shadow-md font-medium'
+                              ? 'btn-mesh text-creme border-transparent shadow-md font-medium'
                               : 'bg-transparent text-black/70 border-black/10 hover:border-black/30 hover:bg-black/5'
                           }`}
                         >
@@ -252,7 +283,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
                 </div>
                 <button 
                   onClick={handleAddToCart}
-                  className="flex-1 bg-olive text-creme rounded-lg py-4 px-8 flex items-center justify-center gap-3 transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(40,54,24,0.3)] active:scale-[0.95] font-medium tracking-widest text-[10px]"
+                  className="flex-1 btn-mesh text-creme rounded-lg py-4 px-8 flex items-center justify-center gap-3 transition-all duration-300 hover:scale-[1.05] hover:-translate-y-1 active:scale-[0.95] font-medium tracking-widest text-[10px] shadow-md"
                 >
                   <ShoppingBag className="w-4 h-4" /> ADD TO CART
                 </button>
