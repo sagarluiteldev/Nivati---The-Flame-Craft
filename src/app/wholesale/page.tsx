@@ -86,7 +86,7 @@ export default function WholesalePage() {
               Contact via WhatsApp
             </a>
             <a 
-              href="mailto:hello@nivati.com"
+              href="mailto:nivaticandles@gmail.com"
               className="inline-flex items-center gap-2 border border-olive/20 text-olive px-8 py-4 rounded-full transition-all duration-300 hover:bg-olive/5 hover:border-olive/45 active:scale-95 text-base font-medium font-sans"
             >
               Email Us

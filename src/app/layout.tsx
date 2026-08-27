@@ -128,6 +128,7 @@ const jsonLd = {
       description:
         "Artisanal candle studio creating hand-poured natural soy and gel wax candles, customized scents, and DIY candle making kits.",
       telephone: "+9779842003249",
+      email: "nivaticandles@gmail.com",
       sameAs: [
         "https://www.instagram.com/nivati.np",
         "https://www.facebook.com/nivati.np",

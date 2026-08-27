@@ -275,6 +275,7 @@ export default function Footer() {
                   <li><Link href="/shipping-policy" className="hover:text-white transition-colors">Shipping Policy</Link></li>
                   <li><Link href="/wholesale" className="hover:text-white transition-colors">Wholesale & Bulk</Link></li>
                   <li><a href="tel:+9779842003249" className="hover:text-white transition-colors">Contact Us: +977 9842003249</a></li>
+                  <li><a href="mailto:nivaticandles@gmail.com" className="hover:text-white transition-colors">Email: nivaticandles@gmail.com</a></li>
                 </ul>
               </div>
             </div>

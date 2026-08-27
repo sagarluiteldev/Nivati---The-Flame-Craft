@@ -64,7 +64,7 @@ export default function PrivacyPage() {
             <h2 className="text-2xl font-serif text-olive mb-3">5. Your Rights</h2>
             <p>
               You have the right to request access to the personal data we hold about you, request corrections, or ask us to delete your personal details. 
-              If you have any questions or requests regarding your privacy, please reach out to us at <strong>hello@nivati.com</strong>.
+              If you have any questions or requests regarding your privacy, please reach out to us at <strong>nivaticandles@gmail.com</strong>.
             </p>
           </section>
         </div>

@@ -78,7 +78,7 @@ export default function Journals() {
 
   return (
     <section className="py-16 md:py-24 bg-creme text-black overflow-hidden" id="journals">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="text-center mb-10 md:mb-14">
           <h2 className="text-3xl md:text-5xl font-serif text-black mb-3 md:mb-4">Customer Journals</h2>

@@ -9,19 +9,22 @@ export default function Experience() {
     show: {
       opacity: 1,
       transition: { 
-        staggerChildren: 0.12,
-        delayChildren: 0.08,
+        staggerChildren: 0.1,
+        delayChildren: 0.05,
       },
     },
   };
 
   const item: Variants = {
-    hidden: { opacity: 0, y: 18 },
+    hidden: { 
+      opacity: 0, 
+      y: 14,
+    },
     show: { 
       opacity: 1, 
       y: 0, 
       transition: { 
-        duration: 0.6, 
+        duration: 0.7, 
         ease: [0.22, 1, 0.36, 1],
       } 
     },
@@ -53,9 +56,9 @@ export default function Experience() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center mb-16 md:mb-24">
           <motion.h2 
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="text-3xl md:text-5xl font-serif text-neutral-900 mb-6"
           >
@@ -64,8 +67,8 @@ export default function Experience() {
           <motion.div 
             initial={{ width: 0, opacity: 0 }}
             whileInView={{ width: "4rem", opacity: 1 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="h-0.5 bg-olive mx-auto" 
           />
         </div>
@@ -75,14 +78,14 @@ export default function Experience() {
           variants={container}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-60px" }}
+          viewport={{ once: true, amount: 0.15 }}
         >
           {features.map((feature, idx) => (
             <motion.div 
               key={idx} 
               variants={item}
-              whileHover={{ y: -5, transition: { duration: 0.25, ease: "easeOut" } }}
-              className="relative group p-8 md:p-10 rounded-none bg-mesh-grain border border-white/15 text-creme hover:border-white/35 shadow-xl shadow-black/10 transition-all duration-300 overflow-hidden flex flex-col justify-between"
+              whileHover={{ y: -4, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } }}
+              className="relative group p-8 md:p-10 rounded-none bg-mesh-grain border border-white/15 text-creme hover:border-white/35 shadow-xl shadow-black/10 transition-[border-color,box-shadow] duration-500 ease-out overflow-hidden flex flex-col justify-between transform-gpu will-change-transform backface-hidden"
             >
               <div>
                 {/* Icon */}

@@ -859,7 +859,7 @@ export default function SalesTab({ catalogProducts }: Props) {
                     Pokhara, Nepal
                   </p>
                   <p className="text-[#222a1d]/60 text-[10px] sm:text-xs font-mono truncate">
-                    hello@nivaticandles.com
+                    nivaticandles@gmail.com
                   </p>
                 </div>
               </div>
