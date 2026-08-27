@@ -129,6 +129,8 @@ export default function Collections() {
                     src={col.image} 
                     alt={col.title}
                     fill
+                    loading="lazy"
+                    quality={80}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transform-gpu transition-transform duration-500 ease-out group-hover:scale-105"
                   />

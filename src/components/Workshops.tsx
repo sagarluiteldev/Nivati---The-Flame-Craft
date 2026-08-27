@@ -24,6 +24,7 @@ export default function Workshops() {
               alt="Artisan pouring lavender candle wax during a workshop"
               fill
               loading="lazy"
+              quality={80}
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />

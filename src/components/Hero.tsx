@@ -149,12 +149,7 @@ export default function Hero() {
 
       <div className="w-full max-w-440 mx-auto pl-6 sm:pl-10 md:pl-14 lg:pl-16 xl:pl-20 pr-6 lg:pr-8 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-8 items-center relative z-10">
         <div className="flex flex-col gap-6 lg:gap-8 text-center lg:text-left max-w-2xl lg:max-w-none">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="relative"
-          >
+          <div className="relative">
             {/* Editorial Heading Design */}
             <h1 className="font-serif text-olive leading-[0.88]">
               <span className="text-7xl sm:text-8xl md:text-9xl lg:text-[12rem] xl:text-[13.5rem] block tracking-tighter mix-blend-multiply">
@@ -174,16 +169,11 @@ export default function Hero() {
                 </span>
                 vati
               </span>
-              <motion.span 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 1 }}
-                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-lora not-italic font-normal relative inline-block mt-2 lg:-mt-8 lg:ml-3 text-neutral-800 whitespace-nowrap"
-              >
+              <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-lora not-italic font-normal relative inline-block mt-2 lg:-mt-8 lg:ml-3 text-neutral-800 whitespace-nowrap">
                 The Flame Craft
-              </motion.span>
+              </span>
             </h1>
-          </motion.div>
+          </div>
 
           {/* Interactive Slogan Reveal (40% smaller, single line guaranteed) */}
           <div className="h-7 sm:h-8 lg:h-9 overflow-hidden relative flex items-center justify-center lg:justify-start">
@@ -235,13 +225,8 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Mobile View Image container (0 border radius with slow, graceful entrance animation) */}
-        <motion.div 
-          initial={{ opacity: 0, y: 24, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-          className="relative w-full h-100 sm:h-115 -mt-1 sm:mt-1 mb-6 rounded-none overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden"
-        >
+        {/* Mobile View Image container - Immediate visible paint for 100/100 LCP */}
+        <div className="relative w-full h-100 sm:h-115 -mt-1 sm:mt-1 mb-6 rounded-none overflow-hidden shadow-xl shadow-black/10 border border-black/5 z-0 block lg:hidden">
           <div className="relative h-full w-full overflow-hidden">
             {/* Instant SSR Base Image (Zero render delay for Mobile LCP) */}
             <Image 
@@ -251,7 +236,8 @@ export default function Hero() {
               priority
               fetchPriority="high"
               loading="eager"
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              sizes="100vw"
+              quality={80}
               className="absolute inset-0 w-full h-full object-cover"
               style={{ objectPosition: heroImages[0].position || "center" }}
             />
@@ -265,7 +251,8 @@ export default function Hero() {
                   alt={heroImages[currentImageIndex].alt}
                   fill
                   loading="lazy"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  sizes="100vw"
+                  quality={80}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -276,15 +263,10 @@ export default function Hero() {
               )}
             </AnimatePresence>
           </div>
-        </motion.div>
+        </div>
 
         {/* Mobile only buttons */}
-        <motion.div 
-          className="flex lg:hidden flex-col sm:flex-row justify-center gap-4 mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 1 }}
-        >
+        <div className="flex lg:hidden flex-col sm:flex-row justify-center gap-4 mb-8">
           <Link 
             href="/shop"
             className="px-8 py-4 btn-mesh text-creme rounded-lg text-center font-medium tracking-wide shadow-md"
@@ -297,20 +279,15 @@ export default function Hero() {
           >
             Learn the Craft
           </Link>
-        </motion.div>
+        </div>
 
         {/* Mobile only Luxury Badge */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.85 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="flex lg:hidden pt-2 justify-center items-center w-4/5 mx-auto mb-8"
-        >
+        <div className="flex lg:hidden pt-2 justify-center items-center w-4/5 mx-auto mb-8">
           <div className="flex flex-col items-center gap-2 text-center">
             <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-700 font-bold">Handmade with Love</span>
             <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-700 font-bold">Pure Soy Wax</span>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -3,11 +3,11 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Experience from "@/components/Experience";
 import Collections from "@/components/Collections";
-import Footer from "@/components/Footer";
 
 const Workshops = dynamic(() => import("@/components/Workshops"));
 const Journals = dynamic(() => import("@/components/Journals"));
 const Process = dynamic(() => import("@/components/Process"));
+const Footer = dynamic(() => import("@/components/Footer"));
 
 export default function Home() {
   return (

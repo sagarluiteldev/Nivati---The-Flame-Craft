@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import Lenis from "lenis";
 
 export default function SmoothScroller() {
   const pathname = usePathname();
@@ -15,30 +14,36 @@ export default function SmoothScroller() {
     const isTouch = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
     if (isTouch) return;
 
-    const lenis = new Lenis({
-      duration: 1.0,
-      lerp: 0.1,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.5,
-      infinite: false,
-    });
-
+    let lenisInstance: import("lenis").default | null = null;
     let rafId: number;
 
-    function raf(time: number) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
+    import("lenis").then(({ default: Lenis }) => {
+      // Re-verify in case screen resized
+      if (window.innerWidth < 768) return;
 
-    rafId = requestAnimationFrame(raf);
+      lenisInstance = new Lenis({
+        duration: 1.0,
+        lerp: 0.1,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: "vertical",
+        gestureOrientation: "vertical",
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 1.5,
+        infinite: false,
+      });
+
+      function raf(time: number) {
+        lenisInstance?.raf(time);
+        rafId = requestAnimationFrame(raf);
+      }
+
+      rafId = requestAnimationFrame(raf);
+    });
 
     return () => {
-      cancelAnimationFrame(rafId);
-      lenis.destroy();
+      if (rafId) cancelAnimationFrame(rafId);
+      lenisInstance?.destroy();
     };
   }, [isAdmin]);
 

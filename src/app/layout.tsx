@@ -3,14 +3,16 @@ import { Plus_Jakarta_Sans, Cormorant_Garamond, Lora } from "next/font/google";
 import dynamic from "next/dynamic";
 import "./globals.css";
 import { AppProvider } from "@/context/AppContext";
-import SmoothScroller from "@/components/SmoothScroller";
 
 const CartDrawer = dynamic(() => import("@/components/CartDrawer"));
+const SmoothScroller = dynamic(() => import("@/components/SmoothScroller"));
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
   display: "swap",
+  preload: true,
+  fallback: ["system-ui", "-apple-system", "sans-serif"],
 });
 
 const cormorant = Cormorant_Garamond({
@@ -18,6 +20,8 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   display: "swap",
+  preload: true,
+  fallback: ["Georgia", "Cambria", "serif"],
 });
 
 const lora = Lora({
@@ -25,6 +29,7 @@ const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   display: "swap",
+  preload: false,
 });
 
 export const viewport: Viewport = {

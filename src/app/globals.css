@@ -120,6 +120,21 @@ h6 {
 }
 
 /* ==============================================================================
+   CONTENT VISIBILITY & RENDERING OPTIMIZATIONS (MOBILE 95+ BOOST)
+   Skips layout, styling, and paint for below-the-fold content until scrolled near.
+   ============================================================================== */
+@media screen and (max-width: 768px) {
+  #experience,
+  #shop,
+  #workshops,
+  #story,
+  footer {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
+  }
+}
+
+/* ==============================================================================
    HIGH FIDELITY INVOICE PRINT STYLES
    Ensures pristine, publication-grade A4 invoice printing without dashboard chrome
    or browser headers/footers (URL, dates, page numbers).
