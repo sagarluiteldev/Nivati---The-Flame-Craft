@@ -158,7 +158,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: Props) {
             </button>
 
             {/* Image Section */}
-            <div className="shrink-0 md:w-1/2 relative min-h-56 sm:min-h-72 md:h-auto min-h-0 bg-olive/5 overflow-hidden">
+            <div className="shrink-0 md:w-1/2 relative min-h-56 sm:min-h-72 md:h-auto bg-olive/5 overflow-hidden">
               <motion.img
                 initial={{ scale: 1.1, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}

@@ -183,3 +183,16 @@ h6 {
     display: none !important;
   }
 }
+
+/* Search popup input & placeholder - faded black editorial style */
+.search-popup-input {
+  color: rgba(0, 0, 0, 0.8) !important;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.search-popup-input::placeholder {
+  color: rgba(0, 0, 0, 0.35) !important;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.35) !important;
+  opacity: 1 !important;
+}
+

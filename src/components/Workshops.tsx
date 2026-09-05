@@ -6,9 +6,6 @@ import Image from "next/image";
 export default function Workshops() {
   return (
     <section className="py-24 bg-creme relative overflow-hidden" id="workshops">
-      {/* Background shape */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-sage/10 rounded-none -z-10 transform translate-x-1/4" />
-      
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           

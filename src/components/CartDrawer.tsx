@@ -33,13 +33,13 @@ export default function CartDrawer() {
             className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-creme shadow-2xl flex flex-col overscroll-contain"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-olive/10 ">
-              <h2 className="text-2xl font-serif text-olive  flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5" /> Your Cart
+            <div className="flex items-center justify-between p-6 border-b border-black/10">
+              <h2 className="text-2xl font-serif text-black/85 flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-black/60" /> Your Cart
               </h2>
               <button 
                 onClick={() => setIsCartOpen(false)}
-                className="p-2 text-olive/60 hover:text-olive   hover:bg-olive/5  rounded-full transition-colors"
+                className="p-2 text-black/45 hover:text-black/80 hover:bg-black/5 rounded-full transition-colors"
                 aria-label="Close cart"
               >
                 <X className="w-6 h-6" />
@@ -49,12 +49,12 @@ export default function CartDrawer() {
             {/* Cart Items */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {cart.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-olive/60  gap-4">
-                  <ShoppingBag className="w-12 h-12 stroke-1" />
-                  <p className="font-serif text-xl">Your cart is empty.</p>
+                <div className="h-full flex flex-col items-center justify-center text-black/50 gap-4">
+                  <ShoppingBag className="w-12 h-12 stroke-1 text-black/35" />
+                  <p className="font-serif text-xl text-black/75">Your cart is empty.</p>
                   <button 
                     onClick={() => setIsCartOpen(false)}
-                    className="mt-4 px-6 py-2 border border-olive/20 rounded-lg hover:bg-olive/5 transition-colors"
+                    className="mt-4 px-6 py-2 border border-black/20 text-black/70 rounded-lg hover:bg-black/5 hover:text-black/90 transition-colors font-medium"
                   >
                     Continue Shopping
                   </button>
@@ -62,43 +62,43 @@ export default function CartDrawer() {
               ) : (
                 cart.map((item) => (
                   <div key={item.id} className="flex gap-4">
-                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-olive/5 shrink-0 relative">
+                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-black/[0.03] shrink-0 relative">
                       <Image src={item.image} alt={item.title} fill sizes="96px" loading="lazy" className="object-cover mix-blend-multiply" />
                     </div>
                     
                     <div className="flex-1 flex flex-col justify-between">
                       <div className="flex justify-between items-start gap-2">
                         <div className="flex-1">
-                          <h3 className="font-serif text-lg text-olive leading-tight mb-1">{item.title}</h3>
+                          <h3 className="font-serif text-lg text-black/85 leading-tight mb-1">{item.title}</h3>
                           {item.metadata && (
                             <div className="space-y-1">
-                              <div className="flex gap-2 text-[10px] uppercase tracking-widest text-olive/40">
+                              <div className="flex gap-2 text-[10px] uppercase tracking-widest text-black/45 font-medium">
                                 {item.metadata.color && <span>Color: {item.metadata.color}</span>}
                                 {item.metadata.fragrance && <span>Scent: {item.metadata.fragrance}</span>}
                               </div>
                               {item.metadata.message && (
-                                <p className="text-xs text-olive/60 font-light italic truncate max-w-50">
+                                <p className="text-xs text-black/60 font-light italic truncate max-w-50">
                                   &quot;{item.metadata.message}&quot;
                                 </p>
                               )}
                             </div>
                           )}
                         </div>
-                        <p className="font-medium text-olive">Rs {(item.price * item.quantity).toFixed(0)}</p>
+                        <p className="font-medium text-black/80">Rs {(item.price * item.quantity).toFixed(0)}</p>
                       </div>
                       
                       <div className="flex items-center justify-between mt-4">
-                        <div className="flex items-center border border-olive/20 rounded-lg bg-transparent">
+                        <div className="flex items-center border border-black/15 rounded-lg bg-transparent">
                           <button 
                             onClick={() => updateQuantity(item.id, item.quantity - 1, item.metadata)}
-                            className="w-8 h-8 flex items-center justify-center text-olive hover:bg-olive/10 rounded-lg transition-colors"
+                            className="w-8 h-8 flex items-center justify-center text-black/60 hover:text-black/90 hover:bg-black/5 rounded-lg transition-colors"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="w-6 text-center text-sm">{item.quantity}</span>
+                          <span className="w-6 text-center text-sm text-black/80 font-medium">{item.quantity}</span>
                           <button 
                             onClick={() => updateQuantity(item.id, item.quantity + 1, item.metadata)}
-                            className="w-8 h-8 flex items-center justify-center text-olive hover:bg-olive/10 rounded-lg transition-colors"
+                            className="w-8 h-8 flex items-center justify-center text-black/60 hover:text-black/90 hover:bg-black/5 rounded-lg transition-colors"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -106,7 +106,7 @@ export default function CartDrawer() {
                         
                         <button 
                           onClick={() => removeFromCart(item.id, item.metadata)}
-                          className="text-xs uppercase tracking-wider text-olive/60 hover:text-olive underline underline-offset-4"
+                          className="text-xs uppercase tracking-wider text-black/45 hover:text-black/80 underline underline-offset-4 font-medium"
                         >
                           Remove
                         </button>
@@ -119,12 +119,12 @@ export default function CartDrawer() {
 
             {/* Footer */}
             {cart.length > 0 && (
-              <div className="p-4 md:p-6 border-t border-olive/10 bg-olive/5">
+              <div className="p-4 md:p-6 border-t border-black/10 bg-black/[0.02]">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-olive/80 text-sm">Subtotal</span>
-                  <span className="text-lg font-serif text-olive">Rs {subtotal.toFixed(0)}</span>
+                  <span className="text-black/60 text-sm font-medium">Subtotal</span>
+                  <span className="text-lg font-serif text-black/85 font-medium">Rs {subtotal.toFixed(0)}</span>
                 </div>
-                <p className="text-xs text-olive/60 text-center mb-3">
+                <p className="text-xs text-black/45 text-center mb-3">
                   Shipping & taxes calculated at checkout.
                 </p>
                 <a 

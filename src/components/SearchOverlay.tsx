@@ -77,28 +77,41 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
             exit={{ opacity: 0, y: -20 }}
             className="relative w-full max-w-3xl mx-auto flex flex-col"
           >
+            <style>{`
+              .search-popup-input::placeholder {
+                color: rgba(0, 0, 0, 0.35) !important;
+                -webkit-text-fill-color: rgba(0, 0, 0, 0.35) !important;
+                opacity: 1 !important;
+              }
+              .search-popup-input {
+                color: rgba(0, 0, 0, 0.8) !important;
+                -webkit-text-fill-color: rgba(0, 0, 0, 0.8) !important;
+              }
+            `}</style>
+
             <button
               onClick={onClose}
-              className="absolute top-0 right-0 z-10 p-2 text-olive/50 hover:text-olive   transition-colors"
+              className="absolute top-0 right-0 z-10 p-2 text-black/50 hover:text-black/80 transition-colors"
+              aria-label="Close search"
             >
               <X className="w-8 h-8" />
             </button>
             
-            <div className="relative border-b-2 border-olive/20  pb-4 mb-8 pr-12">
-              <SearchIcon className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 text-olive/40 " />
+            <div className="relative border-b-2 border-black/15 pb-4 mb-8 pr-12">
+              <SearchIcon className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 text-black/40" />
               <input 
                 ref={inputRef}
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search scents, kits..."
-                className="w-full bg-transparent text-4xl md:text-6xl font-serif text-olive  placeholder-olive/20  outline-hidden pl-12"
+                className="search-popup-input w-full bg-transparent text-4xl md:text-6xl font-serif text-black/80 outline-none pl-12"
               />
             </div>
 
             <div className="flex-1 overflow-y-auto max-h-[60vh] scrollbar-hide">
               {query.length > 0 && results.length === 0 && (
-                <p className="text-xl text-olive/60  text-center py-12">
+                <p className="text-xl text-black/60 text-center py-12 font-medium">
                   No results found for &quot;{query}&quot;.
                 </p>
               )}
@@ -109,15 +122,15 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
                     href={`/shop/${product.id}`} 
                     key={product.id}
                     onClick={onClose}
-                    className="flex gap-4 items-center p-4 rounded-lg hover:bg-olive/5 transition-colors group"
+                    className="flex gap-4 items-center p-4 rounded-lg hover:bg-black/[0.03] transition-colors group"
                   >
-                    <div className="w-20 h-20 rounded-none overflow-hidden bg-olive/10 relative shrink-0">
+                    <div className="w-20 h-20 rounded-none overflow-hidden bg-black/5 relative shrink-0">
                       <Image src={product.img} alt={product.title} fill sizes="80px" loading="lazy" className="object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div>
-                      <span className="text-xs uppercase tracking-widest text-olive/50">{Array.isArray(product.category) ? product.category.join(", ") : product.category}</span>
-                      <h4 className="text-xl font-serif text-olive">{product.title}</h4>
-                      <p className="text-olive/80">Rs {product.price}</p>
+                      <span className="text-xs uppercase tracking-widest text-black/45 font-medium">{Array.isArray(product.category) ? product.category.join(", ") : product.category}</span>
+                      <h4 className="text-xl font-serif text-black/80 font-medium">{product.title}</h4>
+                      <p className="text-black/70 font-medium">Rs {product.price}</p>
                     </div>
                   </Link>
                 ))}
@@ -125,14 +138,14 @@ export default function SearchOverlay({ isOpen, onClose }: Props) {
             </div>
             
             {query.length === 0 && (
-              <div className="mt-8 opacity-50">
-                <p className="text-sm uppercase tracking-widest text-olive mb-4">Trending Searches</p>
+              <div className="mt-8">
+                <p className="text-xs uppercase tracking-widest text-black/50 mb-4 font-semibold">Trending Searches</p>
                 <div className="flex flex-wrap gap-2">
                   {["Signature Candles", "Kits", "Fig", "Matcha"].map(term => (
                     <button 
                       key={term}
                       onClick={() => setQuery(term)}
-                      className="px-4 py-2 rounded-lg border border-olive/20 text-olive hover:bg-olive hover:text-creme transition-colors text-sm"
+                      className="px-4 py-2 rounded-lg border border-black/20 text-black/70 hover:bg-black/5 hover:text-black/90 hover:border-black/40 transition-colors text-sm font-medium"
                     >
                       {term}
                     </button>
